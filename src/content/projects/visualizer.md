@@ -1,12 +1,12 @@
 ---
 name: "Visualizer → Music Experience"
 category: "Tech (Exp)"
-status: "WATCH"
+status: "KILL/ARCHIVE"
 enjoyment: 9
 resources: 8
 viability: 7
 scale: 5
-action: "Absorbing into travisBREAKS adaptive music layer. Not standalone anymore."
+action: "Absorbed into travisBREAKS adaptive music layer. Archived."
 tags: ["r3f", "music", "visualization", "webgl"]
 stack: ["React 19", "React Three Fiber", "Three.js", "Postprocessing"]
 deploy_url: ""

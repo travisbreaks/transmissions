@@ -10,7 +10,7 @@ action: "Adaptive discovery engine: genre-selective music paths, SEO/GEO, blog i
 tags: ["portfolio", "web", "creative", "music", "three.js"]
 stack: ["Vanilla JS", "Three.js", "Web Audio API", "GSAP", "CSS Custom Properties"]
 deploy_url: "https://travisbreaks.org"
-git_dir: "travisBREAKS"
+git_dir: "travisbreaks-site"
 date: 2025-01-01
 ---
 

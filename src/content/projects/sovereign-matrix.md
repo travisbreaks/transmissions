@@ -1,12 +1,12 @@
 ---
 name: "Sovereign Matrix"
 category: "Tech (Core)"
-status: "SUSTAIN"
+status: "KILL/ARCHIVE"
 enjoyment: 8
 resources: 10
 viability: 10
 scale: 4
-action: "Absorbed by OPS dashboard. Maintain as reference. No new development."
+action: "ABSORBED by OPS dashboard. No further development."
 tags: ["productivity", "decision-framework", "scoring"]
 stack: ["React 19", "Tailwind 4", "Framer Motion", "localStorage"]
 deploy_url: ""

@@ -1,15 +1,15 @@
 ---
 name: "Blog / Content Engine"
 category: "Creative"
-status: "PRIORITIZE"
+status: "BUILD NOW"
 enjoyment: 9
 resources: 9
 viability: 9
 scale: 7
-action: "51 transmissions built. Content curation in progress. Deploy to travisbreaks.org/transmissions/."
+action: "DEPLOYED at travisbreaks.org/transmissions/. 51 entries live. Prune 22 no-source entries. Wire ChatGPT thread picker."
 tags: ["blog", "ssg", "content", "seo", "astro"]
 stack: ["Astro 5", "Content Collections", "Markdown", "CSS Custom Properties"]
-deploy_url: ""
+deploy_url: "https://travisbreaks.org/transmissions/"
 git_dir: "travisbreaks-blog"
 date: 2026-02-18
 ---
