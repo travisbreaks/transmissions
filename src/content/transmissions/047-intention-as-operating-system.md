@@ -1,0 +1,11 @@
+---
+title: "INTENTION AS OPERATING SYSTEM"
+date: 2024-01-01
+confidence: 82
+tags: ["process", "systems"]
+key_quote: "If it doesn't move the story forward, it's just background process."
+source_platform: "chatgpt"
+id: 47
+---
+
+A month of asking ruthless "why" questions about everything. Intention becomes the OS; everything else is an app that can be uninstalled.

@@ -1,0 +1,189 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <slot name="head" />
+  </head>
+  <body class={className}>
+    <!-- Grain overlay -->
+    <div class="grain" aria-hidden="true">
+      <svg>
+        <filter id="grain-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain-filter)" />
+      </svg>
+    </div>
+
+    <!-- Scan line -->
+    <div class="scanline" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="site-nav">
+      <div class="nav-left">
+        <a href="/transmissions/" class="nav-brand">
+          <span class="nav-label font-code">TRANSMISSIONS</span>
+          <span class="nav-separator">//</span>
+          <span class="nav-sublabel font-code">PROTOCOL</span>
+        </a>
+        <div class="nav-status" aria-hidden="true">
+          <span class="led led-cyan"></span>
+          <span class="led led-gold"></span>
+          <span class="nav-status-text font-code">ONLINE</span>
+        </div>
+      </div>
+      <a href="/" class="nav-back font-code">
+        &larr; TRAVISBREAKS.ORG
+      </a>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-line"></div>
+      <p class="font-code">&copy; {new Date().getFullYear()} TRAVIS BREAKS // PROTOCOL</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--glass);
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-brand:hover {
+    color: var(--cyan);
+  }
+
+  .nav-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-separator {
+    color: var(--gold);
+    font-weight: 300;
+  }
+
+  .nav-sublabel {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2em;
+  }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nav-status-text {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-left: 0.2rem;
+  }
+
+  .nav-back {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .nav-back::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--cyan);
+    transition: width 0.3s ease;
+  }
+
+  .nav-back:hover {
+    color: var(--cyan);
+  }
+
+  .nav-back:hover::after {
+    width: 100%;
+  }
+
+  main {
+    min-height: calc(100vh - 120px);
+  }
+
+  .site-footer {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .footer-line {
+    width: 60px;
+    height: 1px;
+    background: var(--gold-dim);
+    margin: 0 auto 1rem;
+  }
+
+  .site-footer p {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+  }
+
+  @media (max-width: 768px) {
+    .site-nav {
+      padding: 0.75rem 1rem;
+    }
+
+    .nav-sublabel,
+    .nav-status {
+      display: none;
+    }
+  }
+</style>

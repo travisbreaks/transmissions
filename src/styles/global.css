@@ -1,0 +1,222 @@
+/* PROTOCOL Design System — Transmissions */
+
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&family=JetBrains+Mono:wght@300;400;500;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+  --void: #080808;
+  --void-light: #0a0a0a;
+  --void-surface: #111111;
+  --gold: #cca43b;
+  --gold-dim: rgba(204, 164, 59, 0.3);
+  --pink: #ff2a6d;
+  --pink-dim: rgba(255, 42, 109, 0.2);
+  --cyan: #05d9e8;
+  --cyan-dim: rgba(5, 217, 232, 0.15);
+  --text-primary: #e0e0e0;
+  --text-secondary: #8a8a8a;
+  --text-muted: #555555;
+  --glass: rgba(8, 8, 8, 0.75);
+  --glass-border: rgba(204, 164, 59, 0.12);
+  --font-display: 'Unbounded', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+  --font-body: 'EB Garamond', serif;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--void);
+  color: var(--text-primary);
+  font-family: var(--font-code);
+  line-height: 1.7;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--gold);
+}
+
+::selection {
+  background: var(--cyan-dim);
+  color: var(--text-primary);
+}
+
+/* --- Grain overlay --- */
+.grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.015;
+  mix-blend-mode: overlay;
+}
+
+.grain svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Scan line --- */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
+  z-index: 9998;
+  pointer-events: none;
+  animation: scanline 4s linear infinite;
+  opacity: 0.4;
+}
+
+/* --- Corner accents --- */
+.corner-accents {
+  position: relative;
+}
+
+.corner-accents::before,
+.corner-accents::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+
+.corner-accents::before {
+  top: 0;
+  left: 0;
+  border-top: 1px solid var(--cyan);
+  border-left: 1px solid var(--cyan);
+}
+
+.corner-accents::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+}
+
+/* --- Glass card --- */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* --- Typography --- */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-code {
+  font-family: var(--font-code);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* --- Card entrance animation --- */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.card-animate {
+  animation: card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Card hover glow --- */
+.glow-hover {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.glow-hover:hover {
+  box-shadow:
+    0 0 30px rgba(5, 217, 232, 0.15),
+    inset 0 0 20px rgba(5, 217, 232, 0.04);
+}
+
+/* --- Status LED dots --- */
+@keyframes led-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.led-cyan {
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  animation: led-pulse 2s ease-in-out infinite;
+}
+
+.led-gold {
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+  animation: led-pulse 2s ease-in-out infinite 1s;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .scanline {
+    animation: none;
+  }
+
+  .card-animate {
+    animation: none;
+    opacity: 1;
+  }
+
+  .led-cyan,
+  .led-gold {
+    animation: none;
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+}
