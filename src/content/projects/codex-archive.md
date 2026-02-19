@@ -1,12 +1,12 @@
 ---
 name: "Codex Archive (figma-contribution)"
 category: "Creative"
-status: "SUSTAIN"
+status: "KILL/ARCHIVE"
 enjoyment: 6
 resources: 10
 viability: 10
 scale: 3
-action: "SHIPPED. Being retired — replaced by travisbreaks-blog. Remove from CI after transmissions goes live."
+action: "RETIRED. Replaced by Transmissions (travisbreaks-blog). Remove from CI."
 tags: ["archive", "blog", "legacy"]
 stack: ["React 19", "TypeScript", "Tailwind", "Framer Motion", "Vitest"]
 deploy_url: "https://codex-archive.netlify.app"

@@ -1,7 +1,7 @@
 ---
 name: "SEO & GEO Implementation"
 category: "Tech (Core)"
-status: "PRIORITIZE"
+status: "BUILD NOW"
 enjoyment: 7
 resources: 10
 viability: 9
@@ -10,7 +10,7 @@ action: "Netlify Prerender, JSON-LD schema, /llms.txt, robots.txt, sitemap."
 tags: ["seo", "geo", "infrastructure", "discovery"]
 stack: ["Netlify Prerender", "JSON-LD", "Schema.org", "robots.txt"]
 deploy_url: ""
-git_dir: "travisBREAKS"
+git_dir: "travisbreaks-site"
 date: 2026-02-01
 ---
 
