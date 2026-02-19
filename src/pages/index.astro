@@ -1,0 +1,326 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SEOHead from '../components/SEOHead.astro'
+import TransmissionCard from '../components/TransmissionCard.astro'
+
+const transmissions = (await getCollection('transmissions'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+
+// Collect all unique tags across entries
+const allTags = [...new Set(transmissions.flatMap(t => t.data.tags))].sort()
+
+const description = `${transmissions.length} philosophical transmissions on AI interaction, consciousness, grief, and creative process. By Travis Bonnet.`
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title="TRANSMISSIONS"
+    description={description}
+    url="https://travisbreaks.org/transmissions/"
+    type="website"
+  />
+
+  <div class="archive">
+    <!-- Header -->
+    <header class="archive-header">
+      <h1 class="archive-title font-display">
+        <span class="title-prefix">03 //</span> TRANSMISSIONS
+      </h1>
+      <p class="archive-count font-code">
+        <span id="visible-count">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
+      </p>
+    </header>
+
+    <!-- Filter bar -->
+    <div class="filter-bar glass-card corner-accents">
+      <div class="search-wrapper">
+        <input
+          type="text"
+          id="search-input"
+          class="search-input font-code"
+          placeholder="SEARCH TRANSMISSIONS..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="filter-controls">
+        <div class="tag-filters" id="tag-filters">
+          {allTags.map(tag => (
+            <button class="tag-btn font-code" data-filter-tag={tag}>
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        <div class="sort-control">
+          <select id="sort-select" class="sort-select font-code">
+            <option value="date-desc">NEWEST</option>
+            <option value="date-asc">OLDEST</option>
+            <option value="title-asc">TITLE A-Z</option>
+            <option value="confidence-desc">CONFIDENCE</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid" id="transmission-grid">
+      {transmissions.map((t, i) => (
+        <TransmissionCard
+          title={t.data.title}
+          slug={t.slug}
+          date={t.data.date}
+          confidence={t.data.confidence}
+          tags={t.data.tags}
+          keyQuote={t.data.key_quote}
+          summary={t.body?.substring(0, 200) ?? ''}
+          index={i}
+        />
+      ))}
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state font-code" id="empty-state" style="display: none;">
+      NO TRANSMISSIONS FOUND
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Client-side search, filter, and sort (vanilla JS — progressive enhancement)
+  const searchInput = document.getElementById('search-input') as HTMLInputElement
+  const grid = document.getElementById('transmission-grid')!
+  const cards = Array.from(grid.querySelectorAll('.card')) as HTMLElement[]
+  const tagBtns = document.querySelectorAll('[data-filter-tag]')
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement
+  const visibleCount = document.getElementById('visible-count')!
+  const emptyState = document.getElementById('empty-state')!
+
+  let activeTags = new Set<string>()
+
+  function filterAndSort() {
+    const query = searchInput.value.toLowerCase().trim()
+    let visible = 0
+
+    for (const card of cards) {
+      const title = card.dataset.title || ''
+      const summary = card.dataset.summary || ''
+      const cardTags = (card.dataset.tags || '').split(',')
+
+      // Search match
+      const matchesSearch = !query
+        || title.includes(query)
+        || summary.includes(query)
+        || cardTags.some(t => t.includes(query))
+
+      // Tag match (all active tags must be present)
+      const matchesTags = activeTags.size === 0
+        || [...activeTags].every(tag => cardTags.includes(tag))
+
+      if (matchesSearch && matchesTags) {
+        card.style.display = ''
+        visible++
+      } else {
+        card.style.display = 'none'
+      }
+    }
+
+    visibleCount.textContent = String(visible)
+    emptyState.style.display = visible === 0 ? '' : 'none'
+
+    // Sort visible cards
+    const sortVal = sortSelect.value
+    const sorted = cards
+      .filter(c => c.style.display !== 'none')
+      .sort((a, b) => {
+        switch (sortVal) {
+          case 'date-desc':
+            return (b.dataset.date || '').localeCompare(a.dataset.date || '')
+          case 'date-asc':
+            return (a.dataset.date || '').localeCompare(b.dataset.date || '')
+          case 'title-asc':
+            return (a.dataset.title || '').localeCompare(b.dataset.title || '')
+          case 'confidence-desc': {
+            const confA = parseInt(a.querySelector('.card-confidence')?.textContent || '0')
+            const confB = parseInt(b.querySelector('.card-confidence')?.textContent || '0')
+            return confB - confA
+          }
+          default:
+            return 0
+        }
+      })
+
+    // Re-append in order
+    for (const card of sorted) grid.appendChild(card)
+  }
+
+  searchInput.addEventListener('input', filterAndSort)
+  sortSelect.addEventListener('change', filterAndSort)
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = (btn as HTMLElement).dataset.filterTag!
+      if (activeTags.has(tag)) {
+        activeTags.delete(tag)
+        btn.classList.remove('active')
+      } else {
+        activeTags.add(tag)
+        btn.classList.add('active')
+      }
+      filterAndSort()
+    })
+  })
+</script>
+
+<style>
+  .archive {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .archive-header {
+    padding: 3rem 0 2rem;
+    text-align: center;
+  }
+
+  .archive-title {
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .title-prefix {
+    color: var(--gold);
+    font-weight: 300;
+  }
+
+  .archive-count {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2em;
+  }
+
+  .filter-bar {
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-input:focus {
+    border-color: var(--cyan);
+  }
+
+  .filter-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tag-btn {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag-btn:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .tag-btn.active {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .sort-select {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    padding: 3px 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .sort-select option {
+    background: var(--void);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+
+  @media (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .archive {
+      padding: 1rem;
+    }
+
+    .archive-title {
+      font-size: 1.4rem;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-controls {
+      flex-direction: column;
+    }
+  }
+</style>

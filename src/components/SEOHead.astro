@@ -1,0 +1,87 @@
+---
+interface Props {
+  title: string
+  description: string
+  url: string
+  type?: 'article' | 'website'
+  datePublished?: string
+  tags?: string[]
+  keyQuote?: string
+}
+
+const { title, description, url, type = 'website', datePublished, tags, keyQuote } = Astro.props
+const fullTitle = `${title} | TRANSMISSIONS // PROTOCOL`
+const siteName = 'TRAVIS BREAKS // PROTOCOL'
+const author = 'Travis Bonnet'
+---
+
+<!-- Standard -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={author} />
+{tags && <meta name="keywords" content={tags.join(', ')} />}
+<link rel="canonical" href={url} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={siteName} />
+{datePublished && <meta property="article:published_time" content={datePublished} />}
+{tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+
+<!-- JSON-LD Structured Data -->
+{type === 'article' && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: description,
+    author: {
+      '@type': 'Person',
+      name: author,
+      url: 'https://travisbreaks.org',
+    },
+    datePublished: datePublished,
+    publisher: {
+      '@type': 'Person',
+      name: author,
+      url: 'https://travisbreaks.org',
+    },
+    url: url,
+    keywords: tags?.join(', '),
+    ...(keyQuote && {
+      citation: {
+        '@type': 'CreativeWork',
+        text: keyQuote,
+        author: { '@type': 'Person', name: author },
+      },
+    }),
+  })} />
+)}
+
+{type === 'website' && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'TRANSMISSIONS',
+    description: description,
+    url: url,
+    author: {
+      '@type': 'Person',
+      name: author,
+      url: 'https://travisbreaks.org',
+    },
+    isPartOf: {
+      '@type': 'WebSite',
+      name: siteName,
+      url: 'https://travisbreaks.org',
+    },
+  })} />
+)}

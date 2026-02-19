@@ -1,0 +1,225 @@
+---
+import { getCollection, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SEOHead from '../components/SEOHead.astro'
+
+export async function getStaticPaths() {
+  const transmissions = await getCollection('transmissions')
+  return transmissions.map(t => ({
+    params: { slug: t.slug },
+    props: { entry: t },
+  }))
+}
+
+const { entry } = Astro.props
+const { Content } = await render(entry)
+
+const formattedDate = entry.data.date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+
+const isoDate = entry.data.date.toISOString().split('T')[0]
+
+// Calculate read time from body
+const wordCount = entry.body?.split(/\s+/).length ?? 0
+const readTime = Math.max(1, Math.ceil(wordCount / 200))
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title={entry.data.title}
+    description={entry.body?.substring(0, 160) || ''}
+    url={`https://travisbreaks.org/transmissions/${entry.slug}/`}
+    type="article"
+    datePublished={isoDate}
+    tags={entry.data.tags}
+    keyQuote={entry.data.key_quote}
+  />
+
+  <article class="transmission">
+    <!-- Back link -->
+    <a href="/transmissions/" class="back-link font-code">
+      &larr; ALL TRANSMISSIONS
+    </a>
+
+    <!-- Header -->
+    <header class="transmission-header">
+      <div class="meta-line font-code">
+        <time datetime={isoDate}>{formattedDate}</time>
+        <span class="meta-sep">&middot;</span>
+        <span>{readTime} min read</span>
+        <span class="meta-sep">&middot;</span>
+        <span class="confidence">{entry.data.confidence}% confidence</span>
+      </div>
+
+      <h1 class="transmission-title font-display">{entry.data.title}</h1>
+
+      <div class="tag-list">
+        {entry.data.tags.map(tag => (
+          <span class="tag font-code">{tag}</span>
+        ))}
+      </div>
+    </header>
+
+    <!-- Key quote -->
+    <blockquote class="key-quote corner-accents">
+      <p class="font-body">&ldquo;{entry.data.key_quote}&rdquo;</p>
+    </blockquote>
+
+    <!-- Content -->
+    <div class="content font-body">
+      <Content />
+    </div>
+
+    <!-- Footer nav -->
+    <nav class="entry-footer">
+      <a href="/transmissions/" class="back-link font-code">
+        &larr; BACK TO ARCHIVE
+      </a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .transmission {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--cyan);
+  }
+
+  .transmission-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .meta-line {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-sep {
+    color: var(--text-muted);
+  }
+
+  .confidence {
+    color: var(--gold);
+  }
+
+  .transmission-title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border: 1px solid var(--cyan-dim);
+    padding: 2px 10px;
+  }
+
+  .key-quote {
+    margin: 0 0 2.5rem;
+    padding: 1.5rem 2rem;
+    background: var(--glass);
+    border-left: 3px solid var(--gold);
+  }
+
+  .key-quote p {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--gold);
+    line-height: 1.6;
+  }
+
+  .content {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+  }
+
+  .content :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .content :global(ul),
+  .content :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .content :global(blockquote) {
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+
+  .content :global(code) {
+    font-family: var(--font-code);
+    font-size: 0.9em;
+    background: var(--void-surface);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .entry-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  @media (max-width: 640px) {
+    .transmission {
+      padding: 1rem;
+    }
+
+    .transmission-title {
+      font-size: 1.4rem;
+    }
+
+    .key-quote p {
+      font-size: 1.05rem;
+    }
+
+    .content {
+      font-size: 1rem;
+    }
+  }
+</style>
