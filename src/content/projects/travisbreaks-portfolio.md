@@ -6,7 +6,7 @@ enjoyment: 10
 resources: 10
 viability: 10
 scale: 8
-action: "Adaptive discovery engine: genre-selective music paths, SEO/GEO, blog integration."
+action: "v1 LIVE at travisbreaks.org. v2 (Rabbit Hole) actively rebuilding in travisbreaks-site-v2/ — Next.js 15 full rebuild."
 tags: ["portfolio", "web", "creative", "music", "three.js"]
 stack: ["Vanilla JS", "Three.js", "Web Audio API", "GSAP", "CSS Custom Properties"]
 deploy_url: "https://travisbreaks.org"
