@@ -11,6 +11,7 @@ tags: ["animation", "svg", "gsap", "branding", "collaboration"]
 stack: ["Vanilla JS", "GSAP", "SVG", "CSS Custom Properties"]
 deploy_url: "https://travisbreaks.org/research/realmskeep-brand-ident/"
 git_dir: "realmskeep"
+git_repo: "~/realmskeep/Realmskeep"
 date: 2025-02-10
 ---
 
