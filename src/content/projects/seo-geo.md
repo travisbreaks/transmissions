@@ -10,7 +10,7 @@ action: "Netlify Prerender, JSON-LD schema, /llms.txt, robots.txt, sitemap."
 tags: ["seo", "geo", "infrastructure", "discovery"]
 stack: ["Netlify Prerender", "JSON-LD", "Schema.org", "robots.txt"]
 deploy_url: ""
-git_dir: "travisbreaks-site"
+git_dir: ""
 date: 2026-02-01
 ---
 
