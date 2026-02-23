@@ -1,5 +1,5 @@
-import rss from '@astrojs/rss'
 import { getCollection } from 'astro:content'
+import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
 
 export async function GET(context: APIContext) {
@@ -7,11 +7,12 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: 'TRANSMISSIONS // PROTOCOL',
-    description: 'Philosophical transmissions on AI interaction, consciousness, grief, and creative process. By Travis Bonnet.',
+    description:
+      'Philosophical transmissions on AI interaction, consciousness, grief, and creative process. By Travis Bonnet.',
     site: context.site!,
     items: transmissions
       .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-      .map(t => ({
+      .map((t) => ({
         title: t.data.title,
         pubDate: t.data.date,
         description: t.body?.substring(0, 300) || '',
