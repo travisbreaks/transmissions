@@ -1,12 +1,12 @@
 ---
 name: "Claude Usage Dashboard"
 category: "Tech (Core)"
-status: "SUSTAIN"
+status: "PRIORITIZE"
 enjoyment: 7
 resources: 10
 viability: 10
 scale: 2
-action: "SHIPPED to research page. Maintain only."
+action: "Finish spend tracking — ensure all usage captured. Commit dashboard fixes."
 tags: ["analytics", "visualization", "api", "developer-tools"]
 stack: ["React 19", "Vite 7", "Tailwind 4", "Recharts", "Framer Motion"]
 deploy_url: "https://travisbreaks.org/research/claude-usage/"
