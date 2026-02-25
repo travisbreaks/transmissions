@@ -11,6 +11,7 @@ tags: ["next.js", "experimental", "playground", "react-compiler"]
 stack: ["Next.js 16", "React Compiler", "GSAP", "Lenis", "R3F"]
 deploy_url: ""
 git_dir: "creative-lab"
+phases: ["Quality Sprint", "Discovery Engine"]
 date: 2025-06-01
 ---
 

@@ -11,6 +11,7 @@ tags: ["portfolio", "web", "creative", "music", "three.js"]
 stack: ["Vanilla JS", "Three.js", "Web Audio API", "GSAP", "CSS Custom Properties"]
 deploy_url: "https://travisbreaks.org"
 git_dir: "travisbreaks-site"
+phases: ["Current Sprint", "Quality Sprint", "Portfolio Backlog", "Portfolio Foundation", "Adaptive Music Experience", "Discovery Engine", "Music Catalog Deep Dive", "Foundation", "Asset Hosting & Domains", "CI/CD"]
 date: 2025-01-01
 ---
 

@@ -11,6 +11,7 @@ tags: ["analytics", "visualization", "api", "developer-tools"]
 stack: ["React 19", "Vite 7", "Tailwind 4", "Recharts", "Framer Motion"]
 deploy_url: "https://travisbreaks.org/research/claude-usage/"
 git_dir: "claude-usage"
+phases: ["Current Sprint", "Quality Sprint", "CI/CD"]
 date: 2025-02-18
 ---
 

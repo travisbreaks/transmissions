@@ -11,6 +11,7 @@ tags: ["audio", "visualization", "r3f", "webgl", "music"]
 stack: ["React 19", "React Three Fiber", "Web Audio API", "Custom GLSL", "Drei"]
 deploy_url: ""
 git_dir: "anemone-chorales"
+phases: ["Quality Sprint", "Adaptive Music Experience"]
 date: 2025-02-01
 ---
 
