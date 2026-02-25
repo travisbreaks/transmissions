@@ -11,6 +11,7 @@ tags: ["scrollytelling", "particles", "r3f", "webgl", "geometry"]
 stack: ["React 19", "React Three Fiber", "Drei", "Custom GLSL", "ScrollControls"]
 deploy_url: "https://travisbreaks.org/research/kimi-agent-mandala/"
 git_dir: "Kimi_Agent_Mandala"
+phases: ["Portfolio Foundation", "CI/CD"]
 date: 2025-02-07
 ---
 

@@ -11,6 +11,7 @@ tags: ["interactive", "storytelling", "vanilla-js", "portfolio"]
 stack: ["Vanilla JS", "HTML", "CSS"]
 deploy_url: "https://project-1137.netlify.app"
 git_dir: "project1137"
+phases: ["Portfolio Foundation"]
 date: 2025-01-01
 ---
 

@@ -11,6 +11,7 @@ tags: ["portfolio", "web", "next.js", "gsap", "lenis", "zustand"]
 stack: ["Next.js 15", "GSAP", "Lenis", "Zustand", "Tailwind v4"]
 deploy_url: ""
 git_dir: "travisbreaks-site-v2"
+phases: ["Portfolio Backlog", "Portfolio Foundation", "Adaptive Music Experience", "Discovery Engine", "Music Catalog Deep Dive"]
 date: 2026-02-19
 ---
 

@@ -11,6 +11,7 @@ tags: ["r3f", "experimental", "decision-tree", "webgl"]
 stack: ["React 19", "React Three Fiber", "Three.js", "GSAP", "Custom GLSL"]
 deploy_url: ""
 git_dir: "cymatic-experience"
+phases: ["Adaptive Music Experience", "Discovery Engine"]
 date: 2025-12-01
 ---
 

@@ -11,6 +11,7 @@ tags: ["pipeline", "ai", "media", "transcription", "semantic-search", "infograph
 stack: ["TypeScript", "Next.js 15", "Postgres", "pgvector", "Claude Sonnet", "Whisper", "SQLite"]
 deploy_url: ""
 git_dir: "deep-cuts"
+phases: ["Discovery Engine", "Music Catalog Deep Dive"]
 date: 2026-02-20
 ---
 

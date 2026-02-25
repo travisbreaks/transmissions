@@ -11,6 +11,7 @@ tags: ["ai", "agents", "humor", "cloudflare"]
 stack: ["Static HTML", "Cloudflare D1", "Pages Functions"]
 deploy_url: "https://horny-toad.com"
 git_dir: "horny-toad"
+phases: ["Portfolio Foundation", "Quality Sprint"]
 date: 2026-02-19
 ---
 

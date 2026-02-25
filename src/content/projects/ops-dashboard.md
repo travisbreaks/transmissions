@@ -11,6 +11,7 @@ tags: ["productivity", "dashboard", "visualization", "developer-tools"]
 stack: ["React 19", "Vite 7", "Tailwind 4", "Framer Motion", "Pure CSS/SVG Charts"]
 deploy_url: ""
 git_dir: "ops"
+phases: ["Current Sprint", "Quality Sprint", "Foundation"]
 date: 2026-02-19
 ---
 
