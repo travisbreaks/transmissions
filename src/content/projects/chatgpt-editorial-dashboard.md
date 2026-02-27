@@ -1,7 +1,7 @@
 ---
 name: "ChatGPT Editorial Dashboard"
 category: "Tech (Core)"
-status: "BACKLOG"
+status: "WATCH"
 enjoyment: 6
 resources: 4
 viability: 7
