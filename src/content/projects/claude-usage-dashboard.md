@@ -26,7 +26,7 @@ Two modes in one app:
 - **Widget** (`?widget` param) — compact thermometer for monitoring usage during active coding sessions
 
 The widget has two sub-modes:
-- **Live** (local dev only) — calls `api.anthropic.com/api/oauth/usage` via OAuth token from macOS Keychain
+- **Live** (local dev only) — calls Anthropic's usage API via OAuth token
 - **Demo** (deployed site) — animated fill → explosion → refuel cycle for the showcase
 
 ### Data Pipeline
@@ -39,13 +39,13 @@ The widget features a canvas-based matrix rain background (procedural Japanese c
 
 ## Technology Decisions
 
-**Claude OAuth usage API.** Undocumented `GET api.anthropic.com/api/oauth/usage` returns exact 5-hour session % and 7-day weekly % with reset timestamps. Auth via Bearer token from macOS Keychain. This is far more accurate than trying to reconstruct usage from JSONL token counts.
+**Claude OAuth usage API.** Anthropic's usage API returns exact 5-hour session % and 7-day weekly % with reset timestamps. This is far more accurate than trying to reconstruct usage from JSONL token counts.
 
 **Why JSONL tokens don't match Claude's rate limits.** Local JSONL files only log `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`. Claude's rate limiter counts additional overhead (system prompts, tool definitions, internal tokens) that aren't in JSONL. Trying to match the API percentage from JSONL data is always 30-50% off.
 
 ## Lessons Learned
 
-- **Don't reverse-engineer rate limits from JSONL.** Use the OAuth API directly. It gives you the exact numbers Claude uses internally.
+- **Don't reverse-engineer rate limits from JSONL.** Use the usage API directly. It gives you the exact numbers the rate limiter uses.
 - **Canvas for procedural effects** (matrix rain) doesn't impact layout or React reconciliation. Use a separate `<canvas>` with `blur()` filter for depth.
 - **Glass-morphism pattern** — `background: rgba(8, 8, 8, 0.55)` + `backdrop-filter: blur(10px)` + subtle border creates an elegant panel that works on any background.
 
