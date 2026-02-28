@@ -33,7 +33,7 @@ Content direction: Philosophy + Technology only. No songwriting or unfinished cr
 
 ## Data Pipeline
 
-A separate editorial dashboard (React 19 at `~/code/ChatGPT-data-dump-through-FEB-2026/dashboard/`) processes 1,180 ChatGPT conversations / 19,537 messages through a Keep/Skip/Maybe decision workflow. 48 out of 52 weeks have blog-worthy content, making a weekly publishing cadence sustainable.
+A separate editorial dashboard (React 19) processes 1,180 ChatGPT conversations / 19,537 messages through a Keep/Skip/Maybe decision workflow. 48 out of 52 weeks have blog-worthy content, making a weekly publishing cadence sustainable.
 
 ## What's Next
 

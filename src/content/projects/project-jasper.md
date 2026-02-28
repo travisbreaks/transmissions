@@ -6,7 +6,7 @@ enjoyment: 9
 resources: 10
 viability: 9
 scale: 8
-action: "Finalize EC2 instance & repo connection."
+action: "Finalize cloud instance and repo connection."
 tags: ["aws", "ai", "infrastructure", "automation"]
 stack: ["AWS EC2", "Claude API", "Node.js"]
 date: 2026-01-01
@@ -14,8 +14,8 @@ date: 2026-01-01
 
 # Project Jasper
 
-AWS-hosted AI assistant infrastructure. EC2 instance with Claude API integration (Clawdbot). Core infrastructure project for automation and AI-assisted workflows.
+Cloud-hosted AI assistant infrastructure. Clawdbot: Claude API integration for automation and AI-assisted workflows.
 
 ## Status
 
-BUILD NOW. Finalizing EC2 instance and repository connection.
+BUILD NOW. Finalizing cloud instance and repository connection.
