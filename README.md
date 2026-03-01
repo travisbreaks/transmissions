@@ -1,14 +1,17 @@
-# travisbreaks-blog
+# Transmissions
 
-Transmissions: a curated archive of philosophical essays on AI interaction, consciousness, grief, and creative process.
+A curated archive of philosophical essays on AI interaction, consciousness, grief, and creative process.
 
-![travisbreaks-blog](https://assets.travisbreaks.com/github/travisbreaks-blog.png)
+[![Live Site](https://img.shields.io/badge/live-travisbreaks.org-brightgreen)](https://travisbreaks.org/transmissions/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Astro](https://img.shields.io/badge/Astro-5-ff5d01)](https://astro.build)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://typescriptlang.org)
 
-**[Live Site](https://travisbreaks.org/transmissions/)**
+![transmissions](https://assets.travisbreaks.com/github/travisbreaks-blog.png)
 
 ## Tech Stack
 
-Astro 5, TypeScript, Markdown content collections
+Astro 5 SSG, TypeScript, Markdown content collections
 
 ## Features
 
