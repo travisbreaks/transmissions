@@ -4,6 +4,7 @@ const transmissions = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     date: z.coerce.date(),
     confidence: z.number().min(0).max(100),
     tags: z.array(z.string()),

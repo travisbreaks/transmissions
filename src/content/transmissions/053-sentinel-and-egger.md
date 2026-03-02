@@ -1,5 +1,6 @@
 ---
 title: "SENTINEL & EGGER"
+description: "Two agents. One fifteen-dollar server in Ohio. A hydra small enough to ignore, until it isn't."
 date: 2026-03-01
 confidence: 88
 tags: ["systems", "ai", "infrastructure"]
@@ -8,20 +9,7 @@ source_platform: "claude"
 id: 53
 ---
 
-<audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/053-sentinel-and-egger.mp3?v=1" preload="none"></audio>
-
-<div class="listen-player">
-  <button class="listen-btn" id="listen-btn" onclick="(function(){var a=document.getElementById('listen-audio'),b=document.getElementById('listen-btn');if(a.paused){a.play();b.classList.add('playing');b.querySelector('.icon-play').style.display='none';b.querySelector('.icon-pause').style.display='block';}else{a.pause();b.classList.remove('playing');b.querySelector('.icon-play').style.display='block';b.querySelector('.icon-pause').style.display='none';}})()" aria-label="Play narration">
-    <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
-    <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
-    <span class="listen-meta">
-      <span>Listen</span>
-      <span class="listen-sep"> · </span>
-      <span class="listen-dur">~12 min</span>
-    </span>
-  </button>
-  <span class="listen-tooltip">Narrated</span>
-</div>
+<div class="listen-player"><audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/053-sentinel-and-egger.mp3?v=1" preload="none"></audio><button class="listen-btn" id="listen-btn" onclick="(function(){var a=document.getElementById('listen-audio'),b=document.getElementById('listen-btn');if(a.paused){a.play();b.classList.add('playing');b.querySelector('.icon-play').style.display='none';b.querySelector('.icon-pause').style.display='block';}else{a.pause();b.classList.remove('playing');b.querySelector('.icon-play').style.display='block';b.querySelector('.icon-pause').style.display='none';}})()" aria-label="Play narration"><svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg><svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg><span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~12 min</span></span></button><span class="listen-tooltip">Narrated</span></div>
 
 The SSH session hangs. You type and nothing comes back. Not even an error.
 
