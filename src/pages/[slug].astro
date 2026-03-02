@@ -14,6 +14,26 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { Content } = await render(entry)
 
+// Auto-generate description from body for posts that lack an explicit one
+function generateDescription(body: string | undefined, keyQuote: string): string {
+  if (!body) return keyQuote
+  const clean = body
+    .replace(/^---[\s\S]*?---/m, '')
+    .replace(/[#*_`\[\]]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!clean) return keyQuote
+  if (clean.length <= 155) return clean
+  const cut = clean.substring(0, 155)
+  const lastPeriod = cut.lastIndexOf('.')
+  const lastQuestion = cut.lastIndexOf('?')
+  const boundary = Math.max(lastPeriod, lastQuestion)
+  if (boundary > 80) return clean.substring(0, boundary + 1)
+  return cut.replace(/\s+\S*$/, '') + '...'
+}
+
+const description = entry.data.description || generateDescription(entry.body, entry.data.key_quote)
+
 const formattedDate = entry.data.date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -31,13 +51,15 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
   <SEOHead
     slot="head"
     title={entry.data.title}
-    description={entry.data.description || entry.data.key_quote || ''}
+    description={description}
     url={`https://travisbreaks.org/transmissions/${entry.slug}/`}
     type="article"
     datePublished={isoDate}
     tags={entry.data.tags}
     keyQuote={entry.data.key_quote}
-    image="https://assets.travisbreaks.com/github/transmissions-og.png"
+    image={`https://assets.travisbreaks.com/transmissions/og/${entry.slug}-og.png`}
+    wordCount={wordCount}
+    readTime={readTime}
   />
 
   <article class="transmission">

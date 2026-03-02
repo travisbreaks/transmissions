@@ -8,9 +8,11 @@ interface Props {
   tags?: string[]
   keyQuote?: string
   image?: string
+  wordCount?: number
+  readTime?: number
 }
 
-const { title, description, url, type = 'website', datePublished, tags, keyQuote, image } = Astro.props
+const { title, description, url, type = 'website', datePublished, tags, keyQuote, image, wordCount, readTime } = Astro.props
 const fullTitle = `${title} | TRANSMISSIONS // PROTOCOL`
 const siteName = 'TRAVIS BREAKS // PROTOCOL'
 const author = 'Travis Bonnet'
@@ -34,6 +36,7 @@ const author = 'Travis Bonnet'
 {image && <meta property="og:image:height" content="630" />}
 {datePublished && <meta property="article:published_time" content={datePublished} />}
 {tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
+{type === 'article' && <meta property="article:author" content="https://travisbreaks.org" />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
@@ -45,13 +48,21 @@ const author = 'Travis Bonnet'
 {type === 'article' && (
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: title,
     description: description,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
     author: {
       '@type': 'Person',
       name: author,
       url: 'https://travisbreaks.org',
+      sameAs: [
+        'https://github.com/travisbreaks',
+        'https://soundcloud.com/travisbreaks',
+      ],
     },
     datePublished: datePublished,
     publisher: {
@@ -60,7 +71,11 @@ const author = 'Travis Bonnet'
       url: 'https://travisbreaks.org',
     },
     url: url,
+    ...(image && { image }),
     keywords: tags?.join(', '),
+    ...(wordCount && { wordCount }),
+    ...(readTime && { timeRequired: `PT${readTime}M` }),
+    inLanguage: 'en-US',
     ...(keyQuote && {
       citation: {
         '@type': 'CreativeWork',
@@ -68,6 +83,33 @@ const author = 'Travis Bonnet'
         author: { '@type': 'Person', name: author },
       },
     }),
+  })} />
+)}
+
+{type === 'article' && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'TRAVISBREAKS',
+        item: 'https://travisbreaks.org/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'TRANSMISSIONS',
+        item: 'https://travisbreaks.org/transmissions/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: title,
+        item: url,
+      },
+    ],
   })} />
 )}
 
