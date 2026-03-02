@@ -31,7 +31,7 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
   <SEOHead
     slot="head"
     title={entry.data.title}
-    description={entry.body?.substring(0, 160) || ''}
+    description={entry.data.description || entry.data.key_quote || ''}
     url={`https://travisbreaks.org/transmissions/${entry.slug}/`}
     type="article"
     datePublished={isoDate}
