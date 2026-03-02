@@ -8,6 +8,21 @@ source_platform: "claude"
 id: 53
 ---
 
+<audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/053-sentinel-and-egger.mp3?v=1" preload="none"></audio>
+
+<div class="listen-player">
+  <button class="listen-btn" id="listen-btn" onclick="(function(){var a=document.getElementById('listen-audio'),b=document.getElementById('listen-btn');if(a.paused){a.play();b.classList.add('playing');b.querySelector('.icon-play').style.display='none';b.querySelector('.icon-pause').style.display='block';}else{a.pause();b.classList.remove('playing');b.querySelector('.icon-play').style.display='block';b.querySelector('.icon-pause').style.display='none';}})()" aria-label="Play narration">
+    <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
+    <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
+    <span class="listen-meta">
+      <span>Listen</span>
+      <span class="listen-sep"> · </span>
+      <span class="listen-dur">~12 min</span>
+    </span>
+  </button>
+  <span class="listen-tooltip">Narrated</span>
+</div>
+
 The SSH session hangs. You type and nothing comes back. Not even an error.
 
 You try again. You open a second terminal and try from there. Same result.
@@ -131,6 +146,103 @@ One lives on the host OS. I call it Sentinel. It is Claude Code CLI on Opus 4.6,
 
   @media (prefers-reduced-motion: reduce) {
     .agent-frame::after { animation: none; opacity: 0; }
+  }
+
+  /* Listen player */
+  .listen-player {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 2.5rem 0;
+  }
+  .listen-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1rem 0.45rem 0.75rem;
+    background: rgba(120, 220, 255, 0.03);
+    border: 1px solid rgba(120, 220, 255, 0.18);
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px rgba(120, 220, 255, 0.04), 0 0 14px rgba(120, 220, 255, 0.06);
+    color: rgba(120, 220, 255, 0.65);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    outline: none;
+    font-family: inherit;
+  }
+  .listen-btn:hover {
+    background: rgba(120, 220, 255, 0.07);
+    color: rgba(120, 220, 255, 0.9);
+    box-shadow: 0 0 0 1px rgba(120, 220, 255, 0.08), 0 0 18px rgba(120, 220, 255, 0.1);
+  }
+  .listen-btn.playing {
+    background: rgba(120, 220, 255, 0.06);
+    color: rgba(120, 220, 255, 1);
+  }
+  .listen-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 40%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.03) 45%,
+      rgba(255, 255, 255, 0.065) 50%,
+      rgba(255, 255, 255, 0.03) 55%,
+      transparent
+    );
+    transform: skewX(-20deg);
+    animation: sheen-listen 9s ease-in-out infinite;
+    animation-delay: 3.7s;
+    pointer-events: none;
+  }
+  @keyframes sheen-listen {
+    0%   { left: -50%; opacity: 0; }
+    8%   { left: -50%; opacity: 0; }
+    15%  { opacity: 1; }
+    60%  { left: 140%; opacity: 1; }
+    67%  { opacity: 0; }
+    100% { left: 140%; opacity: 0; }
+  }
+  .listen-icon {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    fill: currentColor;
+  }
+  .listen-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    opacity: 0.8;
+  }
+  .listen-sep { opacity: 0.4; }
+  .listen-dur { opacity: 0.55; }
+  .listen-tooltip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 0.55rem);
+    background: rgba(8, 8, 12, 0.92);
+    border: 1px solid rgba(120, 220, 255, 0.12);
+    color: rgba(120, 220, 255, 0.55);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    padding: 0.28rem 0.65rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s;
+  }
+  .listen-player:hover .listen-tooltip { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .listen-btn::after { animation: none; opacity: 0; }
   }
 </style>
 
