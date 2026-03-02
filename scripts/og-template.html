@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700&family=JetBrains+Mono:wght@400&family=EB+Garamond:ital@1&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #080808;
+    color: #e0e0e0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Corner accents */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 40px;
+    height: 40px;
+    border-top: 2px solid #05d9e8;
+    border-left: 2px solid #05d9e8;
+  }
+
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    border-bottom: 2px solid #cca43b;
+    border-right: 2px solid #cca43b;
+  }
+
+  .content {
+    padding: 56px 72px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: #8a8a8a;
+    letter-spacing: 0.15em;
+  }
+
+  .header span {
+    color: #cca43b;
+  }
+
+  .title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.15;
+    max-height: 175px;
+    overflow: hidden;
+  }
+
+  .quote {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #cca43b;
+    border-left: 3px solid rgba(204, 164, 59, 0.3);
+    padding-left: 20px;
+    line-height: 1.5;
+    max-height: 70px;
+    overflow: hidden;
+  }
+
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #05d9e8;
+    border: 1px solid rgba(5, 217, 232, 0.3);
+    padding: 4px 12px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #555555;
+    letter-spacing: 0.1em;
+  }
+
+  .date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #555555;
+    letter-spacing: 0.1em;
+  }
+
+  /* Subtle scan line */
+  .scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(5, 217, 232, 0.15), transparent);
+    top: 40%;
+  }
+</style>
+</head>
+<body>
+  <div class="scan"></div>
+  <div class="content">
+    <div class="header">TRANSMISSIONS // <span>PROTOCOL</span></div>
+    <div class="title" id="title"></div>
+    <div class="quote" id="quote"></div>
+    <div class="tags" id="tags"></div>
+    <div class="footer">
+      <div class="site">travisbreaks.org/transmissions</div>
+      <div class="date" id="date"></div>
+    </div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    document.getElementById('title').textContent = params.get('title') || ''
+    const quote = params.get('quote')
+    document.getElementById('quote').textContent = quote ? '\u201C' + quote + '\u201D' : ''
+    document.getElementById('date').textContent = params.get('date') || ''
+    const tags = (params.get('tags') || '').split(',').filter(Boolean)
+    document.getElementById('tags').innerHTML = tags
+      .map(t => '<span class="tag">' + t.trim() + '</span>')
+      .join('')
+  </script>
+</body>
+</html>
