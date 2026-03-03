@@ -9,14 +9,39 @@ source_platform: "claude"
 id: 52
 ---
 
-<div class="listen-player"><audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/052-the-infrastructure-of-being-seen.mp3" preload="none"></audio><button class="listen-btn" id="listen-btn" onclick="(function(){var a=document.getElementById('listen-audio'),b=document.getElementById('listen-btn');if(a.paused){a.play();b.classList.add('playing');b.querySelector('.icon-play').style.display='none';b.querySelector('.icon-pause').style.display='block';}else{a.pause();b.classList.remove('playing');b.querySelector('.icon-play').style.display='block';b.querySelector('.icon-pause').style.display='none';}})()" aria-label="Play narration"><svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg><svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg><span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~10 min</span></span></button><span class="listen-tooltip">Narrated</span></div>
+<div class="listen-player">
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/052-the-infrastructure-of-being-seen.mp3" preload="none"></audio>
+  <div class="lp-head">
+    <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
+      <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
+      <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
+      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~10 min</span></span>
+    </button>
+    <span class="listen-tooltip">Narrated</span>
+  </div>
+  <div class="lp-scrubber" id="lp-scrubber">
+    <div class="lp-track" id="lp-track">
+      <div class="lp-fill" id="lp-fill"></div>
+    </div>
+    <div class="lp-times">
+      <span id="lp-cur">0:00</span>
+      <span id="lp-tot">--:--</span>
+    </div>
+  </div>
+</div>
 
 <style>
   .listen-player {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    margin: 0 0 2.5rem 0;
+  }
+  .lp-head {
     position: relative;
     display: inline-flex;
     align-items: center;
-    margin: 0 0 2.5rem 0;
   }
   .listen-btn {
     position: relative;
@@ -86,9 +111,112 @@ id: 52
     pointer-events: none;
     transition: opacity 0.18s;
   }
-  .listen-player:hover .listen-tooltip { opacity: 1; }
+  .lp-head:hover .listen-tooltip { opacity: 1; }
+  .lp-scrubber {
+    width: 220px;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, max-height 0.25s ease;
+  }
+  .lp-scrubber.active {
+    opacity: 1;
+    max-height: 36px;
+    pointer-events: all;
+  }
+  .lp-track {
+    position: relative;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .lp-track::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: rgba(120, 220, 255, 0.1);
+    border-radius: 1px;
+  }
+  .lp-fill {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: rgba(120, 220, 255, 0.65);
+    border-radius: 1px;
+    pointer-events: none;
+    transition: width 0.08s linear;
+  }
+  .lp-times {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.58rem;
+    color: rgba(120, 220, 255, 0.28);
+    letter-spacing: 0.08em;
+    font-family: var(--font-code, monospace);
+    margin-top: -1px;
+  }
   @media (prefers-reduced-motion: reduce) { .listen-btn::after { animation: none; opacity: 0; } }
 </style>
+
+<script>
+(function() {
+  var audio = document.getElementById('listen-audio');
+  var btn   = document.getElementById('listen-btn');
+  var scrub = document.getElementById('lp-scrubber');
+  var track = document.getElementById('lp-track');
+  var fill  = document.getElementById('lp-fill');
+  var cur   = document.getElementById('lp-cur');
+  var tot   = document.getElementById('lp-tot');
+
+  function fmt(s) {
+    var m = Math.floor(s / 60), sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  window.lpToggle = function() {
+    if (audio.paused) {
+      audio.play();
+      btn.classList.add('playing');
+      btn.querySelector('.icon-play').style.display = 'none';
+      btn.querySelector('.icon-pause').style.display = 'block';
+      scrub.classList.add('active');
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      btn.querySelector('.icon-play').style.display = 'block';
+      btn.querySelector('.icon-pause').style.display = 'none';
+    }
+  };
+
+  audio.addEventListener('loadedmetadata', function() { tot.textContent = fmt(audio.duration); });
+
+  audio.addEventListener('timeupdate', function() {
+    if (!audio.duration) return;
+    fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    cur.textContent = fmt(audio.currentTime);
+    // Fade out in last 0.25s to kill end pop
+    var remaining = audio.duration - audio.currentTime;
+    audio.volume = remaining < 0.25 ? Math.max(0, remaining / 0.25) : 1;
+  });
+
+  audio.addEventListener('ended', function() {
+    btn.classList.remove('playing');
+    btn.querySelector('.icon-play').style.display = 'block';
+    btn.querySelector('.icon-pause').style.display = 'none';
+    audio.volume = 1;
+  });
+
+  track.addEventListener('click', function(e) {
+    if (!audio.duration) return;
+    var r = track.getBoundingClientRect();
+    audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+  });
+})();
+</script>
 
 Build the most sophisticated system in the world. If nobody can find it, it doesn't exist.
 
