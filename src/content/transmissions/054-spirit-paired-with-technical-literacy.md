@@ -222,7 +222,7 @@ Spirit without technical literacy is volatility.
 
 That's the argument. The rest is architecture.
 
-The recent debate about whether Anthropic was doing the country a disservice by not complying with Department of Defense requests is not a loyalty question. It's a contract question.
+The recent debate about whether Anthropic was doing the country a disservice by not complying with Department of War requests is not a loyalty question. It's a contract question.
 
 If the federal government wants frontier AI capabilities, it engages through formal agreements: defined scope, oversight, alignment with published governance. Anthropic's terms reflect its model. Bypassing them because the request originates in Washington doesn't make the request lawful. It makes it a workaround. That's what courts exist to untangle. Patriotism is not a waiver form.
 
