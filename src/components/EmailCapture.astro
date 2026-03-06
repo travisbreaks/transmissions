@@ -1,0 +1,301 @@
+---
+interface Props {
+  source?: string;
+  variant?: 'inline' | 'banner' | 'modal';
+  copy?: string;
+}
+
+const {
+  source = 'transmissions',
+  variant = 'inline',
+  copy = 'If this one landed, there are more.',
+} = Astro.props;
+---
+
+{variant === 'modal' ? (
+  <div class="capture-overlay" id="capture-overlay" data-source={source}>
+    <div class="capture-modal glass-card corner-accents">
+      <button class="capture-close font-code" data-capture-close>&times;</button>
+      <p class="capture-copy font-code">{copy}</p>
+      <form class="capture-form" data-capture-form>
+        <input
+          type="email"
+          name="email"
+          placeholder="YOUR EMAIL"
+          required
+          autocomplete="email"
+          class="capture-input font-code"
+        />
+        <button type="submit" class="capture-btn font-code">SUBSCRIBE</button>
+      </form>
+      <p class="capture-success font-code" data-capture-success>Signal received.</p>
+      <p class="capture-dismiss font-code" data-capture-close>No thanks</p>
+    </div>
+  </div>
+) : (
+  <div class={`email-capture ${variant}`} data-source={source}>
+    <p class="capture-copy font-code">{copy}</p>
+    <form class="capture-form" data-capture-form>
+      <input
+        type="email"
+        name="email"
+        placeholder="YOUR EMAIL"
+        required
+        autocomplete="email"
+        class="capture-input font-code"
+      />
+      <button type="submit" class="capture-btn font-code">SUBSCRIBE</button>
+    </form>
+    <p class="capture-success font-code" data-capture-success>Signal received.</p>
+  </div>
+)}
+
+<script>
+  // Form submission
+  document.querySelectorAll('[data-capture-form]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const el = e.target as HTMLFormElement;
+      const wrapper = el.closest('.email-capture, .capture-modal') as HTMLElement;
+      const overlay = el.closest('.capture-overlay') as HTMLElement;
+      const email = (el.querySelector('input[name="email"]') as HTMLInputElement).value.trim();
+      const source = (wrapper?.dataset.source || overlay?.dataset.source || 'transmissions');
+
+      const WORKER_URL = '';
+
+      if (!WORKER_URL) {
+        el.style.display = 'none';
+        const success = wrapper.querySelector('[data-capture-success]') as HTMLElement;
+        if (success) success.style.display = 'block';
+        // Close modal after success
+        if (overlay) {
+          setTimeout(() => { overlay.classList.remove('visible'); }, 1500);
+          sessionStorage.setItem('capture-dismissed', '1');
+        }
+        return;
+      }
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source }),
+        });
+
+        if (res.ok) {
+          el.style.display = 'none';
+          const success = wrapper.querySelector('[data-capture-success]') as HTMLElement;
+          if (success) success.style.display = 'block';
+          if (overlay) {
+            setTimeout(() => { overlay.classList.remove('visible'); }, 1500);
+            sessionStorage.setItem('capture-dismissed', '1');
+          }
+        }
+      } catch {
+        // Fail silently
+      }
+    });
+  });
+
+  // Modal: show after scrolling 40% of page, once per session
+  const overlay = document.getElementById('capture-overlay');
+  if (overlay && !sessionStorage.getItem('capture-dismissed')) {
+    let shown = false;
+    window.addEventListener('scroll', () => {
+      if (shown) return;
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      if (pct > 0.4) {
+        shown = true;
+        overlay.classList.add('visible');
+      }
+    }, { passive: true });
+
+    // Close handlers
+    overlay.querySelectorAll('[data-capture-close]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        overlay.classList.remove('visible');
+        sessionStorage.setItem('capture-dismissed', '1');
+      });
+    });
+
+    // Close on overlay background click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('visible');
+        sessionStorage.setItem('capture-dismissed', '1');
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('visible')) {
+        overlay.classList.remove('visible');
+        sessionStorage.setItem('capture-dismissed', '1');
+      }
+    });
+  }
+</script>
+
+<style>
+  /* Modal overlay */
+  .capture-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .capture-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .capture-modal {
+    position: relative;
+    max-width: 420px;
+    width: 90%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .capture-overlay.visible .capture-modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .capture-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .capture-close:hover {
+    color: var(--text-primary);
+  }
+
+  .capture-dismiss {
+    margin-top: 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .capture-dismiss:hover {
+    color: var(--text-secondary);
+  }
+
+  /* Inline/banner styles */
+  .email-capture {
+    margin: 2.5rem 0;
+    padding: 1.5rem 2rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--cyan);
+    position: relative;
+  }
+
+  .email-capture.banner {
+    margin: 0 0 2rem;
+    text-align: center;
+    border-left: none;
+    border-top: 1px solid var(--cyan-dim);
+    border-bottom: 1px solid var(--cyan-dim);
+    padding: 1.25rem 2rem;
+  }
+
+  /* Shared form styles */
+  .capture-copy {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .capture-form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 420px;
+  }
+
+  .banner .capture-form,
+  .capture-modal .capture-form {
+    margin: 0 auto;
+  }
+
+  .capture-input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .capture-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .capture-input:focus {
+    border-color: var(--cyan);
+  }
+
+  .capture-btn {
+    background: var(--cyan-dim);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    padding: 0.5rem 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .capture-btn:hover {
+    background: rgba(5, 217, 232, 0.2);
+  }
+
+  .capture-success {
+    display: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+  }
+
+  @media (max-width: 640px) {
+    .capture-form {
+      flex-direction: column;
+    }
+
+    .capture-btn {
+      align-self: stretch;
+      text-align: center;
+    }
+
+    .capture-modal {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>

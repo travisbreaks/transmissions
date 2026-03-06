@@ -1,6 +1,6 @@
 ---
 title: "DRAFTS THAT REFUSE TO DIE"
-date: 2024-05-01
+date: 2025-08-01
 confidence: 81
 tags: ["process", "protocol"]
 key_quote: "Unfinished work is just commitment that ran out of nerve."

@@ -1,6 +1,6 @@
 ---
 title: "BAND OF PROTOTYPES"
-date: 2025-05-01
+date: 2024-08-01
 confidence: 64
 tags: ["protocol"]
 key_quote: "Every instrument is a philosophy disguised as an object."

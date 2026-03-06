@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
+import EmailCapture from '../components/EmailCapture.astro'
 
 export async function getStaticPaths() {
   const transmissions = await getCollection('transmissions')
@@ -96,6 +97,13 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
     <div class="content font-body">
       <Content />
     </div>
+
+    <!-- Email capture -->
+    <EmailCapture
+      source="transmissions"
+      variant="inline"
+      copy="If this one landed, there are more."
+    />
 
     <!-- Footer nav -->
     <nav class="entry-footer">

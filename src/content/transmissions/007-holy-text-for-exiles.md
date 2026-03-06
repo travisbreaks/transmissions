@@ -1,6 +1,6 @@
 ---
 title: "HOLY TEXT FOR EXILES"
-date: 2025-09-01
+date: 2024-04-01
 confidence: 68
 tags: ["process", "protocol", "void"]
 key_quote: "If you don't belong anywhere, you're free to design the flag."

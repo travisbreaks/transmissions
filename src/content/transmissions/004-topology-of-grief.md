@@ -1,6 +1,6 @@
 ---
 title: "TOPOLOGY OF GRIEF"
-date: 2025-11-01
+date: 2024-02-01
 confidence: 72
 tags: ["grief", "signal"]
 key_quote: "Pain is a place."
