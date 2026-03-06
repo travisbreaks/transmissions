@@ -1,6 +1,6 @@
 ---
 title: "SYSTEMIC MERCY"
-date: 2025-06-01
+date: 2024-07-01
 confidence: 67
 tags: ["signal", "systems", "worlds"]
 key_quote: "The future is only humane if the winners fund the bridge."

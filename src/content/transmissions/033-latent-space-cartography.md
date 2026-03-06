@@ -1,6 +1,6 @@
 ---
 title: "LATENT SPACE CARTOGRAPHY"
-date: 2024-08-01
+date: 2025-05-01
 confidence: 74
 tags: ["signal", "systems"]
 key_quote: "You don't fight the bias; you surf it."

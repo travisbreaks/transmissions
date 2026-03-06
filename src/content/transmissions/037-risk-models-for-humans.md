@@ -1,10 +1,11 @@
 ---
 title: "RISK MODELS FOR HUMANS"
-date: 2024-06-01
+date: 2025-07-01
 confidence: 74
 tags: ["signal", "systems"]
 key_quote: "Trust isn't free; you're paying with time and nervous system."
 source_platform: "chatgpt"
+source_id: "68bcea51-7290-8329-9463-c3b5a8c76d21"
 id: 37
 ---
 

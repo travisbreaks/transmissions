@@ -1,6 +1,6 @@
 ---
 title: "THE THRESHOLD OF VOICE"
-date: 2024-05-01
+date: 2025-08-01
 confidence: 70
 tags: ["process", "protocol", "self", "worlds"]
 key_quote: "A voice is a weapon that wounds and heals with the same strike."

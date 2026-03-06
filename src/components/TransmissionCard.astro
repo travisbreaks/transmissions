@@ -11,6 +11,8 @@ interface Props {
 }
 
 const { title, slug, date, confidence, tags, keyQuote, summary, index = 0 } = Astro.props
+const slugNumber = slug.match(/^(\d+)/)?.[1]
+const displayNumber = slugNumber ? slugNumber.padStart(3, '0') : ''
 
 const formattedDate = date.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -52,6 +54,13 @@ const overflowCount = tags.length - 3
       <span class="tag tag-overflow font-code">+{overflowCount}</span>
     )}
   </div>
+
+  {displayNumber && (
+    <span
+      class="card-number font-display"
+      style={`--sheen-duration: ${7 + (index % 7) * 1.3}s; --sheen-delay: ${(index * 1.7) % 5}s`}
+    >{displayNumber}</span>
+  )}
 </a>
 
 <style>
@@ -146,5 +155,24 @@ const overflowCount = tags.length - 3
   .tag-overflow {
     color: var(--text-muted);
     border-color: var(--glass-border);
+  }
+
+  .card-number {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.75rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.06);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 0.05em;
+    transition: -webkit-text-stroke 0.3s ease;
+  }
+
+  .card:hover .card-number {
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.12);
   }
 </style>

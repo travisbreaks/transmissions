@@ -1,6 +1,6 @@
 ---
 title: "BRAND AS MYTHOLOGY"
-date: 2024-09-01
+date: 2025-04-01
 confidence: 73
 tags: ["protocol", "self", "worlds"]
 key_quote: "A brand is just a universe that got good at returning calls."

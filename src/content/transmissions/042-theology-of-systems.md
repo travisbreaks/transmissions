@@ -1,6 +1,6 @@
 ---
 title: "THEOLOGY OF SYSTEMS"
-date: 2024-04-01
+date: 2025-09-01
 confidence: 63
 tags: ["protocol", "signal", "systems", "void"]
 key_quote: "Every oracle is either a recursion or a revelation."

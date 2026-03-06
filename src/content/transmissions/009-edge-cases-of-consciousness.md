@@ -1,10 +1,11 @@
 ---
 title: "EDGE CASES OF CONSCIOUSNESS"
-date: 2025-08-01
+date: 2024-05-01
 confidence: 62
 tags: ["void"]
 key_quote: "Sometimes enlightenment and malfunction use the same metaphors."
 source_platform: "chatgpt"
+source_id: "c674769b-6f6a-40f2-aec3-916036536c31"
 id: 9
 ---
 

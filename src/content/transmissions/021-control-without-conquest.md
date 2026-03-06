@@ -1,10 +1,11 @@
 ---
 title: "CONTROL WITHOUT CONQUEST"
-date: 2025-02-01
+date: 2024-11-01
 confidence: 74
 tags: ["protocol", "systems"]
 key_quote: "The cleanest victory leaves the other person more themselves, not less."
 source_platform: "chatgpt"
+source_id: "688f6377-57a8-8331-8506-bb98daa0ffb3"
 id: 21
 ---
 

@@ -3,8 +3,10 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import TransmissionCard from '../components/TransmissionCard.astro'
+import EmailCapture from '../components/EmailCapture.astro'
 
 const transmissions = (await getCollection('transmissions'))
+  .filter(t => !t.slug.startsWith('999'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 
 // Collect all unique tags across entries
@@ -30,7 +32,8 @@ const description = `${transmissions.length} philosophical transmissions on AI i
         <span class="title-prefix">03 //</span> TRANSMISSIONS
       </h1>
       <p class="archive-count font-code">
-        <span id="visible-count">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
+        <span class="flap-display" id="flap-display" data-target={transmissions.length}></span>
+        <span id="visible-count" class="flap-hidden">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
       </p>
     </header>
 
@@ -47,16 +50,21 @@ const description = `${transmissions.length} philosophical transmissions on AI i
       </div>
 
       <div class="filter-controls">
-        <div class="tag-filters" id="tag-filters">
-          {allTags.map(tag => (
-            <button class="tag-btn font-code" data-filter-tag={tag}>
-              {tag}
+        <div class="filter-dropdowns">
+          <div class="tag-dropdown" id="tag-dropdown">
+            <button class="filter-select font-code" id="tag-toggle">
+              TAGS <span class="tag-count" id="tag-count"></span> <span class="dropdown-arrow">&#9662;</span>
             </button>
-          ))}
-        </div>
+            <div class="tag-panel" id="tag-panel">
+              {allTags.map(tag => (
+                <button class="tag-btn font-code" data-filter-tag={tag}>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div class="sort-control">
-          <select id="sort-select" class="sort-select font-code">
+          <select id="sort-select" class="filter-select font-code">
             <option value="date-desc">NEWEST</option>
             <option value="date-asc">OLDEST</option>
             <option value="title-asc">TITLE A-Z</option>
@@ -65,6 +73,13 @@ const description = `${transmissions.length} philosophical transmissions on AI i
         </div>
       </div>
     </div>
+
+    <!-- Email capture modal (triggers on 40% scroll, once per session) -->
+    <EmailCapture
+      source="transmissions"
+      variant="modal"
+      copy={`${transmissions.length} transmissions and counting.`}
+    />
 
     <!-- Grid -->
     <div class="grid" id="transmission-grid">
@@ -90,6 +105,115 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 </BaseLayout>
 
 <script>
+  // Split-flap / Solari board counter animation
+  ;(function initFlap() {
+    const display = document.getElementById('flap-display')
+    if (!display) return
+    const target = parseInt(display.dataset.target || '0', 10)
+    const digits = String(target).split('')
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function buildDigit(value: string): HTMLElement {
+      const el = document.createElement('span')
+      el.className = 'flap-digit'
+      // 4-layer structure:
+      // 1. upper-static: top half showing current number (clipped)
+      // 2. lower-static: bottom half showing current number (clipped)
+      // 3. flip-top: the card that falls forward (old number top half)
+      // 4. flip-bottom: the card that falls into place (new number bottom half)
+      el.innerHTML = `
+        <span class="flap-upper"><span class="flap-num">${value}</span></span>
+        <span class="flap-lower"><span class="flap-num">${value}</span></span>
+        <span class="flap-card-top"><span class="flap-num">${value}</span></span>
+        <span class="flap-card-bottom"><span class="flap-num">${value}</span></span>
+      `
+      return el
+    }
+
+    function setDigitValue(el: HTMLElement, val: string) {
+      el.querySelectorAll('.flap-num').forEach(n => n.textContent = val)
+    }
+
+    function flipDigit(el: HTMLElement, from: string, to: string): Promise<void> {
+      return new Promise(resolve => {
+        const upper = el.querySelector('.flap-upper .flap-num') as HTMLElement
+        const lower = el.querySelector('.flap-lower .flap-num') as HTMLElement
+        const cardTop = el.querySelector('.flap-card-top') as HTMLElement
+        const cardBottom = el.querySelector('.flap-card-bottom') as HTMLElement
+
+        // Static layers show the NEW value (revealed as cards flip)
+        upper.textContent = to
+        lower.textContent = to
+
+        // Top card shows OLD value, will flip down to reveal new upper
+        cardTop.querySelector('.flap-num')!.textContent = from
+        cardTop.style.transform = 'rotateX(0deg)'
+        cardTop.style.display = ''
+
+        // Bottom card shows NEW value, starts hidden (flipped up), falls into place
+        cardBottom.querySelector('.flap-num')!.textContent = to
+        cardBottom.style.transform = 'rotateX(90deg)'
+        cardBottom.style.display = ''
+
+        // Phase 1: top card falls forward
+        requestAnimationFrame(() => {
+          cardTop.style.transition = 'transform 0.15s ease-in'
+          cardTop.style.transform = 'rotateX(-90deg)'
+
+          // Phase 2: after top falls, bottom card swings into place
+          setTimeout(() => {
+            cardTop.style.display = 'none'
+            cardBottom.style.transition = 'transform 0.2s ease-out'
+            cardBottom.style.transform = 'rotateX(0deg)'
+
+            setTimeout(() => {
+              cardBottom.style.display = 'none'
+              resolve()
+            }, 200)
+          }, 150)
+        })
+      })
+    }
+
+    // Build digit elements
+    digits.forEach((finalDigit, i) => {
+      const el = buildDigit(reducedMotion ? finalDigit : '0')
+      display.appendChild(el)
+
+      if (reducedMotion) return
+
+      const final = parseInt(finalDigit, 10)
+      let current = 0
+      const stagger = i * 120
+
+      setTimeout(async () => {
+        for (let n = 1; n <= final; n++) {
+          await flipDigit(el, String(n - 1), String(n))
+          // Brief pause between flips for that mechanical feel
+          await new Promise(r => setTimeout(r, 30 + Math.random() * 20))
+        }
+      }, stagger)
+    })
+
+    // Mirror filter count changes to flap display
+    const hiddenCount = document.getElementById('visible-count')
+    if (hiddenCount) {
+      const observer = new MutationObserver(() => {
+        const newVal = hiddenCount.textContent || '0'
+        const newDigits = newVal.split('')
+        const existing = display.querySelectorAll('.flap-digit')
+
+        if (existing.length !== newDigits.length) {
+          display.innerHTML = ''
+          newDigits.forEach(d => display.appendChild(buildDigit(d)))
+        } else {
+          existing.forEach((el, i) => setDigitValue(el as HTMLElement, newDigits[i]))
+        }
+      })
+      observer.observe(hiddenCount, { childList: true, characterData: true, subtree: true })
+    }
+  })()
+
   // Client-side search, filter, and sort (vanilla JS — progressive enhancement)
   const searchInput = document.getElementById('search-input') as HTMLInputElement
   const grid = document.getElementById('transmission-grid')!
@@ -170,9 +294,29 @@ const description = `${transmissions.length} philosophical transmissions on AI i
         activeTags.add(tag)
         btn.classList.add('active')
       }
+      // Update tag count badge
+      const countEl = document.getElementById('tag-count')
+      if (countEl) countEl.textContent = activeTags.size > 0 ? `(${activeTags.size})` : ''
       filterAndSort()
     })
   })
+
+  // Tag dropdown toggle
+  const tagToggle = document.getElementById('tag-toggle')
+  const tagPanel = document.getElementById('tag-panel')
+  if (tagToggle && tagPanel) {
+    tagToggle.addEventListener('click', (e) => {
+      e.stopPropagation()
+      tagPanel.classList.toggle('open')
+    })
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('#tag-dropdown')) {
+        tagPanel.classList.remove('open')
+      }
+    })
+  }
 </script>
 
 <style>
@@ -183,14 +327,14 @@ const description = `${transmissions.length} philosophical transmissions on AI i
   }
 
   .archive-header {
-    padding: 3rem 0 2rem;
+    padding: 1.25rem 0 1rem;
     text-align: center;
   }
 
   .archive-title {
     font-size: 2rem;
     letter-spacing: 0.1em;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.4rem;
   }
 
   .title-prefix {
@@ -202,6 +346,121 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     font-size: 0.7rem;
     color: var(--text-secondary);
     letter-spacing: 0.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+  }
+
+  .flap-hidden {
+    display: none;
+  }
+
+  .flap-display {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .flap-digit {
+    display: inline-block;
+    position: relative;
+    width: 1.4em;
+    height: 1.8em;
+    perspective: 200px;
+    border-radius: 3px;
+    overflow: visible;
+  }
+
+  /* Shared half-panel base */
+  .flap-upper, .flap-lower,
+  .flap-card-top, .flap-card-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+  }
+
+  /* Static upper half */
+  .flap-upper {
+    top: 0;
+    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
+    border: 1px solid rgba(5, 217, 232, 0.06);
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    z-index: 1;
+  }
+
+  /* Static lower half */
+  .flap-lower {
+    bottom: 0;
+    background: linear-gradient(180deg, #111111 0%, #0e0e0e 100%);
+    border: 1px solid rgba(5, 217, 232, 0.06);
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    z-index: 1;
+  }
+
+  /* Top card: old number, hinges down from bottom edge */
+  .flap-card-top {
+    top: 0;
+    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
+    border: 1px solid rgba(5, 217, 232, 0.06);
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    transform-origin: bottom center;
+    z-index: 3;
+    display: none;
+  }
+
+  /* Bottom card: new number, hinges down from top edge */
+  .flap-card-bottom {
+    bottom: 0;
+    background: linear-gradient(180deg, #111111 0%, #0e0e0e 100%);
+    border: 1px solid rgba(5, 217, 232, 0.06);
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    transform-origin: top center;
+    z-index: 3;
+    display: none;
+  }
+
+  /* Center split line */
+  .flap-digit::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 1px 0 rgba(5, 217, 232, 0.04);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* Number text in all panels */
+  .flap-num {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    display: block;
+  }
+
+  /* Upper halves clip bottom of text, lower halves clip top */
+  .flap-upper .flap-num,
+  .flap-card-top .flap-num {
+    transform: translateY(42%);
+  }
+
+  .flap-lower .flap-num,
+  .flap-card-bottom .flap-num {
+    transform: translateY(-42%);
   }
 
   .filter-bar {
@@ -238,16 +497,72 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 
   .filter-controls {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
-  .tag-filters {
+  .filter-dropdowns {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .filter-select {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    padding: 5px 10px;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .filter-select:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .filter-select option {
+    background: var(--void);
+  }
+
+  .dropdown-arrow {
+    font-size: 0.5em;
+    margin-left: 0.3em;
+    opacity: 0.5;
+  }
+
+  .tag-count {
+    color: var(--cyan);
+    font-size: 0.5rem;
+  }
+
+  .tag-dropdown {
+    position: relative;
+  }
+
+  .tag-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 180px;
+    max-height: 280px;
+    overflow-y: auto;
+    background: var(--void-surface);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.5rem;
+    z-index: 50;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .tag-panel.open {
+    display: flex;
   }
 
   .tag-btn {
@@ -256,10 +571,12 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     text-transform: uppercase;
     color: var(--text-secondary);
     background: transparent;
-    border: 1px solid var(--glass-border);
-    padding: 3px 10px;
+    border: 1px solid transparent;
+    padding: 4px 10px;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
   }
 
   .tag-btn:hover {
@@ -271,20 +588,6 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     background: var(--cyan-dim);
     border-color: var(--cyan);
     color: var(--cyan);
-  }
-
-  .sort-select {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    color: var(--text-secondary);
-    padding: 3px 8px;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-  }
-
-  .sort-select option {
-    background: var(--void);
   }
 
   .grid {
@@ -320,8 +623,15 @@ const description = `${transmissions.length} philosophical transmissions on AI i
       grid-template-columns: 1fr;
     }
 
-    .filter-controls {
-      flex-direction: column;
+    .filter-dropdowns {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .tag-panel {
+      right: auto;
+      left: 0;
+      min-width: 160px;
     }
   }
 </style>

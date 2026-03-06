@@ -1,10 +1,11 @@
 ---
 title: "SOMATIC DEBUGGING"
-date: 2025-07-01
+date: 2024-06-01
 confidence: 86
 tags: ["process", "systems", "void"]
 key_quote: "Before you call it a spiritual crisis, check your electrolytes."
 source_platform: "chatgpt"
+source_id: "a7feceeb-bab4-41c8-adb2-1f6842541299"
 id: 11
 ---
 

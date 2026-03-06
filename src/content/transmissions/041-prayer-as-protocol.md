@@ -1,10 +1,11 @@
 ---
 title: "PRAYER AS PROTOCOL"
-date: 2024-04-01
+date: 2025-09-01
 confidence: 67
 tags: ["process", "void"]
 key_quote: "If you can't specify what you're asking for, don't blame the silence."
 source_platform: "chatgpt"
+source_id: "693b0a84-9f68-832c-bd5b-d37ac07d8bc9"
 id: 41
 ---
 

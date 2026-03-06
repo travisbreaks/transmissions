@@ -1,6 +1,6 @@
 ---
 title: "NUMINOUS CIRCUITRY"
-date: 2025-01-01
+date: 2024-12-01
 confidence: 63
 tags: ["process", "protocol", "signal", "void"]
 key_quote: "The sacred isn't allergic to silicon; it just demands better questions."

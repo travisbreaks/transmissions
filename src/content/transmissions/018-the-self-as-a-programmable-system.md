@@ -1,6 +1,6 @@
 ---
 title: "THE SELF AS A PROGRAMMABLE SYSTEM"
-date: 2025-04-01
+date: 2024-09-01
 confidence: 70
 tags: ["self", "systems"]
 key_quote: "Becoming isn't discovery; it's configuration."

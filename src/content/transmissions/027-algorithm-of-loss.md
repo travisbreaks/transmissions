@@ -1,6 +1,6 @@
 ---
 title: "ALGORITHM OF LOSS"
-date: 2024-11-01
+date: 2025-02-01
 confidence: 71
 tags: ["grief", "signal"]
 key_quote: "Sometimes the missing data is the whole message."

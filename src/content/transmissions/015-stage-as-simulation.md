@@ -1,6 +1,6 @@
 ---
 title: "STAGE AS SIMULATION"
-date: 2025-05-01
+date: 2024-08-01
 confidence: 73
 tags: ["protocol", "signal", "systems", "worlds"]
 key_quote: "If it works in the sim, the body can learn the choreography later."

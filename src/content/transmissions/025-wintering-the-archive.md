@@ -1,10 +1,11 @@
 ---
 title: "WINTERING THE ARCHIVE"
-date: 2024-12-01
+date: 2025-01-01
 confidence: 85
 tags: ["process", "systems"]
 key_quote: "Not everything deserves backup."
 source_platform: "chatgpt"
+source_id: "0d1d1372-c853-4a32-a8e8-605d3c689870"
 id: 25
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "PATCH NOTES FOR A HUMAN"
-date: 2025-04-01
+date: 2024-09-01
 confidence: 84
 tags: ["process"]
 key_quote: "If you can't describe the patch, don't expect different gameplay."
