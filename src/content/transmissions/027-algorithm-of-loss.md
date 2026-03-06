@@ -1,7 +1,7 @@
 ---
 title: "ALGORITHM OF LOSS"
 date: 2024-11-01
-confidence: 98
+confidence: 71
 tags: ["grief", "signal"]
 key_quote: "Sometimes the missing data is the whole message."
 source_platform: "chatgpt"

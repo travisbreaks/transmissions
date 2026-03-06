@@ -1,7 +1,7 @@
 ---
 title: "ARCHITECTURE OF POSSIBILITY"
 date: 2024-01-01
-confidence: 81
+confidence: 71
 tags: ["self", "signal", "worlds"]
 key_quote: "You are the architect of what you will allow to count as real."
 source_platform: "chatgpt"

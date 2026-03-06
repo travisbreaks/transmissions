@@ -1,7 +1,7 @@
 ---
 title: "SHAPES OF THE INVISIBLE"
 date: 2024-02-01
-confidence: 83
+confidence: 68
 tags: ["systems", "worlds"]
 key_quote: "Perception is not the world; it is the story our nerves tell about it."
 source_platform: "chatgpt"

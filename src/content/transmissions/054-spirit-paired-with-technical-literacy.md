@@ -2,7 +2,7 @@
 title: "SPIRIT PAIRED WITH TECHNICAL LITERACY"
 description: "Anthropic, the DoD, and a contract question masquerading as a loyalty test. Spirit without technical literacy is volatility. Governance before power."
 date: 2026-03-02
-confidence: 91
+confidence: 88
 tags: ["ai", "governance", "systems"]
 key_quote: "Governance first. Then power. In that order, or not at all."
 source_platform: "claude"

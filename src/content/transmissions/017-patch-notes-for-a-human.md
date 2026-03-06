@@ -1,7 +1,7 @@
 ---
 title: "PATCH NOTES FOR A HUMAN"
 date: 2025-04-01
-confidence: 99
+confidence: 84
 tags: ["process"]
 key_quote: "If you can't describe the patch, don't expect different gameplay."
 source_platform: "chatgpt"

@@ -1,7 +1,7 @@
 ---
 title: "ECONOMY OF TRUST"
 date: 2024-06-01
-confidence: 91
+confidence: 73
 tags: ["signal", "systems"]
 key_quote: "Every alliance is a bet on the future."
 source_platform: "chatgpt"

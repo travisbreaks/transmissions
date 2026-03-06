@@ -1,7 +1,7 @@
 ---
 title: "DRAFTS THAT REFUSE TO DIE"
 date: 2024-05-01
-confidence: 90
+confidence: 81
 tags: ["process", "protocol"]
 key_quote: "Unfinished work is just commitment that ran out of nerve."
 source_platform: "chatgpt"

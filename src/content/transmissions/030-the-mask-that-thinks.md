@@ -1,7 +1,7 @@
 ---
 title: "THE MASK THAT THINKS"
 date: 2024-10-01
-confidence: 97
+confidence: 66
 tags: ["protocol", "self"]
 key_quote: "A mask is not a lie; it is a hypothesis."
 source_platform: "chatgpt"

@@ -1,7 +1,7 @@
 ---
 title: "CARTOGRAPHY OF THE INTERIOR"
 date: 2024-02-01
-confidence: 84
+confidence: 77
 tags: ["protocol", "signal"]
 key_quote: "Once you name the district, getting lost there becomes a choice."
 source_platform: "chatgpt"

@@ -1,7 +1,7 @@
 ---
 title: "LATENT SPACE CARTOGRAPHY"
 date: 2024-08-01
-confidence: 95
+confidence: 74
 tags: ["signal", "systems"]
 key_quote: "You don't fight the bias; you surf it."
 source_platform: "chatgpt"

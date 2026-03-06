@@ -1,7 +1,7 @@
 ---
 title: "FIELD NOTES FROM THE LIMINAL"
 date: 2024-07-01
-confidence: 93
+confidence: 66
 tags: ["self", "worlds"]
 key_quote: "The chrysalis is not a pause; it is a workshop."
 source_platform: "chatgpt"

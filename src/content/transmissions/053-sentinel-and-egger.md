@@ -2,7 +2,7 @@
 title: "SENTINEL & EGGER"
 description: "Two agents. One fifteen-dollar server in Ohio. A hydra small enough to ignore, until it isn't."
 date: 2026-03-01
-confidence: 88
+confidence: 94
 tags: ["systems", "ai", "infrastructure"]
 key_quote: "Naming things changes how you treat them."
 source_platform: "claude"

@@ -1,7 +1,7 @@
 ---
 title: "BIOLOGY OF HOPE"
 date: 2025-07-01
-confidence: 99
+confidence: 82
 tags: ["systems"]
 key_quote: "Hope is not emotional; it is biochemical."
 source_platform: "chatgpt"

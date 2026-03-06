@@ -1,7 +1,7 @@
 ---
 title: "SINGULARITY OF SUFFERING"
 date: 2024-11-01
-confidence: 98
+confidence: 69
 tags: ["grief", "signal"]
 key_quote: "Grief is the scaffolding around a soul under reconstruction."
 source_platform: "chatgpt"

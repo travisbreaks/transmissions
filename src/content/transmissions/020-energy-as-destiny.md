@@ -1,7 +1,7 @@
 ---
 title: "ENERGY AS DESTINY"
 date: 2025-03-01
-confidence: 99
+confidence: 80
 tags: ["systems"]
 key_quote: "Where the watts go, the future follows."
 source_platform: "chatgpt"

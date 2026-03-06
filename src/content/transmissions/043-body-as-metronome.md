@@ -1,7 +1,7 @@
 ---
 title: "BODY AS METRONOME"
 date: 2024-03-01
-confidence: 86
+confidence: 78
 tags: ["sonic", "systems"]
 key_quote: "If the groove is wrong, no schedule app will save the song."
 source_platform: "chatgpt"

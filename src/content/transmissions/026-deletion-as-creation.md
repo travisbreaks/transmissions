@@ -1,7 +1,7 @@
 ---
 title: "DELETION AS CREATION"
 date: 2024-12-01
-confidence: 99
+confidence: 84
 tags: ["process", "sonic"]
 key_quote: "Mastery isn't what you add; it's what you stop allowing."
 source_platform: "chatgpt"

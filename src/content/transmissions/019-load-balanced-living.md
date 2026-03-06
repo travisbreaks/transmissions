@@ -1,7 +1,7 @@
 ---
 title: "LOAD-BALANCED LIVING"
 date: 2025-03-01
-confidence: 99
+confidence: 83
 tags: ["protocol", "systems"]
 key_quote: "You don't need less voltage; you need better infrastructure."
 source_platform: "chatgpt"

@@ -1,7 +1,7 @@
 ---
 title: "VISUAL GRAMMARS OF THE MACHINE"
 date: 2024-08-01
-confidence: 95
+confidence: 72
 tags: ["signal"]
 key_quote: "Style is not a look; it is a pattern of decisions."
 source_platform: "chatgpt"
