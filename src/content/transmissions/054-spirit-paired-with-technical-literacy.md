@@ -259,7 +259,7 @@ id: 54
 
 Spirit without technical literacy is volatility.
 
-That's the argument. The rest is architecture.
+That is the position. The contract follows.
 
 The recent debate about whether Anthropic was doing the country a disservice by not complying with Department of War requests is not a loyalty question. It's a contract question.
 
