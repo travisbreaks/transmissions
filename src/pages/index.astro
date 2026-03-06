@@ -32,13 +32,13 @@ const description = `${transmissions.length} philosophical transmissions on AI i
         <span class="title-prefix">03 //</span> TRANSMISSIONS
       </h1>
       <p class="archive-count font-code">
-        <span class="flap-display" id="flap-display" data-target={transmissions.length}></span>
-        <span id="visible-count" class="flap-hidden">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
+        <span class="count-number" id="count-display" data-target={transmissions.length}>0</span>
+        <span id="visible-count" style="display:none">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
       </p>
     </header>
 
     <!-- Filter bar -->
-    <div class="filter-bar glass-card corner-accents">
+    <div class="filter-bar glass-card corner-accents" style="position:relative;z-index:10;">
       <div class="search-wrapper">
         <input
           type="text"
@@ -91,7 +91,7 @@ const description = `${transmissions.length} philosophical transmissions on AI i
           confidence={t.data.confidence}
           tags={t.data.tags}
           keyQuote={t.data.key_quote}
-          summary={t.body?.substring(0, 200) ?? ''}
+          summary={t.body?.replace(/<[^>]*>/g, '').replace(/^---[\s\S]*?---/, '').replace(/\n/g, ' ').trim().substring(0, 200) ?? ''}
           index={i}
         />
       ))}
@@ -105,110 +105,38 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 </BaseLayout>
 
 <script>
-  // Split-flap / Solari board counter animation
-  ;(function initFlap() {
-    const display = document.getElementById('flap-display')
-    if (!display) return
-    const target = parseInt(display.dataset.target || '0', 10)
-    const digits = String(target).split('')
+  // Simple count-up animation: 0 → target over ~1.5s with eased timing
+  ;(function initCounter() {
+    const el = document.getElementById('count-display')
+    if (!el) return
+    const target = parseInt(el.dataset.target || '0', 10)
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    function buildDigit(value: string): HTMLElement {
-      const el = document.createElement('span')
-      el.className = 'flap-digit'
-      // 4-layer structure:
-      // 1. upper-static: top half showing current number (clipped)
-      // 2. lower-static: bottom half showing current number (clipped)
-      // 3. flip-top: the card that falls forward (old number top half)
-      // 4. flip-bottom: the card that falls into place (new number bottom half)
-      el.innerHTML = `
-        <span class="flap-upper"><span class="flap-num">${value}</span></span>
-        <span class="flap-lower"><span class="flap-num">${value}</span></span>
-        <span class="flap-card-top"><span class="flap-num">${value}</span></span>
-        <span class="flap-card-bottom"><span class="flap-num">${value}</span></span>
-      `
-      return el
+    if (reducedMotion) {
+      el.textContent = String(target)
+      return
     }
 
-    function setDigitValue(el: HTMLElement, val: string) {
-      el.querySelectorAll('.flap-num').forEach(n => n.textContent = val)
+    const duration = 1500
+    const start = performance.now()
+
+    function tick(now: number) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      // Ease-out cubic for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 3)
+      el!.textContent = String(Math.round(eased * target))
+      if (progress < 1) requestAnimationFrame(tick)
     }
 
-    function flipDigit(el: HTMLElement, from: string, to: string): Promise<void> {
-      return new Promise(resolve => {
-        const upper = el.querySelector('.flap-upper .flap-num') as HTMLElement
-        const lower = el.querySelector('.flap-lower .flap-num') as HTMLElement
-        const cardTop = el.querySelector('.flap-card-top') as HTMLElement
-        const cardBottom = el.querySelector('.flap-card-bottom') as HTMLElement
+    // Small delay so it's visible after page paint
+    setTimeout(() => requestAnimationFrame(tick), 200)
 
-        // Static layers show the NEW value (revealed as cards flip)
-        upper.textContent = to
-        lower.textContent = to
-
-        // Top card shows OLD value, will flip down to reveal new upper
-        cardTop.querySelector('.flap-num')!.textContent = from
-        cardTop.style.transform = 'rotateX(0deg)'
-        cardTop.style.display = ''
-
-        // Bottom card shows NEW value, starts hidden (flipped up), falls into place
-        cardBottom.querySelector('.flap-num')!.textContent = to
-        cardBottom.style.transform = 'rotateX(90deg)'
-        cardBottom.style.display = ''
-
-        // Phase 1: top card falls forward
-        requestAnimationFrame(() => {
-          cardTop.style.transition = 'transform 0.15s ease-in'
-          cardTop.style.transform = 'rotateX(-90deg)'
-
-          // Phase 2: after top falls, bottom card swings into place
-          setTimeout(() => {
-            cardTop.style.display = 'none'
-            cardBottom.style.transition = 'transform 0.2s ease-out'
-            cardBottom.style.transform = 'rotateX(0deg)'
-
-            setTimeout(() => {
-              cardBottom.style.display = 'none'
-              resolve()
-            }, 200)
-          }, 150)
-        })
-      })
-    }
-
-    // Build digit elements
-    digits.forEach((finalDigit, i) => {
-      const el = buildDigit(reducedMotion ? finalDigit : '0')
-      display.appendChild(el)
-
-      if (reducedMotion) return
-
-      const final = parseInt(finalDigit, 10)
-      let current = 0
-      const stagger = i * 120
-
-      setTimeout(async () => {
-        for (let n = 1; n <= final; n++) {
-          await flipDigit(el, String(n - 1), String(n))
-          // Brief pause between flips for that mechanical feel
-          await new Promise(r => setTimeout(r, 30 + Math.random() * 20))
-        }
-      }, stagger)
-    })
-
-    // Mirror filter count changes to flap display
+    // Mirror filter count changes (instant, no animation)
     const hiddenCount = document.getElementById('visible-count')
     if (hiddenCount) {
       const observer = new MutationObserver(() => {
-        const newVal = hiddenCount.textContent || '0'
-        const newDigits = newVal.split('')
-        const existing = display.querySelectorAll('.flap-digit')
-
-        if (existing.length !== newDigits.length) {
-          display.innerHTML = ''
-          newDigits.forEach(d => display.appendChild(buildDigit(d)))
-        } else {
-          existing.forEach((el, i) => setDigitValue(el as HTMLElement, newDigits[i]))
-        }
+        el!.textContent = hiddenCount.textContent || '0'
       })
       observer.observe(hiddenCount, { childList: true, characterData: true, subtree: true })
     }
@@ -349,118 +277,18 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4em;
+    gap: 0.6em;
   }
 
-  .flap-hidden {
-    display: none;
-  }
-
-  .flap-display {
-    display: inline-flex;
-    gap: 3px;
-  }
-
-  .flap-digit {
-    display: inline-block;
-    position: relative;
-    width: 1.4em;
-    height: 1.8em;
-    perspective: 200px;
-    border-radius: 3px;
-    overflow: visible;
-  }
-
-  /* Shared half-panel base */
-  .flap-upper, .flap-lower,
-  .flap-card-top, .flap-card-bottom {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backface-visibility: hidden;
-  }
-
-  /* Static upper half */
-  .flap-upper {
-    top: 0;
-    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
-    border: 1px solid rgba(5, 217, 232, 0.06);
-    border-bottom: none;
-    border-radius: 3px 3px 0 0;
-    z-index: 1;
-  }
-
-  /* Static lower half */
-  .flap-lower {
-    bottom: 0;
-    background: linear-gradient(180deg, #111111 0%, #0e0e0e 100%);
-    border: 1px solid rgba(5, 217, 232, 0.06);
-    border-top: none;
-    border-radius: 0 0 3px 3px;
-    z-index: 1;
-  }
-
-  /* Top card: old number, hinges down from bottom edge */
-  .flap-card-top {
-    top: 0;
-    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
-    border: 1px solid rgba(5, 217, 232, 0.06);
-    border-bottom: none;
-    border-radius: 3px 3px 0 0;
-    transform-origin: bottom center;
-    z-index: 3;
-    display: none;
-  }
-
-  /* Bottom card: new number, hinges down from top edge */
-  .flap-card-bottom {
-    bottom: 0;
-    background: linear-gradient(180deg, #111111 0%, #0e0e0e 100%);
-    border: 1px solid rgba(5, 217, 232, 0.06);
-    border-top: none;
-    border-radius: 0 0 3px 3px;
-    transform-origin: top center;
-    z-index: 3;
-    display: none;
-  }
-
-  /* Center split line */
-  .flap-digit::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.7);
-    box-shadow: 0 1px 0 rgba(5, 217, 232, 0.04);
-    z-index: 5;
-    pointer-events: none;
-  }
-
-  /* Number text in all panels */
-  .flap-num {
-    font-size: 1.2em;
+  .count-number {
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1;
-    display: block;
-  }
-
-  /* Upper halves clip bottom of text, lower halves clip top */
-  .flap-upper .flap-num,
-  .flap-card-top .flap-num {
-    transform: translateY(42%);
-  }
-
-  .flap-lower .flap-num,
-  .flap-card-bottom .flap-num {
-    transform: translateY(-42%);
+    color: var(--cyan);
+    font-family: var(--font-code);
+    letter-spacing: 0.05em;
+    min-width: 2ch;
+    display: inline-block;
+    text-align: center;
   }
 
   .filter-bar {
