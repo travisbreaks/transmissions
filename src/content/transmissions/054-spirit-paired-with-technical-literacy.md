@@ -18,6 +18,11 @@ id: 54
       <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~5 min</span></span>
     </button>
     <span class="listen-tooltip">Narrated</span>
+    <div class="speed-btns">
+      <button class="speed-btn active" data-speed="1">1x</button>
+      <button class="speed-btn" data-speed="1.25">1.25x</button>
+      <button class="speed-btn" data-speed="1.5">1.5x</button>
+    </div>
   </div>
   <div class="lp-scrubber" id="lp-scrubber">
     <div class="lp-track" id="lp-track">
@@ -159,6 +164,32 @@ id: 54
     font-family: var(--font-code, monospace);
     margin-top: -1px;
   }
+  .speed-btns {
+    display: inline-flex;
+    gap: 0.3rem;
+    margin-left: 0.6rem;
+  }
+  .speed-btn {
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid rgba(120, 220, 255, 0.08);
+    color: rgba(120, 220, 255, 0.35);
+    font-family: var(--font-code, monospace);
+    font-size: 0.62rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    outline: none;
+  }
+  .speed-btn:hover {
+    color: rgba(120, 220, 255, 0.7);
+    border-color: rgba(120, 220, 255, 0.15);
+  }
+  .speed-btn.active {
+    color: rgba(120, 220, 255, 0.85);
+    border-color: rgba(120, 220, 255, 0.3);
+    background: rgba(120, 220, 255, 0.08);
+  }
   @media (prefers-reduced-motion: reduce) { .listen-btn::after { animation: none; opacity: 0; } }
 </style>
 
@@ -214,6 +245,14 @@ id: 54
     if (!audio.duration) return;
     var r = track.getBoundingClientRect();
     audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+  });
+
+  document.querySelectorAll('.speed-btn').forEach(function(b) {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.speed-btn').forEach(function(s) { s.classList.remove('active'); });
+      b.classList.add('active');
+      audio.playbackRate = parseFloat(b.dataset.speed);
+    });
   });
 })();
 </script>
