@@ -2,7 +2,7 @@
 title: "THE INFRASTRUCTURE OF BEING SEEN"
 description: "Fifteen projects. Zero followers. What it took to treat presence as a deployable system."
 date: 2026-02-28
-confidence: 88
+confidence: 93
 tags: ["process", "systems", "signal"]
 key_quote: "A signal that nobody receives is just noise with good intentions."
 source_platform: "claude"

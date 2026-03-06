@@ -1,7 +1,7 @@
 ---
 title: "TOPOLOGY OF GRIEF"
 date: 2025-11-01
-confidence: 99
+confidence: 72
 tags: ["grief", "signal"]
 key_quote: "Pain is a place."
 source_platform: "chatgpt"

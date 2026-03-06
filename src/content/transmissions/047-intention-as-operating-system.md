@@ -1,7 +1,7 @@
 ---
 title: "INTENTION AS OPERATING SYSTEM"
 date: 2024-01-01
-confidence: 82
+confidence: 79
 tags: ["process", "systems"]
 key_quote: "If it doesn't move the story forward, it's just background process."
 source_platform: "chatgpt"

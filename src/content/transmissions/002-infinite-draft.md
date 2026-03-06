@@ -1,7 +1,7 @@
 ---
 title: "INFINITE DRAFT"
 date: 2025-12-01
-confidence: 99
+confidence: 80
 tags: ["process", "systems"]
 key_quote: "Nothing finished is ever finished."
 source_platform: "chatgpt"

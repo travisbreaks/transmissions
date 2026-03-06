@@ -1,7 +1,7 @@
 ---
 title: "NOMADIC INFRASTRUCTURE"
 date: 2024-07-01
-confidence: 94
+confidence: 82
 tags: ["process", "protocol", "systems", "worlds"]
 key_quote: "If losing a room kills the art, it wasn't art; it was furniture."
 source_platform: "chatgpt"

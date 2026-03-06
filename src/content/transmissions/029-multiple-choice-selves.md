@@ -1,7 +1,7 @@
 ---
 title: "MULTIPLE CHOICE SELVES"
 date: 2024-10-01
-confidence: 97
+confidence: 68
 tags: ["self"]
 key_quote: "You can be plural without being fake."
 source_platform: "chatgpt"

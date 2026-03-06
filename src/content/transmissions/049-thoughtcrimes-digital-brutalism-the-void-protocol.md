@@ -1,7 +1,7 @@
 ---
 title: "THOUGHTCRIMES: Digital Brutalism & The Void Protocol"
 date: 2026-01-05
-confidence: 99
+confidence: 97
 tags: ["protocol", "void"]
 key_quote: "The interface is not a window. It's a scar."
 source_platform: "chatgpt"

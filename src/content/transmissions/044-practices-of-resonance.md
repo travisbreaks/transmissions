@@ -1,7 +1,7 @@
 ---
 title: "PRACTICES OF RESONANCE"
 date: 2024-03-01
-confidence: 85
+confidence: 76
 tags: ["process", "sonic", "systems", "void"]
 key_quote: "Discipline is just frequency selection."
 source_platform: "chatgpt"

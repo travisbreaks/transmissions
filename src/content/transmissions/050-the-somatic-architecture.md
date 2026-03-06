@@ -1,7 +1,7 @@
 ---
 title: "THE SOMATIC ARCHITECTURE"
 date: 2026-01-06
-confidence: 99
+confidence: 90
 tags: ["systems", "protocol"]
 key_quote: "Pain leaves traces in the body. So does interaction."
 source_platform: "chatgpt"

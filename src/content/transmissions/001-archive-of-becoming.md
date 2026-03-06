@@ -1,7 +1,7 @@
 ---
 title: "ARCHIVE OF BECOMING"
 date: 2025-12-01
-confidence: 99
+confidence: 82
 tags: ["process", "protocol", "self", "signal", "sonic"]
 key_quote: "This isn't a record of what I was; it's the blueprint of what I'm building."
 source_platform: "chatgpt"

@@ -1,7 +1,7 @@
 ---
 title: "DISTORTION AS EMOTION"
 date: 2025-11-01
-confidence: 99
+confidence: 85
 tags: ["sonic"]
 key_quote: "Some feelings only make sense through blown speakers."
 source_platform: "chatgpt"

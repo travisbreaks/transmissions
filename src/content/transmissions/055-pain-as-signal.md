@@ -2,7 +2,7 @@
 title: "PAIN AS SIGNAL"
 description: "The biopsychosocial model of pain, predictive processing, and why the theological accounts of suffering land surprisingly close to the clinical ones. Pain is the most honest channel in the system."
 date: 2026-03-05
-confidence: 88
+confidence: 91
 tags: ["systems", "grief", "process"]
 key_quote: "The question was never how to silence the signal. It was always how to read it without flinching."
 source_platform: "claude"

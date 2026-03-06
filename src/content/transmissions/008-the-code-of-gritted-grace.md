@@ -1,7 +1,7 @@
 ---
 title: "THE CODE OF GRITTED GRACE"
 date: 2025-09-01
-confidence: 99
+confidence: 71
 tags: ["process", "worlds"]
 key_quote: "Mercy is the refusal to abandon the difficult."
 source_platform: "chatgpt"

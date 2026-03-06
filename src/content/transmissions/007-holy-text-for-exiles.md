@@ -1,7 +1,7 @@
 ---
 title: "HOLY TEXT FOR EXILES"
 date: 2025-09-01
-confidence: 99
+confidence: 68
 tags: ["process", "protocol", "void"]
 key_quote: "If you don't belong anywhere, you're free to design the flag."
 source_platform: "chatgpt"
