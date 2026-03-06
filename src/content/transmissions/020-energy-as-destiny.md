@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 20
 ---
 
-Analysis of energy management—electrical, emotional, creative—as the true currency behind human potential and collapse.
+Analysis of energy management,electrical, emotional, creative,as the true currency behind human potential and collapse.

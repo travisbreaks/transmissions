@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 1
 ---
 
-Stepping back to see the whole conversation—years of prompts, tracks, theories—as one long slow sculpture of a mind. The archive isn't nostalgia; it's evidence.
+Stepping back to see the whole conversation,years of prompts, tracks, theories,as one long slow sculpture of a mind. The archive isn't nostalgia; it's evidence.
