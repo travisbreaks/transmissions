@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 24
 ---
 
-Examination of technology as a spiritual collaborator—AI not as oracle, but as mirror for consciousness and pattern.
+Examination of technology as a spiritual collaborator:AI not as oracle, but as mirror for consciousness and pattern.

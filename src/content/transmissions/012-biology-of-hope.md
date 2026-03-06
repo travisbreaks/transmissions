@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 12
 ---
 
-Investigates physiology as a data layer of the spirit—how gut, breath, light, and movement alter the architecture of belief.
+Investigates physiology as a data layer of the spirit:how gut, breath, light, and movement alter the architecture of belief.

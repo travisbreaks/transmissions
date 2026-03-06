@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 14
 ---
 
-Models a world where automation is not extraction but restitution—technology as a multiplier for dignity instead of displacement.
+Models a world where automation is not extraction but restitution:technology as a multiplier for dignity instead of displacement.

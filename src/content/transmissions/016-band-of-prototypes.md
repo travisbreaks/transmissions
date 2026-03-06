@@ -8,4 +8,4 @@ source_platform: "chatgpt"
 id: 16
 ---
 
-Constructs a fictional ensemble as living allegories of creativity—emotion, discipline, computation, virtuosity—and studies how they harmonize.
+Constructs a fictional ensemble as living allegories of creativity,emotion, discipline, computation, virtuosity,and studies how they harmonize.
