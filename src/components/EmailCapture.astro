@@ -62,22 +62,8 @@ const {
       const email = (el.querySelector('input[name="email"]') as HTMLInputElement).value.trim();
       const source = (wrapper?.dataset.source || overlay?.dataset.source || 'transmissions');
 
-      const WORKER_URL = 'https://email-capture.travisbreaks.workers.dev';
-
-      if (!WORKER_URL) {
-        el.style.display = 'none';
-        const success = wrapper.querySelector('[data-capture-success]') as HTMLElement;
-        if (success) success.style.display = 'block';
-        // Close modal after success
-        if (overlay) {
-          setTimeout(() => { overlay.classList.remove('visible'); }, 1500);
-          sessionStorage.setItem('capture-dismissed', '1');
-        }
-        return;
-      }
-
       try {
-        const res = await fetch(WORKER_URL, {
+        const res = await fetch('https://email-capture.travisbreaks.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, source }),
