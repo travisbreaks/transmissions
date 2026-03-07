@@ -35,6 +35,7 @@ Testing the terminal replay animation below.
     <button class="term-pause-btn" id="term-pause-btn" aria-label="Pause animation">
       <svg class="tctl-icon tctl-pause" viewBox="0 0 16 16"><path d="M4 2h3v12H4zm5 0h3v12H9z"/></svg>
       <svg class="tctl-icon tctl-play" viewBox="0 0 16 16" style="display:none"><path d="M3 2.5l10 5.5-10 5.5z"/></svg>
+      <span class="term-pause-label" id="term-pause-label">PAUSE</span>
     </button>
     <span class="term-loop-label" id="term-loop-label"></span>
   </div>
@@ -90,6 +91,9 @@ Testing the terminal replay animation below.
   overflow-y: auto; font-size: 13px; line-height: 1.65;
   scrollbar-width: thin;
   scrollbar-color: rgba(204,164,59,0.15) transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .term-body::-webkit-scrollbar { width: 4px; }
 .term-body::-webkit-scrollbar-track { background: transparent; }
@@ -133,12 +137,26 @@ Testing the terminal replay animation below.
   background: var(--tr-chrome);
 }
 .term-pause-btn {
-  background: none; border: none; cursor: pointer;
-  padding: 2px; display: flex; align-items: center;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px; cursor: pointer;
+  padding: 4px 10px; display: flex; align-items: center; gap: 6px;
+  transition: background 0.15s, border-color 0.15s;
 }
+.term-pause-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
 .tctl-icon { width: 14px; height: 14px; fill: var(--tr-dim); transition: fill 0.15s; }
 .term-pause-btn:hover .tctl-icon { fill: var(--tr-text); }
+.term-pause-label {
+  font-size: 10px; color: var(--tr-dim); letter-spacing: 0.5px;
+  font-family: var(--tr-font); transition: color 0.15s;
+}
+.term-pause-btn:hover .term-pause-label { color: var(--tr-text); }
 .term-loop-label { font-size: 10px; color: var(--tr-dim); letter-spacing: 0.5px; }
+.term-body.term-paused { cursor: pointer; }
+.term-body.term-paused::after {
+  content: ''; position: absolute; inset: 0; z-index: 2;
+  pointer-events: none;
+}
+.term-body { position: relative; }
 @keyframes term-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 @keyframes term-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 @keyframes term-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -253,6 +271,8 @@ Testing the terminal replay animation below.
         paused = false;
         pauseIcon.style.display = 'block';
         playIcon.style.display = 'none';
+        pauseLabel.textContent = 'PAUSE';
+        body.classList.remove('term-paused');
       }
     } else {
       if (!scrollPaused && !paused) {
@@ -260,6 +280,8 @@ Testing the terminal replay animation below.
         paused = true;
         pauseIcon.style.display = 'none';
         playIcon.style.display = 'block';
+        pauseLabel.textContent = 'PLAY';
+        body.classList.add('term-paused');
       }
     }
   }, { passive: true });
@@ -389,7 +411,9 @@ Testing the terminal replay animation below.
     loopLabel.style.fontWeight = '500';
   }
 
-  pauseBtn.addEventListener('click', () => {
+  const pauseLabel = document.getElementById('term-pause-label');
+
+  function togglePause() {
     if (finished) return;
     paused = !paused;
     if (!paused) {
@@ -398,6 +422,17 @@ Testing the terminal replay animation below.
     }
     pauseIcon.style.display = paused ? 'none' : 'block';
     playIcon.style.display = paused ? 'block' : 'none';
+    pauseLabel.textContent = paused ? 'PLAY' : 'PAUSE';
+    body.classList.toggle('term-paused', paused);
+  }
+
+  pauseBtn.addEventListener('click', togglePause);
+
+  // Click anywhere in the terminal body to toggle pause
+  body.addEventListener('click', (e) => {
+    // Don't toggle if user is selecting text or clicking a link
+    if (window.getSelection().toString()) return;
+    togglePause();
   });
 
   const observer = new IntersectionObserver((entries) => {
