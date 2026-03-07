@@ -15,6 +15,23 @@ const { class: className } = Astro.props
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     <link rel="alternate" type="application/rss+xml" title="TRANSMISSIONS // PROTOCOL" href="/transmissions/rss.xml" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Travis Bonnet",
+      "url": "https://travisfixes.com",
+      "jobTitle": "Systems Builder & AI Consultant",
+      "sameAs": [
+        "https://travisbreaks.com",
+        "https://travisbreaks.org",
+        "https://travismakes.org",
+        "https://github.com/travisbreaks",
+        "https://linkedin.com/in/travisbonnet",
+        "https://x.com/travisbreaks"
+      ]
+    }
+    </script>
     <slot name="head" />
   </head>
   <body class={className}>

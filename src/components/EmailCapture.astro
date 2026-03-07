@@ -47,6 +47,7 @@ const {
       <button type="submit" class="capture-btn font-code">SUBSCRIBE</button>
     </form>
     <p class="capture-success font-code" data-capture-success>Signal received.</p>
+    <a href="https://travisfixes.com/privacy/" target="_blank" rel="noopener" class="capture-privacy font-code">Privacy policy</a>
   </div>
 )}
 
@@ -61,7 +62,7 @@ const {
       const email = (el.querySelector('input[name="email"]') as HTMLInputElement).value.trim();
       const source = (wrapper?.dataset.source || overlay?.dataset.source || 'transmissions');
 
-      const WORKER_URL = '';
+      const WORKER_URL = 'https://email-capture.travisbreaks.workers.dev';
 
       if (!WORKER_URL) {
         el.style.display = 'none';
@@ -282,6 +283,19 @@ const {
     font-size: 0.7rem;
     letter-spacing: 0.1em;
     color: var(--cyan);
+  }
+
+  .capture-privacy {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+
+  .capture-privacy:hover {
+    color: var(--text-secondary);
   }
 
   @media (max-width: 640px) {
