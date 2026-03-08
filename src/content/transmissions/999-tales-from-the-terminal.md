@@ -244,11 +244,11 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   transition: all 0.25s;
 }
 .term-overlay-btn-label {
-  font-size: 12px; font-weight: 600; letter-spacing: 1px;
+  font-size: 13px; font-weight: 600; letter-spacing: 1px;
   color: var(--tr-text); transition: color 0.25s;
 }
 .term-overlay-btn-sub {
-  font-size: 9px; color: var(--tr-text); opacity: 0.45;
+  font-size: 10px; color: var(--tr-text); opacity: 0.55;
   letter-spacing: 0.3px; transition: opacity 0.25s;
 }
 .term-overlay-narrate:hover {
