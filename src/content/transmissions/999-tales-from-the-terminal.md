@@ -235,13 +235,24 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   // --- Audio config ---
   const AUDIO_BASE = 'https://assets.travisbreaks.com/transmissions/999-tales-from-the-terminal';
 
-  // Unlock audio on mobile: play a tiny silent buffer during user gesture
-  // so subsequent async play() calls aren't blocked by autoplay policy
-  let audioUnlocked = false;
+  // iOS Safari requires reusing the SAME Audio element that was .play()'d
+  // during a user gesture. Creating new Audio() later gets blocked.
+  // We create two persistent elements (main + aside) and just swap .src.
+  const mainAudioEl = new Audio();
+  const asideAudioEl = new Audio();
+  mainAudioEl.preload = 'auto';
+  asideAudioEl.preload = 'auto';
+
+  // "Warm" both audio elements during the user's tap gesture
+  // by playing silence — this marks them as user-activated for iOS Safari
   function unlockAudio() {
-    if (audioUnlocked) return;
-    audioUnlocked = true;
-    // Method 1: AudioContext (covers most mobile browsers)
+    const warmUp = (el) => {
+      el.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAFeANX9AAACM2JKv8xgAIAAA0gAAABAcIAKgiMeAFCAGP/5cEIQgAYEQMf/ygIAgCAIfu/9QEP/KAgCAJ/8oCAIeD4Pg+8HwfB8HwfB8AAAB8HwfB9/4AAAAAAf/7UMQFgAAADSAAAAAAAANIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMRDAAAADSAAAAAAAAA0gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
+      el.play().then(() => { el.pause(); el.currentTime = 0; }).catch(() => {});
+    };
+    warmUp(mainAudioEl);
+    warmUp(asideAudioEl);
+    // Also unlock AudioContext for good measure
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const buf = ctx.createBuffer(1, 1, 22050);
@@ -249,14 +260,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
       src.buffer = buf;
       src.connect(ctx.destination);
       src.start(0);
-      // Keep context alive for the session
       if (ctx.state === 'suspended') ctx.resume();
-    } catch(e) {}
-    // Method 2: silent HTML audio element (iOS Safari belt-and-suspenders)
-    try {
-      const silent = new Audio();
-      silent.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAFeANX9AAACM2JKv8xgAIAAA0gAAABAcIAKgiMeAFCAGP/5cEIQgAYEQMf/ygIAgCAIfu/9QEP/KAgCAJ/8oCAIeD4Pg+8HwfB8HwfB8AAAB8HwfB9/4AAAAAAf/7UMQFgAAADSAAAAAAAANIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMRDAAAADSAAAAAAAAA0gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
-      silent.play().catch(() => {});
     } catch(e) {}
   }
 
@@ -471,12 +475,16 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     document.head.appendChild(link);
   }
 
-  // Play an audio clip, returns the Audio element
-  function playClip(filename) {
+  // Play an audio clip using a persistent element (main or aside)
+  // iOS Safari only allows play() on elements that were .play()'d during a user gesture.
+  // We reuse the same elements and swap src to stay within that permission.
+  function playClip(filename, useAside) {
     if (fastForward || !audioEnabled || !filename) return null;
-    const audio = new Audio(AUDIO_BASE + '/' + filename);
-    audio.play().catch(() => {}); // swallow autoplay policy errors
-    return audio;
+    const el = useAside ? asideAudioEl : mainAudioEl;
+    el.src = AUDIO_BASE + '/' + filename;
+    el.load(); // required on iOS when changing src
+    el.play().catch(() => {});
+    return el;
   }
 
   // --- Scroll-aware pause ---
@@ -630,11 +638,11 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
       const bootTypingMs = ((msg.asideDuration || 16) * 1000) - bootLinePause;
       const bootCharSpeed = Math.max(8, Math.round(bootTypingMs / bootText.length));
 
-      // Start aside audio
-      asideAudio = playClip(msg.asideAudio);
+      // Start aside audio (use aside element)
+      asideAudio = playClip(msg.asideAudio, true);
       let asideEnded = false;
       if (asideAudio) {
-        asideAudio.addEventListener('ended', () => { asideEnded = true; asideAudio = null; });
+        asideAudio.addEventListener('ended', () => { asideEnded = true; asideAudio = null; }, { once: true });
       } else {
         asideEnded = true;
       }
@@ -710,7 +718,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
       // Wait for main clip to finish (skip in FF)
       if (!fastForward && currentAudio && !currentAudio.ended && !currentAudio.paused) {
         await new Promise(resolve => {
-          currentAudio.addEventListener('ended', resolve);
+          currentAudio.addEventListener('ended', resolve, { once: true });
           setTimeout(resolve, (msg.audioDuration || 30) * 1000 + 2000);
         });
       }
@@ -721,13 +729,13 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 
       // Play aside audio IN PARALLEL with text typing
       if (msg.asideAudio) {
-        asideAudio = playClip(msg.asideAudio);
+        asideAudio = playClip(msg.asideAudio, true);
         const mainFile = msg.audioFile;
         if (asideAudio) {
           asideAudio.addEventListener('ended', () => {
             asideAudio = null;
-            if (audioEnabled && !paused) { currentAudio = playClip(mainFile); }
-          });
+            if (audioEnabled && !paused) { currentAudio = playClip(mainFile, false); }
+          }, { once: true });
         }
       } else {
         currentAudio = playClip(msg.audioFile);
@@ -760,7 +768,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
       // If audio is still playing, wait for it to finish (skip in FF)
       if (!fastForward && currentAudio && !currentAudio.ended && !currentAudio.paused) {
         await new Promise(resolve => {
-          currentAudio.addEventListener('ended', resolve);
+          currentAudio.addEventListener('ended', resolve, { once: true });
           setTimeout(resolve, (msg.audioDuration || 30) * 1000 + 2000);
         });
       }
