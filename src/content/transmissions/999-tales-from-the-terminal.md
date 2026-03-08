@@ -13,6 +13,30 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 
 <div class="listen-player" style="display:none"></div>
 
+<!-- Full-viewport overlay gate — user MUST choose before anything happens -->
+<div class="term-overlay" id="term-overlay">
+  <div class="term-overlay-glass"></div>
+  <div class="term-overlay-content">
+    <div class="term-overlay-title">transporter-terminal v1.0</div>
+    <div class="term-overlay-protocol">
+      <span class="term-overlay-proto-text" id="term-overlay-proto-text"></span><span class="term-overlay-cursor">|</span>
+    </div>
+    <div class="term-overlay-divider"></div>
+    <div class="term-overlay-buttons">
+      <button class="term-overlay-btn term-overlay-narrate" id="term-gate-on" type="button">
+        <svg class="term-overlay-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><path d="M11 5.5c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="term-overlay-btn-label">NARRATION ON</span>
+        <span class="term-overlay-btn-sub">two voices, synced audio</span>
+      </button>
+      <button class="term-overlay-btn term-overlay-read" id="term-gate-off" type="button">
+        <svg class="term-overlay-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><line x1="12" y1="5" x2="12" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/></svg>
+        <span class="term-overlay-btn-label">READ ONLY</span>
+        <span class="term-overlay-btn-sub">text at your own pace</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="term-replay" id="term-replay">
   <div class="term-chrome">
     <div class="term-dots">
@@ -27,20 +51,6 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     </div>
   </div>
   <div class="term-body" id="term-body">
-    <div class="term-start-gate" id="term-start-gate">
-      <div class="term-gate-title">transporter-terminal v1.0</div>
-      <div class="term-gate-sub">two-voice terminal replay</div>
-      <div class="term-gate-buttons">
-        <button class="term-gate-btn term-gate-on" id="term-gate-on" type="button">
-          <svg class="tctl-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><path d="M11 5.5c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          NARRATION ON
-        </button>
-        <button class="term-gate-btn term-gate-off" id="term-gate-off" type="button">
-          <svg class="tctl-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><line x1="12" y1="5" x2="12" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/></svg>
-          READ ONLY
-        </button>
-      </div>
-    </div>
     <div class="term-header-line" style="display:none">
       <span class="term-sys">——— secure channel established ———</span>
     </div>
@@ -170,30 +180,96 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 }
 .term-pause-btn:hover .term-pause-label { color: var(--tr-text); }
 .term-loop-label { font-size: 10px; color: var(--tr-dim); letter-spacing: 0.5px; }
-.term-start-gate {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 220px; gap: 16px; padding: 40px 20px;
+/* --- Full-viewport overlay gate --- */
+.term-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity 0.5s ease;
+  font-family: var(--tr-font);
 }
-.term-gate-title {
-  font-size: 14px; color: var(--tr-cyan); letter-spacing: 1.5px;
-  font-weight: 600; text-transform: uppercase;
+.term-overlay.term-overlay-out {
+  opacity: 0; pointer-events: none;
 }
-.term-gate-sub {
-  font-size: 11px; color: var(--tr-dim); letter-spacing: 0.5px;
-  margin-bottom: 8px;
+.term-overlay-glass {
+  position: absolute; inset: 0;
+  background: rgba(4, 4, 8, 0.82);
+  backdrop-filter: blur(12px) saturate(0.5) brightness(0.7);
+  -webkit-backdrop-filter: blur(12px) saturate(0.5) brightness(0.7);
 }
-.term-gate-buttons { display: flex; gap: 12px; }
-.term-gate-btn {
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px; cursor: pointer;
-  padding: 10px 20px; display: flex; align-items: center; gap: 8px;
-  font-family: var(--tr-font); font-size: 11px; letter-spacing: 0.5px;
-  color: var(--tr-dim); transition: all 0.2s;
+.term-overlay-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding: 40px 24px; max-width: 420px; width: 100%;
 }
-.term-gate-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: var(--tr-text); }
-.term-gate-btn .tctl-icon { fill: currentColor; stroke: currentColor; }
-.term-gate-on:hover { border-color: rgba(5, 217, 232, 0.4); color: var(--tr-cyan); }
-.term-gate-off:hover { border-color: rgba(255,255,255,0.2); }
+.term-overlay-title {
+  font-size: 11px; color: var(--tr-dim); letter-spacing: 2px;
+  text-transform: uppercase; opacity: 0;
+  animation: term-fade-in 0.4s ease 0.2s forwards;
+}
+.term-overlay-protocol {
+  font-size: 13px; color: var(--tr-cyan); letter-spacing: 0.5px;
+  min-height: 1.4em; opacity: 0;
+  animation: term-fade-in 0.4s ease 0.4s forwards;
+}
+.term-overlay-cursor {
+  color: var(--tr-cyan); animation: term-blink 0.8s step-end infinite;
+}
+.term-overlay-divider {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(5, 217, 232, 0.3), transparent);
+  opacity: 0; animation: term-fade-in 0.4s ease 0.6s forwards;
+}
+.term-overlay-buttons {
+  display: flex; gap: 16px; opacity: 0;
+  animation: term-fade-in 0.5s ease 0.8s forwards;
+}
+.term-overlay-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; cursor: pointer;
+  padding: 20px 28px; display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+  font-family: var(--tr-font); transition: all 0.25s ease;
+  min-width: 150px;
+}
+.term-overlay-btn:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+.term-overlay-btn:active { transform: translateY(0); }
+.term-overlay-icon {
+  width: 24px; height: 24px;
+  fill: var(--tr-dim); stroke: var(--tr-dim);
+  transition: all 0.25s;
+}
+.term-overlay-btn-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 1px;
+  color: var(--tr-dim); transition: color 0.25s;
+}
+.term-overlay-btn-sub {
+  font-size: 9px; color: var(--tr-dim); opacity: 0.5;
+  letter-spacing: 0.3px; transition: opacity 0.25s;
+}
+.term-overlay-narrate:hover {
+  border-color: rgba(5, 217, 232, 0.4);
+  box-shadow: 0 0 20px rgba(5, 217, 232, 0.08);
+}
+.term-overlay-narrate:hover .term-overlay-icon { fill: var(--tr-cyan); stroke: var(--tr-cyan); }
+.term-overlay-narrate:hover .term-overlay-btn-label { color: var(--tr-cyan); }
+.term-overlay-narrate:hover .term-overlay-btn-sub { opacity: 0.8; }
+.term-overlay-read:hover {
+  border-color: rgba(255,255,255,0.25);
+}
+.term-overlay-read:hover .term-overlay-icon { fill: var(--tr-text); stroke: var(--tr-text); }
+.term-overlay-read:hover .term-overlay-btn-label { color: var(--tr-text); }
+.term-overlay-read:hover .term-overlay-btn-sub { opacity: 0.8; }
+@media (max-width: 480px) {
+  .term-overlay-buttons { flex-direction: column; gap: 12px; width: 100%; }
+  .term-overlay-btn { min-width: unset; padding: 16px 20px; flex-direction: row; gap: 14px; }
+  .term-overlay-btn-sub { display: none; }
+  .term-overlay-icon { width: 20px; height: 20px; }
+}
 .term-mute-btn {
   background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px; cursor: pointer;
@@ -819,9 +895,8 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     // Replace mute button with PLAY AGAIN
     muteBtn.style.display = 'none';
     const replayBtn = document.createElement('button');
-    replayBtn.className = 'term-gate-btn';
     replayBtn.id = 'term-replay-btn';
-    replayBtn.style.cssText = 'margin-left: auto; border-radius: 20px; font-size: 10px; padding: 4px 14px; border-color: rgba(5, 217, 232, 0.25); color: var(--tr-cyan);';
+    replayBtn.style.cssText = 'margin-left: auto; background: rgba(255,255,255,0.04); border: 1px solid rgba(5, 217, 232, 0.25); border-radius: 20px; cursor: pointer; padding: 4px 14px; display: flex; align-items: center; gap: 6px; font-family: var(--tr-font); font-size: 10px; letter-spacing: 0.5px; color: var(--tr-cyan); transition: all 0.2s;';
     replayBtn.innerHTML = '<svg class="tctl-icon" viewBox="0 0 16 16" style="width:12px;height:12px;fill:var(--tr-cyan)"><path d="M3 2.5l10 5.5-10 5.5z"/></svg> PLAY AGAIN';
     replayBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -831,50 +906,97 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     controls.appendChild(replayBtn);
   }
 
+  // --- Overlay typewriter ---
+  function typeOverlayText(el, text, speed) {
+    return new Promise(resolve => {
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent = text.slice(0, ++i);
+        if (i >= text.length) { clearInterval(interval); resolve(); }
+      }, speed || 42);
+    });
+  }
+
+  function showOverlay() {
+    // Create overlay if it doesn't exist (replay case)
+    let overlay = document.getElementById('term-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'term-overlay';
+      overlay.id = 'term-overlay';
+      overlay.innerHTML =
+        '<div class="term-overlay-glass"></div>' +
+        '<div class="term-overlay-content">' +
+          '<div class="term-overlay-title">transporter-terminal v1.0</div>' +
+          '<div class="term-overlay-protocol">' +
+            '<span class="term-overlay-proto-text" id="term-overlay-proto-text"></span>' +
+            '<span class="term-overlay-cursor">|</span>' +
+          '</div>' +
+          '<div class="term-overlay-divider"></div>' +
+          '<div class="term-overlay-buttons">' +
+            '<button class="term-overlay-btn term-overlay-narrate" type="button">' +
+              '<svg class="term-overlay-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><path d="M11 5.5c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
+              '<span class="term-overlay-btn-label">NARRATION ON</span>' +
+              '<span class="term-overlay-btn-sub">two voices, synced audio</span>' +
+            '</button>' +
+            '<button class="term-overlay-btn term-overlay-read" type="button">' +
+              '<svg class="term-overlay-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><line x1="12" y1="5" x2="12" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/></svg>' +
+              '<span class="term-overlay-btn-label">READ ONLY</span>' +
+              '<span class="term-overlay-btn-sub">text at your own pace</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      // Insert before the terminal
+      const termEl = document.getElementById('term-replay');
+      termEl.parentNode.insertBefore(overlay, termEl);
+    }
+
+    overlay.classList.remove('term-overlay-out');
+    overlay.style.display = '';
+
+    // Wire buttons
+    const narrateBtn = overlay.querySelector('.term-overlay-narrate');
+    const readBtn = overlay.querySelector('.term-overlay-read');
+    narrateBtn.addEventListener('click', (e) => { e.stopPropagation(); dismissOverlay(true); }, { once: true });
+    readBtn.addEventListener('click', (e) => { e.stopPropagation(); dismissOverlay(false); }, { once: true });
+
+    // Start typewriter
+    const protoText = overlay.querySelector('.term-overlay-proto-text');
+    protoText.textContent = '';
+    setTimeout(() => typeOverlayText(protoText, '// SELECT YOUR MODE'), 500);
+  }
+
+  function dismissOverlay(withNarration) {
+    const overlay = document.getElementById('term-overlay');
+    if (!overlay) return;
+
+    // Unlock audio on this gesture
+    if (withNarration) unlockAudio();
+    setAudioState(withNarration, false);
+
+    // Fade out
+    overlay.classList.add('term-overlay-out');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+    }, 500);
+
+    // Start terminal
+    const headerLine = body.querySelector('.term-header-line');
+    if (headerLine) headerLine.style.display = '';
+    body.dataset.started = '1';
+    run();
+  }
+
   function resetToGate() {
-    // Clear terminal body and restore the start gate
+    // Clear terminal body
     body.innerHTML = '';
 
-    const gate = document.createElement('div');
-    gate.className = 'term-start-gate';
-    gate.id = 'term-start-gate';
-    gate.innerHTML =
-      '<div class="term-gate-title">transporter-terminal v1.0</div>' +
-      '<div class="term-gate-sub">two-voice terminal replay</div>' +
-      '<div class="term-gate-buttons">' +
-        '<button class="term-gate-btn term-gate-on" type="button">' +
-          '<svg class="tctl-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><path d="M11 5.5c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
-          ' NARRATION ON</button>' +
-        '<button class="term-gate-btn term-gate-off" type="button">' +
-          '<svg class="tctl-icon" viewBox="0 0 16 16"><path d="M8 2L4 5.5H1v5h3L8 14V2z"/><line x1="12" y1="5" x2="12" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/></svg>' +
-          ' READ ONLY</button>' +
-      '</div>';
-    body.appendChild(gate);
-
+    // Restore header line
     const hl = document.createElement('div');
     hl.className = 'term-header-line';
     hl.style.display = 'none';
     hl.innerHTML = '<span class="term-sys">——— secure channel established ———</span>';
     body.appendChild(hl);
-
-    // Wire up gate buttons
-    gate.querySelector('.term-gate-on').addEventListener('click', (e) => {
-      e.stopPropagation();
-      unlockAudio();
-      gate.remove();
-      hl.style.display = '';
-      body.dataset.started = '1';
-      setAudioState(true, false);
-      run();
-    });
-    gate.querySelector('.term-gate-off').addEventListener('click', (e) => {
-      e.stopPropagation();
-      gate.remove();
-      hl.style.display = '';
-      body.dataset.started = '1';
-      setAudioState(false, false);
-      run();
-    });
 
     // Reset state
     finished = false;
@@ -901,6 +1023,9 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     // Remove play again button
     const replayBtn = document.getElementById('term-replay-btn');
     if (replayBtn) replayBtn.remove();
+
+    // Show overlay again
+    showOverlay();
   }
 
   const pauseLabel = document.getElementById('term-pause-label');
@@ -935,25 +1060,16 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 
   preloadInitialAudio();
 
-  // --- Start gate: user chooses narration on/off before animation begins ---
-  const startGate = document.getElementById('term-start-gate');
-  const gateOnBtn = document.getElementById('term-gate-on');
-  const gateOffBtn = document.getElementById('term-gate-off');
-  const headerLine = body.querySelector('.term-header-line');
+  // --- Initial overlay: wire up buttons from the HTML ---
+  const overlay = document.getElementById('term-overlay');
+  const gateOnBtn = overlay.querySelector('.term-overlay-narrate');
+  const gateOffBtn = overlay.querySelector('.term-overlay-read');
 
-  function startWithNarration(enabled) {
-    // Unlock audio pipeline on user gesture (mobile browsers block async play)
-    if (enabled) unlockAudio();
-    setAudioState(enabled, false);
+  gateOnBtn.addEventListener('click', (e) => { e.stopPropagation(); dismissOverlay(true); }, { once: true });
+  gateOffBtn.addEventListener('click', (e) => { e.stopPropagation(); dismissOverlay(false); }, { once: true });
 
-    // Remove gate, show header
-    startGate.remove();
-    headerLine.style.display = '';
-    body.dataset.started = '1';
-    run();
-  }
-
-  gateOnBtn.addEventListener('click', (e) => { e.stopPropagation(); startWithNarration(true); });
-  gateOffBtn.addEventListener('click', (e) => { e.stopPropagation(); startWithNarration(false); });
+  // Start the typewriter on the initial overlay
+  const protoText = document.getElementById('term-overlay-proto-text');
+  setTimeout(() => typeOverlayText(protoText, '// SELECT YOUR MODE'), 500);
 })();
 </script>
