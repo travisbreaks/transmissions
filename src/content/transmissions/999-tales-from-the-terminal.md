@@ -235,6 +235,31 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   // --- Audio config ---
   const AUDIO_BASE = 'https://assets.travisbreaks.com/transmissions/999-tales-from-the-terminal';
 
+  // Unlock audio on mobile: play a tiny silent buffer during user gesture
+  // so subsequent async play() calls aren't blocked by autoplay policy
+  let audioUnlocked = false;
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    // Method 1: AudioContext (covers most mobile browsers)
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+      // Keep context alive for the session
+      if (ctx.state === 'suspended') ctx.resume();
+    } catch(e) {}
+    // Method 2: silent HTML audio element (iOS Safari belt-and-suspenders)
+    try {
+      const silent = new Audio();
+      silent.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAFeANX9AAACM2JKv8xgAIAAA0gAAABAcIAKgiMeAFCAGP/5cEIQgAYEQMf/ygIAgCAIfu/9QEP/KAgCAJ/8oCAIeD4Pg+8HwfB8HwfB8AAAB8HwfB9/4AAAAAAf/7UMQFgAAADSAAAAAAAANIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMRDAAAADSAAAAAAAAA0gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
+      silent.play().catch(() => {});
+    } catch(e) {}
+  }
+
   // Display names, model tags, and CSS class per speaker
   const SPEAKER_META = {
     tadao_ando: { display: 'TADAO ANDO', model: 'claude-opus-4-6 · VS Code', css: 'tadao' },
@@ -422,7 +447,8 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       if (asideAudio) { asideAudio.pause(); asideAudio = null; }
     } else if (body.dataset.started) {
-      // Turning ON mid-play — show pending state
+      // Turning ON mid-play — unlock audio on this gesture, show pending state
+      unlockAudio();
       audioEnabled = true;
       setAudioState(true, true);
     } else {
@@ -826,6 +852,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
     // Wire up gate buttons
     gate.querySelector('.term-gate-on').addEventListener('click', (e) => {
       e.stopPropagation();
+      unlockAudio();
       gate.remove();
       hl.style.display = '';
       body.dataset.started = '1';
@@ -907,6 +934,8 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   const headerLine = body.querySelector('.term-header-line');
 
   function startWithNarration(enabled) {
+    // Unlock audio pipeline on user gesture (mobile browsers block async play)
+    if (enabled) unlockAudio();
     setAudioState(enabled, false);
 
     // Remove gate, show header
