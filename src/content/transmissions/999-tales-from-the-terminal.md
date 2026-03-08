@@ -227,7 +227,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px; cursor: pointer;
-  width: 150px; height: 150px;
+  width: 170px; height: 170px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 12px;
   font-family: var(--tr-font); transition: all 0.25s ease;
@@ -239,17 +239,17 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 }
 .term-overlay-btn:active { transform: translateY(0); }
 .term-overlay-icon {
-  width: 28px; height: 28px;
-  fill: var(--tr-text); stroke: var(--tr-text);
+  width: 32px; height: 32px;
+  fill: #e0e0e0; stroke: #e0e0e0;
   transition: all 0.25s;
 }
 .term-overlay-btn-label {
-  font-size: 13px; font-weight: 600; letter-spacing: 1px;
-  color: var(--tr-text); transition: color 0.25s;
+  font-size: 14px; font-weight: 600; letter-spacing: 1px;
+  color: #e0e0e0; transition: color 0.25s;
 }
 .term-overlay-btn-sub {
-  font-size: 10px; color: var(--tr-text); opacity: 0.55;
-  letter-spacing: 0.3px; transition: opacity 0.25s;
+  font-size: 11px; color: #b0b0b0;
+  letter-spacing: 0.3px; transition: color 0.25s;
 }
 .term-overlay-narrate:hover {
   border-color: rgba(5, 217, 232, 0.4);
