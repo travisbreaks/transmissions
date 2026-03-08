@@ -11,7 +11,7 @@ tags: ["dashboard", "ai", "stats", "r2", "visualization", "public-facing"]
 stack: ["React 19", "Vite 7", "Tailwind 4", "Framer Motion"]
 deploy_url: "https://travisbreaks.org/overture/"
 git_dir: "overture"
-phases: ["Current Sprint", "Portfolio Foundation", "Asset Hosting & Domains"]
+phases: ["Portfolio Sites", "Domain + Email Infrastructure"]
 date: 2026-01-10
 ---
 

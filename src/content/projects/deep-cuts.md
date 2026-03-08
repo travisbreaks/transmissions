@@ -1,17 +1,17 @@
 ---
 name: "deep-cuts"
 category: "Tech (Core)"
-status: "PRIORITIZE"
+status: "WATCH"
 enjoyment: 9
-resources: 6
+resources: 4
 viability: 8
 scale: 9
-action: "Scaffolded. YouTube/podcast → transcribe → LLM analyze → semantic search + infographics. Worker + Next.js 15 frontend (port 3002). Postgres+pgvector. NOT committed yet."
+action: "Scaffolded, 5 TODO stubs blocking. YouTube transcript + MP3/WAV download tooling has standalone utility (cover song Suno workflow). Consider extracting those tools before full pipeline build."
 tags: ["pipeline", "ai", "media", "transcription", "semantic-search", "infographics"]
 stack: ["TypeScript", "Next.js 15", "Postgres", "pgvector", "Claude Sonnet", "Whisper", "SQLite"]
 deploy_url: ""
 git_dir: "deep-cuts"
-phases: ["Discovery Engine", "Music Catalog Deep Dive"]
+phases: ["Portfolio Sites"]
 date: 2026-02-20
 ---
 

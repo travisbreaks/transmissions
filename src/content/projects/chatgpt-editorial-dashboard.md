@@ -11,7 +11,7 @@ tags: ["analytics", "editorial", "visualization", "developer-tools"]
 stack: ["React 19", "Vite 7", "Tailwind 4", "Recharts", "TanStack Virtual"]
 deploy_url: ""
 git_dir: ""
-phases: ["Quality Sprint"]
+phases: ["Transmissions", "Canon + Voice"]
 date: 2026-02-22
 ---
 

@@ -1,17 +1,17 @@
 ---
 name: "Binary Protocol"
 category: "Tech (Core)"
-status: "BUILD NOW"
+status: "WATCH"
 enjoyment: 9
-resources: 8
+resources: 3
 viability: 7
 scale: 4
-action: "Phase 3 complete locally (SuperCollider clock, WS server, OSC bridge). Phase 2: React frontend HUD with WS hook + Zustand store. Phase 3 blocked: Buffer.read audio sample wiring in SuperCollider."
+action: "Phase 2 React frontend done. Phase 3 blocked on SuperCollider Buffer.read expertise. Fun project but deprioritized behind paid work and content pipeline."
 tags: ["audio", "supercollider", "websocket", "osc", "real-time", "visualization"]
 stack: ["SuperCollider", "Python", "WebSocket", "OSC", "React 19", "Zustand"]
 deploy_url: ""
 git_dir: "binary-protocol"
-phases: ["Current Sprint"]
+phases: ["Portfolio Sites"]
 date: 2026-01-15
 ---
 

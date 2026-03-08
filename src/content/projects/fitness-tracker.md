@@ -11,6 +11,7 @@ tags: ["pwa", "fitness", "voice", "pocketbase"]
 stack: ["React 19", "PocketBase", "React Query", "PWA", "Voice API"]
 deploy_url: ""
 git_dir: "fitness-tracker"
+phases: ["Portfolio Sites"]
 date: 2025-06-01
 ---
 

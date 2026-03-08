@@ -11,7 +11,7 @@ tags: ["r3f", "music", "visualization", "webgl"]
 stack: ["React 19", "React Three Fiber", "Three.js", "Postprocessing"]
 deploy_url: ""
 git_dir: "visualizer"
-phases: ["Adaptive Music Experience"]
+phases: ["Portfolio Sites"]
 date: 2025-01-01
 ---
 

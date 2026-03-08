@@ -11,7 +11,7 @@ tags: ["finance", "data", "api", "python", "fastapi", "react"]
 stack: ["React 19", "Vite 7", "FastAPI", "Python", "SQLite"]
 deploy_url: ""
 git_dir: "market-lab"
-phases: ["Discovery Engine"]
+phases: ["Portfolio Sites"]
 date: 2026-02-10
 ---
 

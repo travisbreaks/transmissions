@@ -11,7 +11,7 @@ tags: ["blog", "ssg", "content", "seo", "astro"]
 stack: ["Astro 5", "Content Collections", "Markdown", "CSS Custom Properties"]
 deploy_url: "https://travisbreaks.org/transmissions/"
 git_dir: "travisbreaks-blog"
-phases: ["Portfolio Backlog", "Portfolio Foundation", "Discovery Engine", "CI/CD"]
+phases: ["Transmissions", "Portfolio Sites"]
 date: 2026-02-18
 ---
 

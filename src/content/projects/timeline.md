@@ -11,7 +11,7 @@ tags: ["personal", "narrative", "visualization", "three.js", "react"]
 stack: ["React 19", "Vite 7", "Three.js", "Framer Motion"]
 deploy_url: ""
 git_dir: "timeline"
-phases: ["Portfolio Backlog"]
+phases: ["Portfolio Sites"]
 date: 2026-01-20
 ---
 

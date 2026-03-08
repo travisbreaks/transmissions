@@ -11,7 +11,7 @@ tags: ["visualization", "systems", "ai", "agents", "mcp", "architecture"]
 stack: ["React 19", "Vite 7", "D3.js", "Framer Motion"]
 deploy_url: ""
 git_dir: "orchestration-map"
-phases: ["Current Sprint", "Discovery Engine", "Foundation"]
+phases: ["Portfolio Sites"]
 date: 2026-02-01
 ---
 

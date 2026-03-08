@@ -11,6 +11,7 @@ tags: ["seo", "geo", "infrastructure", "discovery"]
 stack: ["Netlify Prerender", "JSON-LD", "Schema.org", "robots.txt"]
 deploy_url: ""
 git_dir: ""
+phases: ["Online Presence + Social", "Portfolio Sites"]
 date: 2026-02-01
 ---
 

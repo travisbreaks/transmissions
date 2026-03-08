@@ -1,17 +1,17 @@
 ---
 name: "travisBREAKS v2 (Rabbit Hole)"
 category: "Creative"
-status: "BUILD NOW"
+status: "WATCH"
 enjoyment: 10
-resources: 10
+resources: 3
 viability: 10
 scale: 9
-action: "ACTIVE REBUILD. Next.js 15, GSAP+Lenis, Zustand. 5 phases scaffolded, 61 pages, 165 content items. Port 3001."
+action: "PARKED. Next.js 15 rebuild waiting on v1 maturity. Keep building v1 pages/personas, then transition everything. The bigger v1 gets, the bigger this project becomes."
 tags: ["portfolio", "web", "next.js", "gsap", "lenis", "zustand"]
 stack: ["Next.js 15", "GSAP", "Lenis", "Zustand", "Tailwind v4"]
 deploy_url: ""
 git_dir: "travisbreaks-site-v2"
-phases: ["Portfolio Backlog", "Portfolio Foundation", "Adaptive Music Experience", "Discovery Engine", "Music Catalog Deep Dive"]
+phases: ["Portfolio Sites", "Canon + Voice"]
 date: 2026-02-19
 ---
 
