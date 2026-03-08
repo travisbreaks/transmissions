@@ -1,4 +1,9 @@
-MIT License
+This project uses a dual license:
+
+## Code (MIT License)
+
+All source code (Astro configuration, components, scripts, styles, and build
+tooling) is licensed under the MIT License.
 
 Copyright (c) 2025-2026 Travis Bonnet
 
@@ -19,3 +24,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+## Written Content (CC BY-NC-ND 4.0)
+
+All written content in src/content/transmissions/ is licensed under the
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International
+License.
+
+You are free to:
+  - Share: copy and redistribute the material in any medium or format
+
+Under the following terms:
+  - Attribution: You must give appropriate credit, provide a link to the
+    license, and indicate if changes were made.
+  - NonCommercial: You may not use the material for commercial purposes.
+  - NoDerivatives: If you remix, transform, or build upon the material,
+    you may not distribute the modified material.
+
+Full license text: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+
+Copyright (c) 2025-2026 Travis Bonnet. All rights reserved.
