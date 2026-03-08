@@ -224,31 +224,31 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   animation: term-fade-in 0.5s ease 0.8s forwards;
 }
 .term-overlay-btn {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px; cursor: pointer;
-  padding: 20px 28px; display: flex; flex-direction: column;
-  align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; cursor: pointer;
+  width: 150px; height: 150px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
   font-family: var(--tr-font); transition: all 0.25s ease;
-  min-width: 150px;
 }
 .term-overlay-btn:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.22);
   transform: translateY(-2px);
 }
 .term-overlay-btn:active { transform: translateY(0); }
 .term-overlay-icon {
-  width: 24px; height: 24px;
-  fill: var(--tr-dim); stroke: var(--tr-dim);
+  width: 28px; height: 28px;
+  fill: var(--tr-text); stroke: var(--tr-text);
   transition: all 0.25s;
 }
 .term-overlay-btn-label {
   font-size: 12px; font-weight: 600; letter-spacing: 1px;
-  color: var(--tr-dim); transition: color 0.25s;
+  color: var(--tr-text); transition: color 0.25s;
 }
 .term-overlay-btn-sub {
-  font-size: 9px; color: var(--tr-dim); opacity: 0.5;
+  font-size: 9px; color: var(--tr-text); opacity: 0.45;
   letter-spacing: 0.3px; transition: opacity 0.25s;
 }
 .term-overlay-narrate:hover {
@@ -257,18 +257,18 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 }
 .term-overlay-narrate:hover .term-overlay-icon { fill: var(--tr-cyan); stroke: var(--tr-cyan); }
 .term-overlay-narrate:hover .term-overlay-btn-label { color: var(--tr-cyan); }
-.term-overlay-narrate:hover .term-overlay-btn-sub { opacity: 0.8; }
+.term-overlay-narrate:hover .term-overlay-btn-sub { opacity: 0.7; color: var(--tr-cyan); }
 .term-overlay-read:hover {
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.3);
 }
-.term-overlay-read:hover .term-overlay-icon { fill: var(--tr-text); stroke: var(--tr-text); }
-.term-overlay-read:hover .term-overlay-btn-label { color: var(--tr-text); }
-.term-overlay-read:hover .term-overlay-btn-sub { opacity: 0.8; }
+.term-overlay-read:hover .term-overlay-icon { fill: #fff; stroke: #fff; }
+.term-overlay-read:hover .term-overlay-btn-label { color: #fff; }
+.term-overlay-read:hover .term-overlay-btn-sub { opacity: 0.7; }
 @media (max-width: 480px) {
-  .term-overlay-buttons { flex-direction: column; gap: 12px; width: 100%; }
-  .term-overlay-btn { min-width: unset; padding: 16px 20px; flex-direction: row; gap: 14px; }
+  .term-overlay-buttons { flex-direction: column; gap: 12px; width: 100%; max-width: 280px; }
+  .term-overlay-btn { width: 100%; height: auto; padding: 16px 20px; flex-direction: row; justify-content: flex-start; gap: 14px; }
   .term-overlay-btn-sub { display: none; }
-  .term-overlay-icon { width: 20px; height: 20px; }
+  .term-overlay-icon { width: 22px; height: 22px; }
 }
 .term-mute-btn {
   background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
