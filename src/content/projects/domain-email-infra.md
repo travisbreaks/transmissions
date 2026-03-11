@@ -6,7 +6,7 @@ enjoyment: 5
 resources: 9
 viability: 10
 scale: 3
-action: "travisfixes.com fully operational. Pending Travis manual actions: travisbreaks.com DKIM, horny-toad.org NS, travisbreaks.org DNS migration. Then travisbonnet.com transfer from Google/Squarespace."
+action: "travisfixes.com fully operational. Pending Travis manual actions: travisbreaks.com DKIM, horny-toad.com NS, travisbreaks.org DNS migration. Then travisbonnet.com transfer from Google/Squarespace."
 tags: ["infrastructure", "email", "dns", "cloudflare", "domains"]
 stack: ["Cloudflare", "Resend", "Gmail", "Netlify", "R2"]
 deploy_url: ""

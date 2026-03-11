@@ -1,0 +1,46 @@
+# travisbreaks.org — Transmissions
+
+> Long-form essays on AI, consciousness, recovery, grief, creative process, and systems thinking by Travis Bonnet (travisBREAKS).
+
+## About
+
+Transmissions is a collection of 55+ essays exploring the intersection of technology, human experience, and creative practice. Written by Travis Bonnet, a creative technologist in recovery, building AI systems and reflecting on what it means to be human alongside machines.
+
+## Content
+
+Essays are organized by tags:
+- **process**: Creative workflow, iteration, craft
+- **protocol**: Systems, rules, constraints as features
+- **self**: Identity, recovery, personal archaeology
+- **signal**: Music, audio, sonic practice
+- **sonic**: Sound design, production, listening
+- **systems**: Architecture, infrastructure, engineering
+- **void**: Loss, absence, what remains
+- **grief**: Processing loss through building
+- **worlds**: Worldbuilding, imagination, possibility space
+
+## Key Transmissions
+
+- [001: Archive of Becoming](https://travisbreaks.org/transmissions/001-archive-of-becoming/): Genesis essay on building as self-documentation
+- [049: Thoughtcrimes](https://travisbreaks.org/transmissions/049-thoughtcrimes/): Voice calibration gold standard
+- [055: Pain as Signal](https://travisbreaks.org/transmissions/055-pain-as-signal/): Scholarly and personal integration
+
+## Format
+
+Each transmission includes:
+- Full essay text (~1500-2500 words)
+- Audio narration (TTS via ElevenLabs)
+- Confidence score (50-100)
+- Tags for categorization
+- Key quote highlight
+
+## Feeds
+
+- [RSS](https://travisbreaks.org/rss.xml)
+- [Sitemap](https://travisbreaks.org/transmissions/sitemap-index.xml)
+
+## Related Sites
+
+- [travisbreaks.com](https://travisbreaks.com): Creative portfolio hub
+- [travisfixes.com](https://travisfixes.com): AI consulting
+- [travismakes.org](https://travismakes.org): Research prototypes

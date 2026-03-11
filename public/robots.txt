@@ -1,7 +1,14 @@
 User-agent: *
 Allow: /
 
+# AI Search Bots (allow - these serve search results)
 User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: Google-Extended
@@ -10,7 +17,13 @@ Allow: /
 User-agent: Claude-Web
 Allow: /
 
+User-agent: ClaudeBot
+Allow: /
+
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://travisbreaks.org/transmissions/sitemap-index.xml
