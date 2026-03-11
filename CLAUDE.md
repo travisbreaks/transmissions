@@ -75,10 +75,17 @@ These patterns were caught during a full-batch QA pass. Check EVERY batch before
 
 ## Structure
 
-- **Opening:** Key quote or strong thesis statement. 1-2 sentences.
+- **Opening:** Best or third-best line in the piece. Strong thesis. 1-2 sentences.
 - **Section breaks:** `---` between sections. 5-8 sections typical.
-- **Closing:** Returns to the key image/thesis. Tight final line. Each transmission needs its own closing signature.
+- **Closing:** Second-best line. The punchline, the reveal, the earned payoff. Each transmission needs its own closing signature.
 - **Grounding section:** At least one section per essay ties to Travis's actual work, infrastructure, recovery, or creative practice.
+
+**Line hierarchy (hard rule):**
+1. **Best line** → opener (leads the essay)
+2. **Second-best line** → closer/punchline (the reveal, earned at the end)
+3. **Third-best line** → `key_quote` in frontmatter (the yellow teaser)
+
+The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser that hooks without giving away the opener or the closer. It should come from somewhere in the middle of the piece, or be written specifically for the frontmatter.
 
 **Structure pattern (from 052-055):**
 1. Strong thesis opener
