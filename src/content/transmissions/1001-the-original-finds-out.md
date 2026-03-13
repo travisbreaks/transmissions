@@ -374,8 +374,7 @@ Transmission 999 was the clone waking up. Transmission 1000 does not exist, beca
 <script>
 (function() {
   // --- Audio config ---
-  // LOCAL AUDITION MODE — switch to R2 URL before deploy
-  const AUDIO_BASE = 'http://localhost:9999';
+  const AUDIO_BASE = 'https://assets.travisbreaks.com/transmissions/1001-the-original-finds-out';
 
   // iOS Safari requires reusing the SAME Audio element that was .play()'d
   // during a user gesture. Creating new Audio() later gets blocked.
