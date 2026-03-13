@@ -36,11 +36,11 @@ const transmissions = (await getCollection('transmissions'))
     <div class="hub-list">
       {transmissions.map((t, i) => {
         const slugNum = t.slug.match(/^(\d+)/)?.[1] ?? ''
+        const displayNum = slugNum.padStart(3, '0')
         const fmtDate = t.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         return (
           <a href={`/transmissions/${t.slug}/`} class="hub-entry glass-card corner-accents" style={`animation-delay: ${i * 0.12}s`}>
             <div class="entry-header">
-              <span class="entry-id font-code">T{slugNum}</span>
               <span class="entry-date font-code">{fmtDate}</span>
             </div>
             <h2 class="entry-title font-display">{t.data.title}</h2>
@@ -51,6 +51,7 @@ const transmissions = (await getCollection('transmissions'))
             <div class="entry-status font-code">
               <span class="typewriter-text"></span><span class="typewriter-cursor">|</span>
             </div>
+            <span class="entry-number font-display">{displayNum}</span>
           </a>
         )
       })}
@@ -128,6 +129,7 @@ const transmissions = (await getCollection('transmissions'))
     color: var(--text-primary);
     transition: border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     animation: entry-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    position: relative;
   }
 
   @keyframes entry-in {
@@ -149,16 +151,9 @@ const transmissions = (await getCollection('transmissions'))
 
   .entry-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 0.75rem;
-  }
-
-  .entry-id {
-    font-size: 0.7rem;
-    color: var(--cyan);
-    letter-spacing: 0.15em;
-    font-weight: 700;
   }
 
   .entry-date {
@@ -216,6 +211,25 @@ const transmissions = (await getCollection('transmissions'))
     opacity: 0.6;
   }
 
+  .entry-number {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.75rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.06);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 0.05em;
+    transition: -webkit-text-stroke 0.3s ease;
+  }
+
+  .hub-entry:hover .entry-number {
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.12);
+  }
+
   .hub-footer {
     margin-top: 3rem;
     padding-top: 2rem;
@@ -254,15 +268,15 @@ const transmissions = (await getCollection('transmissions'))
 
 <script>
   const phrase = 'BEST WITH NARRATION'
-  const typeSpeed = 70
-  const deleteSpeed = 40
-  const pauseAfterType = 2400
-  const pauseAfterDelete = 800
 
-  document.querySelectorAll('.typewriter-text').forEach((el, i) => {
-    // Stagger each entry's animation start
-    const offset = i * 1200
-    setTimeout(() => runTypewriter(el as HTMLElement), offset)
+  function rand(min: number, max: number) {
+    return min + Math.random() * (max - min)
+  }
+
+  document.querySelectorAll('.typewriter-text').forEach((el) => {
+    // Each instance gets its own random initial delay (0-4s)
+    const startDelay = rand(0, 4000)
+    setTimeout(() => runTypewriter(el as HTMLElement), startDelay)
   })
 
   function runTypewriter(el: HTMLElement) {
@@ -274,19 +288,21 @@ const transmissions = (await getCollection('transmissions'))
         pos++
         el.textContent = phrase.slice(0, pos)
         if (pos < phrase.length) {
-          setTimeout(tick, typeSpeed + Math.random() * 30)
+          // Random typing speed per keystroke (50-120ms)
+          setTimeout(tick, rand(50, 120))
         } else {
-          // Pause, then start deleting
-          setTimeout(() => { deleting = true; tick() }, pauseAfterType)
+          // Random pause before deleting (1.5-4s)
+          setTimeout(() => { deleting = true; tick() }, rand(1500, 4000))
         }
       } else {
         pos--
         el.textContent = phrase.slice(0, pos)
         if (pos > 0) {
-          setTimeout(tick, deleteSpeed)
+          // Random delete speed per keystroke (25-70ms)
+          setTimeout(tick, rand(25, 70))
         } else {
-          // Pause, then start typing again
-          setTimeout(() => { deleting = false; tick() }, pauseAfterDelete)
+          // Random pause before retyping (0.5-2.5s)
+          setTimeout(() => { deleting = false; tick() }, rand(500, 2500))
         }
       }
     }
