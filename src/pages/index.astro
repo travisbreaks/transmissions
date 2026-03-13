@@ -91,7 +91,7 @@ const description = `${transmissions.length} philosophical transmissions on AI i
           confidence={t.data.confidence}
           tags={t.data.tags}
           keyQuote={t.data.key_quote}
-          summary={t.body?.replace(/<[^>]*>/g, '').replace(/^---[\s\S]*?---/, '').replace(/\n/g, ' ').trim().substring(0, 200) ?? ''}
+          summary={t.body?.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<[^>]*>/g, '').replace(/^---[\s\S]*?---/, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200) ?? ''}
           index={i}
         />
       ))}
