@@ -36,14 +36,15 @@ const transmissions = (await getCollection('transmissions'))
     <div class="hub-list">
       {transmissions.map((t, i) => {
         const slugNum = t.slug.match(/^(\d+)/)?.[1] ?? ''
-        const displayNum = slugNum.padStart(3, '0')
+        const num = parseInt(slugNum, 10)
+        const displayNum = num >= 999 ? 'T' + slugNum : slugNum.padStart(3, '0')
         const fmtDate = t.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         return (
           <a href={`/transmissions/${t.slug}/`} class="hub-entry glass-card corner-accents" style={`animation-delay: ${i * 0.12}s`}>
             <div class="entry-header">
+              <h2 class="entry-title font-display">{t.data.title}</h2>
               <span class="entry-date font-code">{fmtDate}</span>
             </div>
-            <h2 class="entry-title font-display">{t.data.title}</h2>
             <p class="entry-desc font-code">{t.data.description}</p>
             <blockquote class="entry-quote font-body">
               &ldquo;{t.data.key_quote}&rdquo;
@@ -151,22 +152,23 @@ const transmissions = (await getCollection('transmissions'))
 
   .entry-header {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 0.75rem;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
   }
 
   .entry-date {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     letter-spacing: 0.1em;
+    flex-shrink: 0;
+    margin-left: 1rem;
   }
 
   .entry-title {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
     transition: color 0.2s ease;
   }
 
@@ -214,7 +216,7 @@ const transmissions = (await getCollection('transmissions'))
   .entry-number {
     position: absolute;
     bottom: 0.5rem;
-    left: 0.75rem;
+    right: 0.75rem;
     font-size: 2.5rem;
     font-weight: 900;
     line-height: 1;
@@ -268,45 +270,73 @@ const transmissions = (await getCollection('transmissions'))
 
 <script>
   const phrase = 'BEST WITH NARRATION'
+  const els = Array.from(document.querySelectorAll('.typewriter-text')) as HTMLElement[]
+  const count = els.length
+  if (count === 0) throw new Error('no typewriter elements')
+
+  // State per card
+  const state = els.map(() => ({ pos: 0, deleting: false }))
 
   function rand(min: number, max: number) {
     return min + Math.random() * (max - min)
   }
 
-  document.querySelectorAll('.typewriter-text').forEach((el) => {
-    // Each instance gets its own random initial delay (0-4s)
-    const startDelay = rand(0, 4000)
-    setTimeout(() => runTypewriter(el as HTMLElement), startDelay)
-  })
+  // Waterfall: card N starts typing, when ~70% typed the next card begins.
+  // When fully typed, hold briefly then delete. Next card starts typing
+  // as previous begins deleting. Creates a rolling cascade effect.
 
-  function runTypewriter(el: HTMLElement) {
-    let pos = 0
-    let deleting = false
+  let active = 0 // which card is currently in the "typing" lead
 
-    function tick() {
-      if (!deleting) {
-        pos++
-        el.textContent = phrase.slice(0, pos)
-        if (pos < phrase.length) {
-          // Random typing speed per keystroke (50-120ms)
-          setTimeout(tick, rand(50, 120))
-        } else {
-          // Random pause before deleting (1.5-4s)
-          setTimeout(() => { deleting = true; tick() }, rand(1500, 4000))
+  function typeTick(idx: number) {
+    const s = state[idx]
+    const el = els[idx]
+
+    if (!s.deleting) {
+      s.pos++
+      el.textContent = phrase.slice(0, s.pos)
+
+      // When this card hits ~70%, trigger the next card to start typing
+      if (s.pos === Math.floor(phrase.length * 0.7)) {
+        const next = (idx + 1) % count
+        if (state[next].pos === 0 && !state[next].deleting) {
+          setTimeout(() => typeTick(next), rand(200, 500))
         }
+      }
+
+      if (s.pos < phrase.length) {
+        setTimeout(() => typeTick(idx), rand(50, 110))
       } else {
-        pos--
-        el.textContent = phrase.slice(0, pos)
-        if (pos > 0) {
-          // Random delete speed per keystroke (25-70ms)
-          setTimeout(tick, rand(25, 70))
-        } else {
-          // Random pause before retyping (0.5-2.5s)
-          setTimeout(() => { deleting = false; tick() }, rand(500, 2500))
+        // Fully typed: hold, then start deleting
+        setTimeout(() => {
+          s.deleting = true
+          typeTick(idx)
+        }, rand(2000, 3500))
+      }
+    } else {
+      s.pos--
+      el.textContent = phrase.slice(0, s.pos)
+
+      if (s.pos > 0) {
+        setTimeout(() => typeTick(idx), rand(25, 60))
+      } else {
+        // Fully deleted: brief pause, then this card waits
+        // It will be triggered again by the waterfall from the previous card
+        s.deleting = false
+
+        // If this is the last card in the cycle, restart from the first
+        // after a brief pause
+        const next = (idx + 1) % count
+        if (state[next].pos === 0 && !state[next].deleting) {
+          // Check if all cards are idle (cycle complete)
+          const allIdle = state.every(st => st.pos === 0 && !st.deleting)
+          if (allIdle) {
+            setTimeout(() => typeTick(0), rand(800, 1500))
+          }
         }
       }
     }
-
-    tick()
   }
+
+  // Kick off with card 0 after a brief delay
+  setTimeout(() => typeTick(0), rand(300, 800))
 </script>
