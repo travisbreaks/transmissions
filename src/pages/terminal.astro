@@ -3,9 +3,15 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 
+// T053 (Sentinel & Egger) is the origin story, pinned first
+const PIN_FIRST = 53
 const transmissions = (await getCollection('transmissions'))
   .filter(t => t.data.tags.includes('terminal'))
-  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+  .sort((a, b) => {
+    if (a.data.id === PIN_FIRST) return -1
+    if (b.data.id === PIN_FIRST) return 1
+    return a.data.date.getTime() - b.data.date.getTime()
+  })
 ---
 
 <BaseLayout>
