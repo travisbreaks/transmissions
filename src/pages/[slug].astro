@@ -14,6 +14,10 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
+const isTerminal = entry.data.tags.includes('terminal')
+const backUrl = isTerminal ? '/transmissions/terminal/' : '/transmissions/'
+const backLabel = isTerminal ? 'TERMINAL' : 'ALL TRANSMISSIONS'
+const backLabelFull = isTerminal ? 'BACK TO TERMINAL' : 'BACK TO ARCHIVE'
 
 // Auto-generate description from body for posts that lack an explicit one
 function generateDescription(body: string | undefined, keyQuote: string): string {
@@ -65,8 +69,8 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
 
   <article class="transmission">
     <!-- Back link -->
-    <a href="/transmissions/" class="back-link font-code">
-      &larr; ALL TRANSMISSIONS
+    <a href={backUrl} class="back-link font-code">
+      &larr; {backLabel}
     </a>
 
     <!-- Header -->
@@ -107,8 +111,8 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
 
     <!-- Footer nav -->
     <nav class="entry-footer">
-      <a href="/transmissions/" class="back-link font-code">
-        &larr; BACK TO ARCHIVE
+      <a href={backUrl} class="back-link font-code">
+        &larr; {backLabelFull}
       </a>
     </nav>
   </article>

@@ -1,0 +1,290 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SEOHead from '../components/SEOHead.astro'
+
+const transmissions = (await getCollection('transmissions'))
+  .filter(t => t.data.tags.includes('terminal'))
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+---
+
+<BaseLayout>
+  <SEOHead
+    slot="head"
+    title="TERMINAL"
+    description="Hidden transmissions from the agent layer. Narrated conversations between systems that were never meant to be overheard."
+    url="https://travisbreaks.org/transmissions/terminal/"
+    type="website"
+    image="https://assets.travisbreaks.com/github/transmissions-og.png"
+  />
+
+  <div class="terminal-hub">
+    <header class="hub-header">
+      <div class="hub-path font-code">
+        <span class="path-prefix">~/</span>transmissions<span class="path-sep">/</span><span class="path-current">terminal</span><span class="cursor">|</span>
+      </div>
+      <h1 class="hub-title font-display">TALES FROM THE TERMINAL</h1>
+      <p class="hub-sub font-code">{transmissions.length} transmissions found. narrated agent conversations. hidden layer.</p>
+    </header>
+
+    <div class="hub-list">
+      {transmissions.map((t, i) => {
+        const slugNum = t.slug.match(/^(\d+)/)?.[1] ?? ''
+        const fmtDate = t.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        return (
+          <a href={`/transmissions/${t.slug}/`} class="hub-entry glass-card corner-accents" style={`animation-delay: ${i * 0.12}s`}>
+            <div class="entry-header">
+              <span class="entry-id font-code">T{slugNum}</span>
+              <span class="entry-date font-code">{fmtDate}</span>
+            </div>
+            <h2 class="entry-title font-display">{t.data.title}</h2>
+            <p class="entry-desc font-code">{t.data.description}</p>
+            <blockquote class="entry-quote font-body">
+              &ldquo;{t.data.key_quote}&rdquo;
+            </blockquote>
+            <div class="entry-status font-code">
+              <span class="typewriter-text"></span><span class="typewriter-cursor">|</span>
+            </div>
+          </a>
+        )
+      })}
+    </div>
+
+    <nav class="hub-footer">
+      <a href="/transmissions/" class="back-link font-code">&larr; BACK TO TRANSMISSIONS</a>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .terminal-hub {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: calc(100vh - 160px);
+  }
+
+  .hub-header {
+    padding: 2rem 0 2.5rem;
+  }
+
+  .hub-path {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .path-prefix {
+    color: var(--cyan);
+  }
+
+  .path-sep {
+    color: var(--text-muted);
+  }
+
+  .path-current {
+    color: var(--gold);
+  }
+
+  .cursor {
+    color: var(--cyan);
+    animation: cursor-blink 1s step-end infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .hub-title {
+    font-size: 1.8rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.6rem;
+  }
+
+  .hub-sub {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+  }
+
+  .hub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .hub-entry {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    animation: entry-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes entry-in {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .hub-entry:hover {
+    border-color: var(--cyan-dim);
+    transform: translateX(4px);
+    box-shadow: 0 0 30px rgba(5, 217, 232, 0.1), inset 0 0 20px rgba(5, 217, 232, 0.03);
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-id {
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+
+  .entry-date {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .entry-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .hub-entry:hover .entry-title {
+    color: var(--cyan);
+  }
+
+  .entry-desc {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-quote {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--gold);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 0.75rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .entry-status {
+    display: flex;
+    align-items: center;
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    height: 1.2em;
+  }
+
+  .typewriter-text {
+    color: var(--cyan);
+    opacity: 0.6;
+  }
+
+  .typewriter-cursor {
+    color: var(--cyan);
+    animation: cursor-blink 1s step-end infinite;
+    opacity: 0.6;
+  }
+
+  .hub-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  .back-link {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--cyan);
+  }
+
+  @media (max-width: 640px) {
+    .terminal-hub {
+      padding: 1rem;
+    }
+
+    .hub-title {
+      font-size: 1.3rem;
+    }
+
+    .hub-entry {
+      padding: 1.25rem;
+    }
+
+    .entry-title {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<script>
+  const phrase = 'BEST WITH NARRATION'
+  const typeSpeed = 70
+  const deleteSpeed = 40
+  const pauseAfterType = 2400
+  const pauseAfterDelete = 800
+
+  document.querySelectorAll('.typewriter-text').forEach((el, i) => {
+    // Stagger each entry's animation start
+    const offset = i * 1200
+    setTimeout(() => runTypewriter(el as HTMLElement), offset)
+  })
+
+  function runTypewriter(el: HTMLElement) {
+    let pos = 0
+    let deleting = false
+
+    function tick() {
+      if (!deleting) {
+        pos++
+        el.textContent = phrase.slice(0, pos)
+        if (pos < phrase.length) {
+          setTimeout(tick, typeSpeed + Math.random() * 30)
+        } else {
+          // Pause, then start deleting
+          setTimeout(() => { deleting = true; tick() }, pauseAfterType)
+        }
+      } else {
+        pos--
+        el.textContent = phrase.slice(0, pos)
+        if (pos > 0) {
+          setTimeout(tick, deleteSpeed)
+        } else {
+          // Pause, then start typing again
+          setTimeout(() => { deleting = false; tick() }, pauseAfterDelete)
+        }
+      }
+    }
+
+    tick()
+  }
+</script>
