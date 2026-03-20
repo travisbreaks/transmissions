@@ -329,3 +329,7 @@ The agents are powerful local optimizers. They will confidently do the wrong thi
 The system provides global awareness: tracking, rules, memory, oversight. The agents provide local execution: research, code, analysis, speed. The human provides judgment, taste, and accountability.
 
 The agent swarm is not autonomous. It is an instrument. The human plays it.
+
+---
+
+Architecture, templates, and setup guides: [travisbreaks/samaritan](https://github.com/travisbreaks/samaritan)
