@@ -316,7 +316,7 @@ The bottleneck was never the agent's speed. It was the gap between "the agent ne
 
 An agent finishes a fix. It needs a push approved. The human is in the car, or at the grocery store, or asleep. The agent waits. Minutes become hours. Context fills. The session degrades. Momentum, which is the only currency that matters in a long refactor, evaporates.
 
-Tailscale creates an encrypted mesh between all devices. No ports opened on the router, no firewall changes. mosh replaces SSH with a UDP transport that survives phone sleep, cell-to-wifi handoffs, spotty signal. tmux keeps the terminal session alive between connections. Blink Shell on the phone connects through all three layers.
+[Tailscale](https://tailscale.com/) creates an encrypted mesh between all devices. No ports opened on the router, no firewall changes. mosh replaces SSH with a UDP transport that survives phone sleep, cell-to-wifi handoffs, spotty signal. tmux keeps the terminal session alive between connections. [Blink Shell](https://blink.sh/) on the phone connects through all three layers.
 
 The session is always there. Wake the phone, the terminal is current. Approve a push from the couch. Redirect priorities from bed. The structural constraint that made agent-assisted work impractical for anyone who leaves their desk is gone. What remains is the work.
 
