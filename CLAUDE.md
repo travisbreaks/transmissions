@@ -107,7 +107,7 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 ### Phase 2: Editorial Review (Travis + GPT)
 6. Travis reviews draft, takes it through GPT editorial pass
 7. Travis returns edits. Tadao applies them.
-8. Cross-transmission QA: deduplication check, fingerprint scan, absolutes audit
+8. Cross-transmission QA: grep full archive for signature phrases, shared metaphors, retold incidents. This is a blocker, not a suggestion. See "Cross-Transmission Deduplication" section below.
 
 ### Phase 3: TTS + Audio
 9. Extract body text to `body.txt` (strip frontmatter + HTML audio player)
@@ -122,7 +122,8 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 
 ### Phase 5: Commit + Deploy
 16. **ONLY NOW**: stage and commit. Not before.
-17. Push (with Travis approval)
+17. **Each transmission gets its own commit.** Never bundle multiple transmissions in a single commit. Dedup fixes, new essays, and narration additions are separate commits. This keeps the git history readable and makes reverts surgical.
+18. Push (with Travis approval)
 18. Post-deploy verify: `curl -s URL | grep og:`
 
 **CRITICAL: Essays are NOT committed after Phase 1. They are local drafts until all phases are complete.**
