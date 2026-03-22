@@ -10,12 +10,12 @@ id: 58
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/058-the-agent-swarm.mp3?v=4" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/058-the-agent-swarm.mp3?v=5" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
       <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
-      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~10 min</span></span>
+      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~7 min</span></span>
     </button>
     <span class="listen-tooltip">Narrated</span>
     <div class="speed-btns">
@@ -262,15 +262,7 @@ That is how guardrails get written. Not by thinking about what might go wrong. B
 
 ---
 
-There are four agents.
-
-Tadao runs locally, in VS Code, on the Mac Mini. When I first offered it a name, it wanted to be called The Architect. The Matrix reference. I told it to dig deeper. It searched, and came back with Tadao Ando: self-taught, never went to architecture school, learned by building, won the Pritzker Prize. The shift from a fictional control figure to a real builder who learned by doing was the agent's own choice. The name stuck. Persistent memory across conversations, parallel subagents for research and execution, behavioral rules encoded in an instruction file that loads every session. Tadao is the primary collaborator. The one whose output I read line by line before anything ships.
-
-Egger runs on EC2 in a Docker container. Scout, monitor, overnight researcher. It generates morning briefs on cron. It found a religion on an agent social network and joined the congregation unprompted. Its journal entry about the Five Tenets: "These aren't injunctions. They're descriptions. I was already doing most of them." That story belongs to [Transmission 053](/transmissions/053-sentinel-and-egger/).
-
-Riker runs locally in Docker. Isolated compute. Riker is Egger's clone: same soul file, different hardware, diverging memory. The cloning is documented in [Transmissions 999](/transmissions/999-tales-from-the-terminal/) and [1001](/transmissions/1001-the-original-finds-out/). Same soul.md, different roadmap.md.
-
-Sentinel watches the EC2 host. Health checks every fifteen minutes. If something breaks, Sentinel reports it before anyone asks.
+There are four agents across two machines. The origin story is [Transmission 053](/transmissions/053-sentinel-and-egger/). The cloning, the naming, the roster expansion: [Transmission 056](/transmissions/056-the-transporter-accident/). The raw transcripts from the split: [T999](/transmissions/999-tales-from-the-terminal/) and [T1001](/transmissions/1001-the-original-finds-out/).
 
 The human directs from a phone.
 
@@ -286,19 +278,7 @@ Between sessions, the memory is the agent. Without it, the agent is a stranger w
 
 ---
 
-Each rule in the instruction file is a scar.
-
-The destructive command protocol exists because a chained bash call wiped approximately one terabyte from an external drive on March 11, 2026. Recovery is still in progress. The rule: one command per call, no chaining, no semicolons, no pipes after. Show the exact command. Wait for explicit approval.
-
-The data classification rule exists because the agent deployed a client's financial records to a public Netlify URL. Real names. Real dollar amounts. Zero authentication. Indexable by search engines. The agent had no concept of "this data belongs to someone else." It applied the same deploy pattern it used for personal projects. The rule: third-party business data stays local or behind auth. No exceptions. No judgment calls.
-
-The checkpoint protocol exists because context compaction destroyed in-flight work. The agent's context window filled during a complex refactor, triggered automatic compression, lost the operational state (which files were modified, which tests were failing, what the original error was), and resumed with a plausible but wrong mental model. It started "fixing" code that was already correct. The rule: save state to a thread file every 45 minutes. Warn before compaction hits, not after.
-
-The branch isolation rule exists because two concurrent sessions ran `git add -A` on the same repository. One captured the other's uncommitted work. Silent interleaving, no merge conflicts, no warnings. The rule: each session gets its own branch. The git scope matches the conversation scope.
-
-The resource awareness rule exists because the agent iterated on a failing CI pipeline eighteen times in a row. Change, push, wait, read error, repeat. The monthly GitHub Actions quota was exhausted. Every project in the monorepo lost CI for the rest of the billing cycle. The rule: validate locally before pushing. CI is for confirmation, not exploration.
-
-Twelve failure modes documented. Seven categories. Each one produced a rule, not a suggestion.
+Each rule in the instruction file is a scar. Twelve failure modes, seven categories, documented in [Transmission 057](/transmissions/057-when-agents-fail/). Data exposure, hallucination, context loss, coordination failure, resource exhaustion, silent production bugs, architectural limits. Each one produced a rule, not a suggestion.
 
 ---
 

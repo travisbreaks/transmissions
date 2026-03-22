@@ -10,7 +10,7 @@ id: 52
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/052-the-infrastructure-of-being-seen.mp3" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/052-the-infrastructure-of-being-seen.mp3?v=2" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
@@ -267,9 +267,9 @@ This is the problem I kept solving for others, but kept forgetting to solve for 
 
 ## The Pattern
 
-I've been building environments for 25 years. Large-scale art builds, DJ stages, broadcast control rooms, enterprise operations, corporate turnarounds, military logistics, podcast production, documentary post-production, web platforms. The pattern holds: enter a system, build structure, route signal through chaos, scale until the human variable breaks.
+Twenty-five years of building environments for other people. The pattern is consistent: show up, build the structure, make everyone else's work visible, leave without updating the portfolio.
 
-But there is a recurring blind spot. I build for other people's visibility and often forget my own. The burner camp gets built. The startup gets a Kickstarter. The documentary gets art direction. The client gets a shiny new dashboard. My own work sits in a private git repo with no README.
+But there is a recurring blind spot. I build for other people's visibility and forget my own. The client gets a shiny new dashboard. My own work sits in a private git repo with no README.
 
 A signal that nobody receives is just noise with good intentions.
 
@@ -295,7 +295,7 @@ The split between what AI could automate and what it could not was clean. Everyt
 
 ## The Hard Part
 
-I've spent most of my creative life building things that live in rooms, not on screens. Audiovisual DJ sets that exist for four hours and then they are gone. Camp builds that stand for a week and then get broken down or set on fire. Broadcast control rooms invisible to the audience. Turnarounds that happened inside companies nobody outside the company would ever see.
+Most of my creative life produced work that lived in rooms, not on screens. Performances that ended. Structures that came down. Operations invisible to anyone outside the building.
 
 The work was real. The proof was ephemeral.
 

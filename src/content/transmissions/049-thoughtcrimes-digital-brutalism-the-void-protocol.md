@@ -9,7 +9,7 @@ id: 49
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/049-thoughtcrimes-digital-brutalism-the-void-protocol.mp3?v=3" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/049-thoughtcrimes-digital-brutalism-the-void-protocol.mp3?v=4" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
@@ -340,7 +340,7 @@ THOUGHTCRIMES started as four songs that refused to behave. The mixes were harsh
 
 The EP was not difficult to listen to because the production was careless. It was difficult because the production was precise about what it chose not to smooth over. Clipping was left in where clipping communicated something that clean signal could not. Low-end was allowed to push past the point where most engineers would pull it back. The mastering chain did not optimize for loudness. It optimized for pressure.
 
-That is a compositional stance, not a technical failure. The difference matters.
+That is a compositional stance, not a technical failure. The gap between those two readings is the entire point of the EP.
 
 ---
 

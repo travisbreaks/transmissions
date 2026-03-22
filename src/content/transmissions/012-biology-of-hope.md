@@ -15,7 +15,7 @@ That sentence is not reductive. It is the opposite. Emotions are experiences. Bi
 
 ---
 
-The body maintains a chemical environment that shapes cognition. This is not controversial. It is introductory neuroscience. Serotonin modulates mood, appetite, and sleep. Dopamine drives reward prediction and motivation. Cortisol mediates the stress response. GABA and glutamate balance inhibition and excitation across the entire nervous system.
+The body maintains a chemical environment that shapes cognition. Introductory neuroscience, well-established. Serotonin modulates mood, appetite, and sleep. Dopamine drives reward prediction and motivation. Cortisol mediates the stress response. GABA and glutamate balance inhibition and excitation across the entire nervous system.
 
 What is less commonly discussed is the degree to which these chemicals respond to behavioral inputs. Not pharmaceutical inputs. Behavioral ones. Movement, light exposure, breath patterns, gut composition: these are not wellness trends. They are upstream regulators of the neurochemical environment that determines whether hope feels available or impossible.
 
@@ -39,7 +39,7 @@ The diaphragm operates automatically, keeping the body alive without conscious p
 
 Extended exhale breathing (exhale longer than inhale, roughly a 4:6 or 4:8 ratio) activates the vagus nerve and shifts autonomic tone toward parasympathetic dominance. Heart rate slows. Blood pressure drops. The HPA axis dials down cortisol production. The subjective experience is: the world becomes slightly less threatening.
 
-This is not relaxation in the spa sense. It is a hardware-level state change. The vagus nerve is a bidirectional highway between the brainstem and the viscera. Stimulating it through breath changes the signal environment that the brain uses to assess threat. When the vagal tone is high, the default appraisal shifts from "something is wrong" to "the situation is manageable." That shift is what hope feels like from inside the nervous system.
+A hardware-level state change, not relaxation in the spa sense. The vagus nerve is a bidirectional highway between the brainstem and the viscera. Stimulating it through breath changes the signal environment that the brain uses to assess threat. When the vagal tone is high, the default appraisal shifts from "something is wrong" to "the situation is manageable." That shift is what hope feels like from inside the nervous system.
 
 Box breathing, physiological sighs, Wim Hof protocols: these are not alternative medicine. They are user-level access to the autonomic API.
 
@@ -77,7 +77,7 @@ The spiral works in both directions. Disrupt one input and the others degrade. F
 
 This is not self-help. This is infrastructure.
 
-The distinction matters. Self-help implies that the problem is motivational and the solution is inspirational. The biology of hope implies that the problem is architectural and the solution is environmental. Belief is not the variable. Inputs are.
+The framing is structural, not semantic. Self-help implies that the problem is motivational and the solution is inspirational. The biology of hope implies that the problem is architectural and the solution is environmental. Belief is not the variable. Inputs are.
 
 Hope is not a feeling to be summoned. It is a state the body produces when the conditions are right. The conditions are not mystical. They are light, air, food, and movement. The body is not waiting for permission to feel hope. It is waiting for the raw materials.
 

@@ -17,7 +17,7 @@ Not the difficult problem. The difficult person, the difficult situation, the di
 
 Grit without grace is just stubbornness.
 
-The hustle-culture version of persistence is pure mechanics: keep going, push harder, never quit. It treats the human as a machine with a willpower fuel tank. When the tank empties, refill it with motivational content and resume. The model is hydraulic and it breaks people. Not because persistence is wrong, but because persistence without compassion is self-punishment rebranded as discipline.
+The hustle-culture version of persistence is pure mechanics: keep going, push harder, never quit. It treats the human as a machine with a willpower fuel tank. When the tank empties, refill it with motivational content and resume. The model is mechanical and it breaks people. Not because persistence is wrong, but because persistence without compassion is self-punishment rebranded as discipline.
 
 The people who actually last, the ones who are still building after ten years when everyone who started with them burned out or pivoted to something easier, have something the grit model does not account for. They can forgive themselves for the days that do not work. They can sit with a failed attempt without interpreting it as evidence of personal inadequacy. They can hold the standard and the shortfall simultaneously without either one canceling the other.
 
