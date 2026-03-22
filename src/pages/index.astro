@@ -6,7 +6,7 @@ import TransmissionCard from '../components/TransmissionCard.astro'
 import EmailCapture from '../components/EmailCapture.astro'
 
 const transmissions = (await getCollection('transmissions'))
-  .filter(t => !t.data.tags.includes('terminal'))
+  .filter(t => t.data.id < 999 || !t.data.tags.includes('terminal'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 
 // Collect all unique tags across entries
