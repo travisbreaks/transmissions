@@ -3,7 +3,8 @@
 A curated archive of philosophical essays on AI interaction, consciousness, grief, and creative process.
 
 [![Live Site](https://img.shields.io/badge/live-travisbreaks.org-brightgreen)](https://travisbreaks.org/transmissions/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
+[![Content: CC BY-NC-ND 4.0](https://img.shields.io/badge/content-CC_BY--NC--ND_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Astro](https://img.shields.io/badge/Astro-5-ff5d01)](https://astro.build)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://typescriptlang.org)
 
