@@ -1,11 +1,12 @@
 ---
 import { getCollection } from 'astro:content'
+import { published } from '../lib/published'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import TransmissionCard from '../components/TransmissionCard.astro'
 import EmailCapture from '../components/EmailCapture.astro'
 
-const transmissions = (await getCollection('transmissions'))
+const transmissions = published(await getCollection('transmissions'))
   .filter(t => t.data.id < 999 || !t.data.tags.includes('terminal'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 

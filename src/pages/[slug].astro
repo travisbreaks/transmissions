@@ -4,9 +4,10 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import EmailCapture from '../components/EmailCapture.astro'
 import ReadAlong from '../components/ReadAlong.astro'
+import { published } from '../lib/published'
 
 export async function getStaticPaths() {
-  const transmissions = await getCollection('transmissions')
+  const transmissions = published(await getCollection('transmissions'))
   return transmissions.map(t => ({
     params: { slug: t.slug },
     props: { entry: t },

@@ -1,9 +1,10 @@
 import { getCollection } from 'astro:content'
 import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
+import { published } from '../lib/published'
 
 export async function GET(context: APIContext) {
-  const transmissions = await getCollection('transmissions')
+  const transmissions = published(await getCollection('transmissions'))
   const sorted = transmissions.sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime(),
   )

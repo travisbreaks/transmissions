@@ -1,11 +1,12 @@
 ---
 import { getCollection } from 'astro:content'
+import { published } from '../lib/published'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 
 // T053 (Sentinel & Egger) is the origin story, pinned first
 const PIN_FIRST = 53
-const transmissions = (await getCollection('transmissions'))
+const transmissions = published(await getCollection('transmissions'))
   .filter(t => t.data.tags.includes('terminal'))
   .sort((a, b) => {
     if (a.data.id === PIN_FIRST) return -1
