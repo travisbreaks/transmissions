@@ -12,6 +12,7 @@ const transmissions = defineCollection({
     source_platform: z.string().default('chatgpt'),
     source_id: z.string().optional(),
     id: z.number(),
+    draft: z.boolean().default(false),
   }),
 })
 
