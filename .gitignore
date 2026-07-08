@@ -22,3 +22,6 @@ yarn-error.log*
 
 # wrangler
 .wrangler/
+
+# Narration audio lives on R2, never in git (timing sidecars DO commit)
+public/*.mp3
