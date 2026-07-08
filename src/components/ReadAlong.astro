@@ -1,0 +1,152 @@
+---
+// Read-along narration sync.
+// Progressive enhancement: emits styles + a client script that, IF a word-timing
+// sidecar exists for this transmission, highlights each word as the narration
+// speaks it. No sidecar, or a word-count mismatch, degrades silently to the
+// normal audio player. Hooks the existing #listen-audio element (does not
+// control playback; only observes it), so any essay with the standard player
+// lights up the moment its /transmissions/<slug>.timing.json is uploaded.
+---
+
+<style is:global>
+  .content .ra-w {
+    transition: color 0.12s ease, text-shadow 0.12s ease, opacity 0.12s ease;
+  }
+  .content.ra-dim .ra-w { opacity: 0.4; }
+  .content.ra-dim .ra-w.ra-done { opacity: 0.8; }
+  .content.ra-dim .ra-w.ra-active {
+    opacity: 1;
+    color: rgb(150, 230, 255);
+    text-shadow: 0 0 14px rgba(120, 220, 255, 0.5);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .content .ra-w { transition: none; }
+    .content.ra-dim .ra-w.ra-active { text-shadow: none; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var audio = document.getElementById('listen-audio');
+    var content = document.querySelector('.content');
+    if (!audio || !content) return;
+
+    // Sidecar URL: derive slug from the current path.
+    var path = location.pathname.replace(/\/+$/, '');
+    var slug = path.split('/').pop();
+    if (!slug) return;
+
+    var words = [], spans = [], idx = -1, userScrolledAt = 0;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    ['wheel', 'touchstart'].forEach(function (ev) {
+      window.addEventListener(ev, function () { userScrolledAt = Date.now(); }, { passive: true });
+    });
+
+    fetch('/transmissions/' + slug + '.timing.json')
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (d) { words = (d && d.words) || []; if (words.length) init(); })
+      .catch(function () { /* no sidecar: normal player, no highlighting */ });
+
+    function init() {
+      // Map rendered text onto the sidecar word list by character consumption.
+      // A word may span an element boundary (e.g. a citation link followed by
+      // punctuation: <a>Rocket</a>.), producing multiple spans that share one
+      // word index and light together. Any char-level desync degrades safely.
+      // Markdown rendering applies smart typography (curly quotes, apostrophes,
+      // ellipsis) that the straight-ASCII narration text lacks. Match in a
+      // normalized space so those never cause a false desync; the span still
+      // DISPLAYS the original rendered text.
+      function norm(s) {
+        return s.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/…/g, '...');
+      }
+      var ntarget = words.map(function (w) { return norm(w.w); });
+      var groups = ntarget.map(function () { return []; });
+      var wi = 0, consumed = 0, ok = true;
+
+      var ps = content.querySelectorAll('p');
+      ps.forEach(function (p) {
+        if (!ok || p.closest('.listen-player')) return;
+        var walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+        var nodes = [], n;
+        while ((n = walker.nextNode())) nodes.push(n);
+        nodes.forEach(function (node) {
+          if (!ok || !node.textContent) return;
+          var parts = node.textContent.split(/(\s+)/);
+          var frag = document.createDocumentFragment();
+          parts.forEach(function (part) {
+            if (!ok || !part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            var np = norm(part);
+            if (wi >= ntarget.length || np !== ntarget[wi].substr(consumed, np.length)) { ok = false; return; }
+            var s = document.createElement('span');
+            s.className = 'ra-w';
+            s.textContent = part;
+            frag.appendChild(s);
+            groups[wi].push(s);
+            consumed += np.length;
+            if (consumed >= ntarget[wi].length) { wi++; consumed = 0; }
+          });
+          node.parentNode.replaceChild(frag, node);
+        });
+      });
+
+      if (!ok || wi !== ntarget.length || consumed !== 0) {
+        console.warn('read-along: token map desync (wi=' + wi + '/' + ntarget.length +
+          ' consumed=' + consumed + ' ok=' + ok + '), sync disabled');
+        return;
+      }
+      spans = groups;
+
+      audio.addEventListener('seeked', function () { repaint(indexAt(audio.currentTime)); });
+      requestAnimationFrame(tick);
+    }
+
+    function indexAt(t) {
+      var lo = 0, hi = words.length - 1, cur = -1;
+      while (lo <= hi) {
+        var m = (lo + hi) >> 1;
+        if (words[m].s <= t) { cur = m; lo = m + 1; } else { hi = m - 1; }
+      }
+      return cur;
+    }
+
+    function repaint(cur) {
+      for (var i = 0; i < spans.length; i++) {
+        var g = spans[i];
+        for (var j = 0; j < g.length; j++) {
+          g[j].classList.remove('ra-active');
+          if (i < cur) g[j].classList.add('ra-done');
+          else g[j].classList.remove('ra-done');
+        }
+      }
+      if (cur >= 0 && cur < spans.length) {
+        var gc = spans[cur];
+        for (var k = 0; k < gc.length; k++) gc[k].classList.add('ra-active');
+      }
+      idx = cur;
+    }
+
+    function tick() {
+      // Keep the dim/highlight layer in sync with playback state, regardless of
+      // whether the play event fired before init attached (long-fetch race).
+      if (words.length) {
+        if (!audio.paused) content.classList.add('ra-dim');
+        else content.classList.remove('ra-dim');
+      }
+      if (!audio.paused && words.length) {
+        var cur = indexAt(audio.currentTime);
+        if (cur !== idx) {
+          repaint(cur);
+          if (cur >= 0 && spans[cur].length && !reduced && Date.now() - userScrolledAt > 4000) {
+            var rect = spans[cur][0].getBoundingClientRect();
+            if (rect.top < 90 || rect.bottom > window.innerHeight - 90) {
+              spans[cur][0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }
+          }
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+  })();
+</script>

@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import EmailCapture from '../components/EmailCapture.astro'
+import ReadAlong from '../components/ReadAlong.astro'
 
 export async function getStaticPaths() {
   const transmissions = await getCollection('transmissions')
@@ -101,6 +102,8 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
     <div class="content font-body">
       <Content />
     </div>
+
+    <ReadAlong />
 
     <!-- Email capture -->
     <EmailCapture
