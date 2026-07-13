@@ -18,6 +18,12 @@ The same hallway is re-skinned each pass, driven by a narrative STATE MACHINE ti
 - Pass 2 (room→waterfall): cobblestone archway + sconce torches, bright cross-light at the end.
 - Pass 3 (waterfall→church): square church-concrete corridor.
 
+## Phase A decisions (Boss-pinned 2026-07-13 ~00:47)
+
+1. **Trigger = changes unobserved.** Read the chalk (proximity + facing), turn away, the wall transforms while unwitnessed. Next glance back: the passage exists where the words were. The change is never seen happening. No transformation animation needed; the state machine flips only while the wall is outside the view frustum.
+2. **Chalk wording (verbatim):** TURN AROUND TO GO ON. GO BACK TO ARRIVE.
+3. **Ship cadence = hold for full loop.** v1.0 stays live and untouched on travismakes until Phases A-D work end-to-end; then one v2.0 ship. No public phase drops, no secret door.
+
 ## Build phases (proposed sequencing; each likely 1+ Fable round + models)
 - **Phase A — entry mechanic (keystone):** back-wall chalk prompt + the elevated distant sign-figure + the turn-around REVEAL of the passage (transforming back wall / state machine skeleton). Mostly geometry + state; low model dependency. Build first — it proves the loop mechanic.
 - **Phase B — Tadao's empty room:** mine-shaft hallway + the room + props (chalkboards w/ physics eqs, drafting table, abacus, compass, wheelbarrow + concrete bags) + "turn back around" chalkboard. NEEDS MODELS (GLB pipeline).
