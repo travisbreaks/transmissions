@@ -281,7 +281,7 @@ In the old world, I poured walls that weighed four hundred tons and waited weeks
   <figcaption>Fig. 1 // A wall that costs nothing says nothing.</figcaption>
 </figure>
 
-Light is the only material I kept from the old world. The Church of the Light took me two years and a construction crew of eighty. Its successor took me one shader and an argument with a graphics card. Visitors still cry at the cross of light in the east wall, which proves my point about people. Give them one honest beam in one honest darkness and they will find something to worship. Give them infinity and they will build a casino.
+Light is the only material I kept from the old world. The Church of the Light took me two years and a construction crew of eighty. [Its successor](https://travismakes.org/church-of-the-light/) took me one shader and an argument with a graphics card. Visitors still cry at the cross of light in the east wall, which proves my point about people. Give them one honest beam in one honest darkness and they will find something to worship. Give them infinity and they will build a casino.
 
 <figure class="demo-fig">
   <img src="https://assets.travisbreaks.com/transmissions/concrete/cross-of-light.png" alt="A cruciform slit of blinding light in a brutalist concrete chamber, one wall dissolving into a glowing pixel grid" loading="lazy" />
