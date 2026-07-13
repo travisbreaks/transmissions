@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import EmailCapture from '../components/EmailCapture.astro'
 import ReadAlong from '../components/ReadAlong.astro'
+import FloatingPlayer from '../components/FloatingPlayer.astro'
 import { published } from '../lib/published'
 
 export async function getStaticPaths() {
@@ -105,6 +106,7 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
     </div>
 
     <ReadAlong />
+    <FloatingPlayer />
 
     <!-- Email capture -->
     <EmailCapture

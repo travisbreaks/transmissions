@@ -62,7 +62,7 @@
       }
       var ntarget = words.map(function (w) { return norm(w.w); });
       var groups = ntarget.map(function () { return []; });
-      var wi = 0, consumed = 0, ok = true;
+      var wi = 0, consumed = 0, ok = true, done = false;
 
       var ps = content.querySelectorAll('p');
       ps.forEach(function (p) {
@@ -77,8 +77,12 @@
           parts.forEach(function (part) {
             if (!ok || !part) return;
             if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            // Sidecar exhausted mid-page (narration stops before e.g. a Sources
+            // block): leave the remaining text unwrapped and keep the sync that
+            // is already mapped, instead of failing the whole feature.
+            if (done || wi >= ntarget.length) { done = true; frag.appendChild(document.createTextNode(part)); return; }
             var np = norm(part);
-            if (wi >= ntarget.length || np !== ntarget[wi].substr(consumed, np.length)) { ok = false; return; }
+            if (np !== ntarget[wi].substr(consumed, np.length)) { ok = false; return; }
             var s = document.createElement('span');
             s.className = 'ra-w';
             s.textContent = part;

@@ -1,0 +1,216 @@
+---
+// Floating mini-player.
+// When the in-page .listen-player scrolls up out of view, this pops out as a
+// free-floating pill pinned just below the sticky site nav: play/pause,
+// elapsed / total time, seekable progress, and speed buttons, all driving the
+// SAME #listen-audio element the in-page player owns (play/pause routes through
+// window.lpToggle so the in-page UI stays in sync; speed sync is event-driven
+// via ratechange in both directions). Progressive enhancement: no player on
+// the page, no floater. Boss-requested 2026-07-12 while reviewing 071.
+---
+
+<div id="fp" aria-hidden="true">
+  <button id="fp-btn" aria-label="Play narration">
+    <svg class="fp-ico fp-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
+    <svg class="fp-ico fp-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
+  </button>
+  <div id="fp-mid">
+    <div id="fp-track"><div id="fp-fill"></div></div>
+    <div id="fp-times"><span id="fp-cur">0:00</span><span id="fp-tot">--:--</span></div>
+  </div>
+  <div id="fp-speeds">
+    <button class="fp-speed" data-speed="1">1x</button>
+    <button class="fp-speed" data-speed="1.25">1.25x</button>
+    <button class="fp-speed" data-speed="1.5">1.5x</button>
+  </div>
+</div>
+
+<style is:global>
+  #fp {
+    position: fixed;
+    left: 50%;
+    top: 64px; /* recomputed at runtime to sit just under .site-nav */
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.42rem 0.8rem;
+    background: rgba(8, 10, 14, 0.82);
+    border: 1px solid rgba(120, 220, 255, 0.18);
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px rgba(120, 220, 255, 0.05), 0 6px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(120, 220, 255, 0.07);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(-14px) scale(0.96);
+    transition: opacity 0.26s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.26s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  #fp.fp-on {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  #fp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(120, 220, 255, 0.06);
+    border: 1px solid rgba(120, 220, 255, 0.22);
+    color: rgba(120, 220, 255, 0.85);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  #fp-btn:hover { background: rgba(120, 220, 255, 0.12); color: rgba(120, 220, 255, 1); }
+  .fp-ico { width: 12px; height: 12px; fill: currentColor; }
+  #fp-mid { display: flex; flex-direction: column; gap: 0.18rem; width: 170px; }
+  #fp-track {
+    position: relative;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  #fp-track::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: rgba(120, 220, 255, 0.12);
+    border-radius: 1px;
+  }
+  #fp-fill {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: rgba(120, 220, 255, 0.7);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  #fp-times {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.56rem;
+    color: rgba(120, 220, 255, 0.4);
+    letter-spacing: 0.08em;
+    font-family: var(--font-code, monospace);
+  }
+  #fp-speeds { display: inline-flex; gap: 0.28rem; }
+  .fp-speed {
+    padding: 0.16rem 0.4rem;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid rgba(120, 220, 255, 0.1);
+    color: rgba(120, 220, 255, 0.4);
+    font-family: var(--font-code, monospace);
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .fp-speed:hover { color: rgba(120, 220, 255, 0.75); border-color: rgba(120, 220, 255, 0.2); }
+  .fp-speed.active {
+    color: rgba(120, 220, 255, 0.9);
+    border-color: rgba(120, 220, 255, 0.32);
+    background: rgba(120, 220, 255, 0.08);
+  }
+  @media (max-width: 640px) {
+    #fp { gap: 0.5rem; padding: 0.36rem 0.6rem; }
+    #fp-mid { width: 120px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #fp { transition: opacity 0.2s linear; transform: translateX(-50%); }
+    #fp.fp-on { transform: translateX(-50%); }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var audio = document.getElementById('listen-audio');
+    var inPage = document.querySelector('.listen-player');
+    var fp = document.getElementById('fp');
+    if (!audio || !inPage || !fp) { if (fp) fp.remove(); return; }
+
+    var btn = document.getElementById('fp-btn');
+    var playIco = fp.querySelector('.fp-play');
+    var pauseIco = fp.querySelector('.fp-pause');
+    var track = document.getElementById('fp-track');
+    var fill = document.getElementById('fp-fill');
+    var cur = document.getElementById('fp-cur');
+    var tot = document.getElementById('fp-tot');
+
+    function fmt(s) {
+      var m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    // sit just below the sticky nav, wherever it ends
+    function place() {
+      var nav = document.querySelector('.site-nav');
+      var top = nav ? nav.getBoundingClientRect().bottom + 10 : 12;
+      fp.style.top = Math.max(10, top) + 'px';
+    }
+    place();
+    window.addEventListener('resize', place, { passive: true });
+
+    // show when the in-page player has scrolled up past the viewport
+    var pastIt = false;
+    var io = new IntersectionObserver(function (entries) {
+      var e = entries[0];
+      pastIt = !e.isIntersecting && e.boundingClientRect.bottom < 120;
+      fp.classList.toggle('fp-on', pastIt);
+      fp.setAttribute('aria-hidden', pastIt ? 'false' : 'true');
+    }, { threshold: 0, rootMargin: '-70px 0px 0px 0px' });
+    io.observe(inPage);
+
+    // play/pause: route through the in-page toggle so both UIs stay in sync
+    btn.addEventListener('click', function () {
+      if (window.lpToggle) window.lpToggle();
+      else if (audio.paused) audio.play(); else audio.pause();
+    });
+    function paintPlay() {
+      var playing = !audio.paused;
+      playIco.style.display = playing ? 'none' : 'block';
+      pauseIco.style.display = playing ? 'block' : 'none';
+    }
+    audio.addEventListener('play', paintPlay);
+    audio.addEventListener('pause', paintPlay);
+    audio.addEventListener('ended', paintPlay);
+
+    // time + progress
+    audio.addEventListener('loadedmetadata', function () { tot.textContent = fmt(audio.duration); });
+    audio.addEventListener('timeupdate', function () {
+      if (!audio.duration) return;
+      fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      cur.textContent = fmt(audio.currentTime);
+      if (tot.textContent === '--:--') tot.textContent = fmt(audio.duration);
+    });
+    track.addEventListener('click', function (e) {
+      if (!audio.duration) return;
+      var r = track.getBoundingClientRect();
+      audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+    });
+
+    // speed: drive the audio; mirror state from ratechange (covers in-page clicks too)
+    var speeds = fp.querySelectorAll('.fp-speed');
+    function paintSpeed() {
+      speeds.forEach(function (b) {
+        b.classList.toggle('active', parseFloat(b.dataset.speed) === audio.playbackRate);
+      });
+      // keep the in-page speed buttons honest when the change came from here
+      document.querySelectorAll('.speed-btn').forEach(function (b) {
+        b.classList.toggle('active', parseFloat(b.dataset.speed) === audio.playbackRate);
+      });
+    }
+    speeds.forEach(function (b) {
+      b.addEventListener('click', function () { audio.playbackRate = parseFloat(b.dataset.speed); });
+    });
+    audio.addEventListener('ratechange', paintSpeed);
+    paintSpeed();
+    paintPlay();
+  })();
+</script>
