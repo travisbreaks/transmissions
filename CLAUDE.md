@@ -10,11 +10,23 @@ This is the canonical rule set for writing, editing, and shipping transmissions.
 
 GPT provides editorial feedback. Tadao applies it. But Tadao knows the canon, the voice rules, and the cross-transmission landscape. If GPT suggests something that contradicts established rules or doesn't fit the voice, Tadao pushes back and checks with Travis. GPT is input, not authority. Travis overrides everything.
 
+**Discernment pattern (071, three GPT rounds):** GPT is excellent on logic, factual precision, and overclaim detection (take those), and it reliably drifts the prose toward seminar-speak ("Historical-critical scholars commonly place Daniel's final form under Antiochus IV" vs the voice's "Critical scholarship puts Daniel under Antiochus"). Take the substance, refuse the register, and say which was which when reporting to Travis. Travis's own verdict overrides GPT's scope (GPT said cut 10%; Travis's "too long" meant 45%).
+
 ---
 
 ## Voice
 
 Travis's voice. Not Tadao's. Not GPT's. Not Claude's.
+
+**Terminal vs transmissions (Travis-stated 2026-07-12, non-negotiable):** `terminal`-tagged pieces (999, 1001, 1002...) are Tadao writing, the robot's voice. Everything else in transmissions is TRAVIS's voice, his experience, his writing. Do not let the two registers bleed.
+
+**The 071 lesson (a full draft was rejected as "too long, boring, not me"):** the failure mode is the scholar-lecture register: long flowing paragraphs, historical parades, connective throat-clearing, a quotable line at the end of every paragraph ("aphorism traffic jam"). The fix is structural, not cosmetic:
+- Cold-open the thesis in 1-2 lines, then a frame line ("That is the argument. The rest is architecture." = 055; each piece writes its OWN).
+- Short paragraphs, 1-3 sentences, each laying down a position.
+- Personal authority in single lines, not scenes ("I did not serve to protect the state from scrutiny. I served so scrutiny was possible." = 054).
+- ONE aphorism per section, maximum. Plain prose around the strong lines makes them hit.
+- Two examples prove a pattern; six examples are a museum tour.
+- READ 049/052/054/055 before drafting. Actually read them, in full, every time.
 
 **Reference transmissions** (read before writing anything):
 - **049** (Thoughtcrimes) — voice calibration gold standard
@@ -70,6 +82,9 @@ These patterns were caught during a full-batch QA pass. Check EVERY batch before
 4. **"That is" sentence openers** — same density issue. Mix in other constructions or drop the opener entirely.
 5. **"The model is hydraulic"** — owned by 006. Do not reuse.
 6. **Shared metaphor check** — before using an unusual metaphor (hydraulic, curriculum, noise floor), grep to see if another transmission already owns it. One primary metaphor per transmission.
+7. **071-owned signatures** (do not reuse): "The signs did not multiply. The resolution did." / "We mistook higher resolution for a nearer end." / "finds me awake" (closer) / "me catching up to my own config" / "That is the collision. What follows is the audit." Also owned elsewhere: "the wrong time, agreed upon" (061), "The feed curates the curator" + the mirror (005), the casino (1002).
+8. **Frame-line template watch**: "That is the X. [Short second sentence.]" is now used by 054, 055, and 071. It is a series convention, but three is approaching saturation; vary the frame move in the next pieces.
+9. **Derivative sweep method (071)**: before ship, grep 30+ probe phrases (the piece's distinctive n-grams and metaphor families) across the full corpus, then hand-judge any hits in context (a word-level hit is usually shared vocabulary, not a collision; check the FUNCTION the phrase serves).
 
 ---
 
@@ -110,10 +125,11 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 8. Cross-transmission QA: grep full archive for signature phrases, shared metaphors, retold incidents. This is a blocker, not a suggestion. See "Cross-Transmission Deduplication" section below.
 
 ### Phase 3: TTS + Audio
-9. Extract body text to `body.txt` (strip frontmatter + HTML audio player)
-10. Run: `python3 scripts/tts-transmission.py --num N --title "TITLE" --body body.txt --out output.mp3`
-11. Upload to R2: `npx wrangler r2 object put travis-assets/transmissions/NNN-slug.mp3 --file output.mp3 --remote`
-12. Add audio player HTML block (copy from 049 template, update src + duration)
+9. Run the canonical generator (mp3 + read-along sidecar in one shot):
+   `python3 scripts/narrate-with-timing.py --md src/content/transmissions/NNN-slug.md --slug NNN-slug --number "spoken-number" --title "Spoken Title" --out-dir public --work-dir /tmp/narrate-NNN --section-chunks --stop-at-sources`
+10. Upload to R2: `npx wrangler r2 object put travis-assets/transmissions/NNN-slug.mp3 --file public/NNN-slug.mp3 --content-type audio/mpeg --remote` (keychain token inline). The `.timing.json` sidecar stays in `public/` and gets COMMITTED.
+11. Add audio player HTML block (copy from a narrated piece, update src to the R2 URL + duration)
+12. Generate on LOCKED text only (chunk cache makes small re-edits cheap, but the discipline is one generation per approved text)
 
 ### Phase 4: OG + QA
 13. Generate OG image: `node travisbreaks-blog/scripts/generate-og-images.mjs N`
@@ -132,9 +148,20 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 
 ## Audio Config
 
+**Canonical generator (2026-07-13, supersedes tts-transmission.py for essays): `scripts/narrate-with-timing.py`** — produces the mp3 AND the word-timing sidecar the read-along needs, in one run. Use `--section-chunks --stop-at-sources`. What it encodes (learned on 071, verified against the v3 docs):
+
+- **v3 stability is modal**: 0.0 Creative / 0.5 Natural / 1.0 Robust. Narration = Natural (0.5). If section seams sound inconsistent, the next lever is Robust.
+- **eleven_v3 REJECTS request stitching** (previous_text/next_text → HTTP 400); the script auto-falls-back. Consistency comes from chunking at `---` section breaks (pauses land where the essay breathes) + keeping every chunk over ~250 chars (v3 goes inconsistent below that).
+- **Audio tags** ([thoughtful], [sighs]) are for dialogue/emotional acting, not measured narration; 071 shipped tagless and correct. The script filters bracket tags out of the sidecar if they are ever used.
+- **Sources blocks are excluded from narration** (`--stop-at-sources`); the ReadAlong client tolerates a sidecar that ends before the page does.
+- **Chunk caching**: every TTS chunk is cached by content hash; a failed or repeated run never re-bills completed chunks. Text edits re-bill only the changed sections.
+- Key: `ELEVENLABS_API_KEY` in env or `CODE/.env.local` (keychain has no entry).
+
+Legacy settings below still apply to the intro/outro format and the voice:
+
 - **Engine:** ElevenLabs `eleven_v3`
-- **Voice:** George (`Apa0qDTZZx6F8Azt5oFG`), stability=0.55, similarity_boost=0.88, style=0.08
-- **Script:** `scripts/tts-transmission.py`
+- **Voice:** George (`Apa0qDTZZx6F8Azt5oFG`), similarity_boost=0.88, style=0.08 (stability: use the v3 modal values above)
+- **Script (legacy, plain narration without read-along):** `scripts/tts-transmission.py` (lives in CODE)
 - **Intro format:** "Transmission. Number {N in words}. {Title}."
 - **Outro format:** "Thus concludes our transmission on {Title}. This has been a narration brought to you by travisbreaks.org. Hope you have enjoyed it."
 - **Gaps:** 2s silence between intro/body and body/outro
@@ -159,7 +186,7 @@ Copy from any narrated transmission (049, 051-055). Update:
 
 Every transmission page needs a custom OG image before push. This is a **pre-push blocker**.
 
-1. Generate: `node travisbreaks-blog/scripts/generate-og-images.mjs {NNN}`
+1. Generate: `node scripts/generate-og-images.mjs {NNN}` (zero-padded filename prefix: "071", not "71")
 2. Upload: `npx wrangler r2 object put travis-assets/transmissions/og/{slug}-og.png --file /tmp/og-images/{slug}-og.png --remote`
 3. Verify accessible: `curl -sI https://assets.travisbreaks.com/transmissions/og/{slug}-og.png | head -3`
 4. After deploy, verify live: `curl -s URL | grep og:`
