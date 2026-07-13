@@ -1,6 +1,14 @@
 # transmissions — thread state
 
-## 📌 CURRENT BRIEF (2026-07-09, pre-compact handoff)
+## 📌 CURRENT BRIEF (2026-07-13 ~00:05 CT)
+
+**071 NOT FOR YOU TO KNOW SHIPPED + VERIFIED LIVE (both surfaces).** Boss "dope! ship it" → full pipeline executed: draft flag dropped, editorial comments stripped, mp3 → R2 (200 audio/mpeg), OG generated (script needs "071" zero-padded arg) + R2 (200), build clean (75 pages; 070 draft + 9998 demo correctly excluded), 4 clean commits to transmissions main pushed (components / 1002-church-link / 071+sidecar+generator / memory), CF Pages nested-recipe deploy (preview verify-071 branch verified THEN main), CODE fallback full-rsync PR #323 (78 files: floating player sitewide + 071 + new CSS bundle `_slug_.Yc4ChLGq.css`; strays excluded; Borrowed-Light mp3 stray = gitignored, inert) merged, deploy-netlify green + 13-URL health check passed. **LIVE VERIFIED: travisbreaks.org/transmissions/071-not-for-you-to-know/ = 200, og:image live, sidecar 200, index + RSS list it, HEADLESS ON LIVE: 1,036 read-along spans mapped to "awake.", audio from R2, floating player pops on scroll, 0 errors 0 warns.** Recovery paragraph SHIPPED (Boss-approved via ship-it), title NOT FOR YOU TO KNOW, id 71.
+**Open follow-ups:** (1) player-duration label says ~10 min (actual 9.5, fine). (2) generator: prev/next ctx in chunk-cache hash re-bills one neighbor unnecessarily since v3 rejects stitching: drop from hash sometime. (3) Read 049+052 before next writing pass. (4) NEXT WORKSTREAMS: church v2 loop Phase A (confirm layout with Boss first); narration cascade (12 essays; generator now has tag-filter + section-chunking ready); 070 A HAND ON THE QUILL still draft awaiting Boss read.
+**Voice canon (from the 071 arc, PERMANENT): transmissions = Travis's voice (cold-open thesis, frame line, short grafs, positions not lectures, ~800-1100 words, one aphorism per section); terminal = Tadao's voice. GPT feedback = input to be DISCERNED, not applied wholesale (rejected its seminar-speak twice on 071).**
+
+---
+
+## 📌 PRIOR BRIEF (2026-07-09, pre-compact handoff)
 
 **LIVE on travisbreaks.org** (verified end-to-end incl headless play-check):
 - **061 NEITHER WATCH NOR ROCKET** re-cut on GEORGE (voice reverted to George per listener feedback 2026-07-08, `Apa0qDTZZx6F8Azt5oFG`; travisMAKES v2 was tried then rejected) + word-level READ-ALONG. Audio R2 `?v=2`.
