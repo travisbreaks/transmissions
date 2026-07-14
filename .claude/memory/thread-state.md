@@ -1,6 +1,18 @@
 # transmissions — thread state
 
-## 📌 CURRENT BRIEF (2026-07-14 ~00:00 CT, compact-ready handoff)
+## 📌 CURRENT BRIEF (2026-07-14 ~11:15 CT, compact-ready handoff)
+
+**MORNING BATCH (all foreman-built, all verified 0 errors on dev, workshop = transmissions/public/church-of-light-fable.html):**
+1. **Chalk trigger FIXED (Boss: "turning around still isn't working")**: root cause = read-zone only 5.2m while chalk legible from mid-nave. Now: whole nave (ZDOOR+12.5), |x|<3.2, hold 0.6s. Sign-gaze also widened (cone 0.84, z>-5, hold 0.6). VERIFIED both paths arm+open. (Debugging artifact to know: headless SwiftShader STARVES rAF: gaze accumulates ~0.2x real time: hold waits in harnesses must be 4-5x. `__loop.fwd` + `__loop.gaze` debug getters added.)
+2. **Archway the WHOLE way**: buildTunnelSkin now closes a continuous 6-chord barrel vault from a spring line (R2=hw+0.06), walls rise only to spring; ribs stand proud inside. Both tunnels.
+3. **Junction JOINED (Boss screenshot: "not appropriately joined")**: falls width matched to stream lip (2.66), FALL_TOP raised (+0.2), stream overhangs the curled lip (y+2.11, z FARCLIFF+11.67: falls emerge from UNDER the stream edge), foam BAR deleted: churn baked into gradient top rows. One water. Faint hairline at high angles remains: Round-3 = small angled lip-apron quad.
+4. **Lawn ENCLOSED**: coursed-stone (extStone) side walls at x=±8.1 full lawn run, mouth facade flanks (z=STEPS0) + parapet sealing above the arch. No more void at the edges.
+5. **Valley ALIVE**: 5 trees (s 0.7-1.65), 9 shrub clusters (squashed icosahedra), 14 grass-tuft cones, scattered irregular. slopeY() helper.
+6. **Song plays ONCE** (loop attr removed from #song).
+7. **VERSION SCHEME**: live travismakes = v1.0 (untouched). Workshop now displays **v1.5.0-dev** (title tag + both HUD spans). Ships as v2.0.0 when the loop is blessed.
+**NEXT (post-compact): Boss GPU re-walk of the morning batch** → remaining: junction lip-apron hairline, slope's hard far-corner edges, moon disc placement, on-device mobile, PT re-bake pauses, then v2.0.0 ship per recipe. Harnesses in ~/code/CODE: final-batch-verify.mjs, turn-repro/turn-debug.mjs (+ prior list).
+
+## 📌 PRIOR BRIEF (2026-07-14 ~00:00 CT)
 
 **CHURCH v2 POLISH ARC (Boss GPU-walk feedback, all foreman-built in-loop, all verified 0 errors on dev):**
 1. **Arch rebuild**: real masonry (stacked-stone jambs → 11 tangent voussoirs + keystone, shared archStone mat). Old 5-box scaffold look dead.
