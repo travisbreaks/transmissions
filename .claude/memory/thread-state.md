@@ -10,7 +10,8 @@
 4. **DEAD-END CHALK** (specced, Boss verbatim): "TURN AROUND ONE LAST TIME TO THE BEGINNING."
 5. **VALLEY ALIVE pass 2 (f_26/29)**: slope reads FLAT smooth green (grass texture invisible at distance: add value variance/patchiness/mottling to grassCanvas + a 2nd overlay tiling); shrubs read as GRAY ROCKS (give them dark-green tint + moonlight response); trees read as lollipops (separate canopy lobes more, vary silhouettes); kill cone tufts → crossed alpha-cut blade quads (merged BufferGeometry, PT-safe); slope hard edges at far corners.
 **LANDED SINCE THE VIDEO (12:13): (a)** vault corner bleed SOLVED at root: raycast probe (`__loop.probe(nx,ny)` test hook added) proved rays escaped between vault chords to the church's zenith (y14.2, ei5.6) 30m up: hallway now wrapped in opaque outer-shell boxes, re-probe confirms containment. **(b)** Church chalk reworded (Boss verbatim): "TURN AROUND AND GO / LOOK BEYOND THE LIGHT." (also nudges toward the sign trigger). Both 0-error verified.
-**Landed this morning pre-video:** chalk trigger whole-nave fix, barrel vault, end-face seals, setts cobble v3 (reads GREAT in f_15 walls), sill wood (reflection continuity), lawn walls (single-sided: see #2), song-once, v1.5.0-dev.
+**Landed this morning pre-video:** chalk trigger whole-nave fix, barrel vault, end-face seals, setts cobble v3 (reads GREAT in f_15 walls), sill wood (reflection continuity), lawn walls (single-sided: see #2), song-once.
+**VERSIONING (Boss-set 2026-07-14): 1.x per ADDITION to the experience, 1.x.y per iteration inside it. 1.0 = chapel (live on travismakes). 1.1 = reveal + shaft + empty room. 1.2 = tunnel + valley + waterfall + corridor + loop close. Workshop currently displays v1.2.3-dev; bump PATCH each Boss-walk polish round; ships publicly as clean 1.2.x (NOT 2.0). Count up through the work, stay consistent.**
 
 ## 📌 PRIOR BRIEF (2026-07-14 ~12:15 CT)
 
