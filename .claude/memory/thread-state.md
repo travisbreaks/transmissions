@@ -1,6 +1,18 @@
 # transmissions — thread state
 
-## 📌 CURRENT BRIEF (2026-07-14 ~12:15 CT, COMPACT NOW — post-compact worklist first)
+## 📌 CURRENT BRIEF (2026-07-14 ~14:00 CT, COMPACT NOW — VIDEO-CONFIRMED PUNCH LIST)
+
+**Boss's 42s walk video (~/Screenshots/Screen Recording 2026-07-14 at 12.13.30 PM.mov; frames at scratchpad vid2/) confirms + extends the list. NOTE: his ls is aliased to eza (use /bin/ls); screenshots/recordings save to ~/Screenshots NOT Desktop.**
+**PUNCH LIST (video-confirmed, in priority order):**
+1. **WATERCOURSE**: seam STILL visible from rim angles (f_10, f_29: dark notch + line at lip). Definitive fix already specced: ONE continuous mesh (stream rows → curve rows → fall rows), single gradient emissiveMap along full V, delete separate stream/fall/curl. NO MORE NUDGING PLANES.
+2. **MOUTH + STEPS SOLID VOLUMES** (f_15, f_20): black bands around corridor opening, facade floats with black edges, treads hang in void with no stringer mass beneath, cheek walls invisible from steps side (single-sided). Rebuild whole assembly as overlapping extStone BOXES (piers, header, stringer block under treads, cheek walls), PAD-overlap discipline.
+3. **TUNNEL MOUTH/VAULT FRAGMENTS (f_05)**: from tunnel looking out, vault reads as floating fragments + margin-seal strips read as shelves on the piers. The solid-volume rebuild (#2) + extending the outer shell treatment to the mouth zone should absorb this; verify from f_05's angle.
+4. **DEAD-END CHALK** (specced, Boss verbatim): "TURN AROUND ONE LAST TIME TO THE BEGINNING."
+5. **VALLEY ALIVE pass 2 (f_26/29)**: slope reads FLAT smooth green (grass texture invisible at distance: add value variance/patchiness/mottling to grassCanvas + a 2nd overlay tiling); shrubs read as GRAY ROCKS (give them dark-green tint + moonlight response); trees read as lollipops (separate canopy lobes more, vary silhouettes); kill cone tufts → crossed alpha-cut blade quads (merged BufferGeometry, PT-safe); slope hard edges at far corners.
+**LANDED SINCE THE VIDEO (12:13): (a)** vault corner bleed SOLVED at root: raycast probe (`__loop.probe(nx,ny)` test hook added) proved rays escaped between vault chords to the church's zenith (y14.2, ei5.6) 30m up: hallway now wrapped in opaque outer-shell boxes, re-probe confirms containment. **(b)** Church chalk reworded (Boss verbatim): "TURN AROUND AND GO / LOOK BEYOND THE LIGHT." (also nudges toward the sign trigger). Both 0-error verified.
+**Landed this morning pre-video:** chalk trigger whole-nave fix, barrel vault, end-face seals, setts cobble v3 (reads GREAT in f_15 walls), sill wood (reflection continuity), lawn walls (single-sided: see #2), song-once, v1.5.0-dev.
+
+## 📌 PRIOR BRIEF (2026-07-14 ~12:15 CT)
 
 **POST-COMPACT TOP 3 (Boss GPU walk, diagnosed, NOT yet built):**
 1. **WATERCOURSE, definitive fix (Boss: "the waterfall still isn't connected bro")**: the black band at the junction = unlit UNDERSIDE of the stream's overhang; the white line = the fall's curled lip edge-on. Patching two planes together keeps failing at new angles. BUILD INSTEAD: ONE continuous mesh: streamGeo rows (tapered from horizon) → curve rows over the lip → fall rows down the face, single geometry, single material, ONE gradient emissiveMap along full V (fallGradCanvas), map streaks scrolling. Delete the separate fall mesh + stream mesh + curl. Then the seam cannot exist.
