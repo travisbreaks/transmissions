@@ -53,7 +53,17 @@ on:
       - 'package.json'           # dependency ranges the build resolves
       - 'package-lock.json'      # what `npm ci` on the CODE runner actually installs
     # Deliberately NOT triggers, none of these reach dist/:
-    #   drafts/**       unpublished markdown outside src/content/, never collected
+    #   drafts/**       unpublished markdown outside src/content/, never collected.
+    #                   Scope note: this exclusion is the top-level drafts/ DIRECTORY
+    #                   and nothing else. It is not a claim about draft status in
+    #                   general. src/content.config.ts gives the transmissions
+    #                   collection a `draft` field (default false), and an entry
+    #                   under src/content/ with `draft: true` still matches
+    #                   src/content/** above, so editing one DOES dispatch, even
+    #                   though src/lib/published.ts filters it out of a production
+    #                   build. That case costs an apex rebuild whose dist/ output
+    #                   is unchanged. Accepted: draft-flagged entries are rare, and
+    #                   path filters cannot read frontmatter.
     #   scripts/**      manual tooling (og images, narration, split); package.json has no build hook
     #   assets/**       source art consumed by scripts/, not an Astro or public/ asset dir
     #   tsconfig.json   types only
@@ -62,16 +72,22 @@ on:
     # the apex. Use workflow_dispatch below to exercise it by hand.
   workflow_dispatch:
 
+# One notify run at a time; a newer publish supersedes an older pending dispatch.
+concurrency:
+  group: notify-code-deploy
+  cancel-in-progress: true
+
 jobs:
   notify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    # Nothing in this job uses GITHUB_TOKEN: no checkout, no API call against
+    # this repo. The dispatch authenticates with CODE_DISPATCH_TOKEN instead.
+    permissions: {}
     steps:
       - name: Send repository_dispatch to travisbreaks/CODE
         env:
-          # Read through env, never interpolated into the script body: keeps the
-          # token out of the command line and out of any expression expansion.
+          # Read through env, never interpolated into the script body, so the
+          # secret is not baked into the run block by expression expansion.
           CODE_DISPATCH_TOKEN: ${{ secrets.CODE_DISPATCH_TOKEN }}
         run: |
           if [ -z "$CODE_DISPATCH_TOKEN" ]; then
@@ -84,11 +100,23 @@ jobs:
             --arg ref "$GITHUB_REF" \
             '{event_type: "transmissions-published", client_payload: {sha: $sha, ref: $ref}}')
 
+          # The Authorization header goes through a curl config file, not a -H
+          # argument. A process's argv is readable by anything else on the runner
+          # (ps, /proc/*/cmdline); a file under RUNNER_TEMP created with umask 077
+          # is not. The heredoc is deliberately UNQUOTED so the shell expands
+          # $CODE_DISPATCH_TOKEN while writing the file, because curl performs no
+          # variable expansion when it reads a config file.
+          CURL_CONFIG="$RUNNER_TEMP/dispatch-curl.conf"
+          umask 077
+          cat > "$CURL_CONFIG" <<EOF
+          header = "Authorization: Bearer $CODE_DISPATCH_TOKEN"
+          EOF
+
           RESPONSE="$RUNNER_TEMP/dispatch-response.json"
-          HTTP_CODE=$(curl -sS -o "$RESPONSE" -w '%{http_code}' \
+          HTTP_CODE=$(curl --config "$CURL_CONFIG" \
+            -sS -o "$RESPONSE" -w '%{http_code}' \
             -X POST \
             -H 'Accept: application/vnd.github+json' \
-            -H "Authorization: Bearer $CODE_DISPATCH_TOKEN" \
             -H 'X-GitHub-Api-Version: 2022-11-28' \
             --data "$PAYLOAD" \
             https://api.github.com/repos/travisbreaks/CODE/dispatches)
