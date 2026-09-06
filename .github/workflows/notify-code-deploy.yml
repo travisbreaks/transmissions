@@ -1,0 +1,104 @@
+name: Notify CODE to redeploy travisbreaks.org
+
+# travisbreaks.org/transmissions/ is NOT served from this repo. The CODE monorepo
+# (github.com/travisbreaks/CODE) owns the apex deploy: its
+# .github/workflows/deploy-netlify.yml checks this repo out, runs
+# `npm ci && npm run build`, and copies dist/ over travisbreaks-site/transmissions/
+# on every run, then ships travisbreaks-site to Netlify and Cloudflare Workers.
+#
+# Before this workflow existed, that refresh was opportunistic: it only ran when
+# something else pushed to CODE's main, or when a human clicked workflow_dispatch
+# there. A transmission published here could sit unpublished on the apex for days.
+#
+# CODE PR #334 added the receiver:
+#
+#   on:
+#     repository_dispatch:
+#       types: [transmissions-published]
+#
+# This workflow is the sender for that receiver. Publish here, apex redeploys.
+#
+# ── REQUIRED SECRET: CODE_DISPATCH_TOKEN ─────────────────────────────────────
+# A fine-grained personal access token, created by the Boss, stored on THIS repo
+# under Settings > Secrets and variables > Actions > New repository secret.
+#
+#   Name:                CODE_DISPATCH_TOKEN
+#   Resource owner:      travisbreaks
+#   Repository access:   Only select repositories > travisbreaks/CODE
+#   Permissions:         Repository permissions > Contents: Read and write
+#                        (the repository_dispatch REST endpoint is gated on
+#                        Contents write; nothing else is needed, grant nothing else)
+#
+# The built-in GITHUB_TOKEN cannot do this: it is scoped to travisbreaks/transmissions
+# and cannot dispatch into travisbreaks/CODE. Until the secret exists this workflow
+# fails fast with a clear message rather than posting an unauthenticated request.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+    # Every path below is an input to `astro build`. If a change cannot alter the
+    # bytes under dist/, it does not belong here: a dispatch costs a full apex
+    # rebuild plus two health-check passes in CODE.
+    paths:
+      - 'src/content/**'         # the transmissions + projects markdown itself
+      - 'src/content.config.ts'  # collection schemas; sibling of src/content/, not covered by the glob above
+      - 'src/pages/**'           # routes: [slug].astro, index.astro, terminal.astro, rss.xml.ts
+      - 'src/layouts/**'         # BaseLayout.astro
+      - 'src/components/**'      # TransmissionCard, FloatingPlayer, ReadAlong, SEOHead, EmailCapture
+      - 'src/lib/**'             # published.ts decides which entries ship in a production build
+      - 'src/styles/**'          # global.css
+      - 'public/**'              # copied verbatim into dist: timing sidecars, _headers, robots.txt, llms.txt, images
+      - 'astro.config.mjs'       # site, base: '/transmissions', sitemap integration
+      - 'package.json'           # dependency ranges the build resolves
+      - 'package-lock.json'      # what `npm ci` on the CODE runner actually installs
+    # Deliberately NOT triggers, none of these reach dist/:
+    #   drafts/**       unpublished markdown outside src/content/, never collected
+    #   scripts/**      manual tooling (og images, narration, split); package.json has no build hook
+    #   assets/**       source art consumed by scripts/, not an Astro or public/ asset dir
+    #   tsconfig.json   types only
+    #   *.md at root, .claude/**, .github/**   docs, memory, and CI config
+    # This file is excluded too, on purpose: editing the sender should not redeploy
+    # the apex. Use workflow_dispatch below to exercise it by hand.
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Send repository_dispatch to travisbreaks/CODE
+        env:
+          # Read through env, never interpolated into the script body: keeps the
+          # token out of the command line and out of any expression expansion.
+          CODE_DISPATCH_TOKEN: ${{ secrets.CODE_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$CODE_DISPATCH_TOKEN" ]; then
+            echo "::error::Secret CODE_DISPATCH_TOKEN is not set on travisbreaks/transmissions. See the header of this file for the exact token scope to create."
+            exit 1
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg sha "$GITHUB_SHA" \
+            --arg ref "$GITHUB_REF" \
+            '{event_type: "transmissions-published", client_payload: {sha: $sha, ref: $ref}}')
+
+          RESPONSE="$RUNNER_TEMP/dispatch-response.json"
+          HTTP_CODE=$(curl -sS -o "$RESPONSE" -w '%{http_code}' \
+            -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer $CODE_DISPATCH_TOKEN" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            --data "$PAYLOAD" \
+            https://api.github.com/repos/travisbreaks/CODE/dispatches)
+
+          # The dispatches endpoint answers 204 No Content on success.
+          if [ "$HTTP_CODE" != "204" ]; then
+            echo "::error::repository_dispatch to travisbreaks/CODE failed with HTTP $HTTP_CODE"
+            cat "$RESPONSE"
+            exit 1
+          fi
+
+          echo "Dispatched transmissions-published to travisbreaks/CODE for $GITHUB_SHA on $GITHUB_REF"
+          echo "Watch the apex deploy: https://github.com/travisbreaks/CODE/actions/workflows/deploy-netlify.yml"
