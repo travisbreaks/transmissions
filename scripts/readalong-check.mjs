@@ -198,14 +198,22 @@ const dist = path.join(ROOT, 'dist')
 const pub = path.join(ROOT, 'public')
 const slugs = existsSync(dist) ? readdirSync(dist).filter((d) => existsSync(path.join(dist, d, 'index.html')) && existsSync(path.join(pub, d + '.timing.json'))) : []
 if (!slugs.length) console.log('(no dist/<slug>/index.html + public/<slug>.timing.json pairs found; run npm run build)')
-// A tracked sidecar is a deployed one and MUST map; an untracked sidecar is an
-// experiment (e.g. the 049 demo sidecar) and only has to leave the text alone.
-const tracked = (rel) => { try { return execFileSync('git', ['ls-files', '--', rel], { cwd: ROOT, encoding: 'utf8' }).trim().length > 0 } catch { return false } }
+// Every sidecar under public/ ships with a working-tree deploy (git tracking is
+// not a deployment boundary: the untracked 049 experiment went live 2026-09-06),
+// so every sidecar MUST map. The only exemption is an explicit, documented one:
+// a slug listed in scripts/readalong-unsupported.txt is checked for text
+// preservation only.
+const unsupportedFile = path.join(ROOT, 'scripts/readalong-unsupported.txt')
+const unsupported = new Set(existsSync(unsupportedFile)
+  ? readFileSync(unsupportedFile, 'utf8').split('\n').map((l) => l.replace(/#.*/, '').trim()).filter(Boolean)
+  : [])
+if (!slugs.length) { failures++; console.log('FAIL no dist/<slug>/index.html + public/<slug>.timing.json pairs: run npm run build first') }
 for (const slug of slugs) {
   const html = readFileSync(path.join(dist, slug, 'index.html'), 'utf8')
   const sidecar = JSON.parse(readFileSync(path.join(pub, slug + '.timing.json'), 'utf8'))
-  const isTracked = tracked('public/' + slug + '.timing.json')
-  await check('live:' + slug + (isTracked ? '' : ' (untracked sidecar: preservation only)'), contentFromBuiltPage(html), sidecar.words, isTracked ? true : null)
+  const exempt = unsupported.has(slug)
+  await check('live:' + slug + (exempt ? ' (documented unsupported experiment: preservation only)' : ''), contentFromBuiltPage(html), sidecar.words, exempt ? null : true)
+  if (sidecar.slug && sidecar.slug !== slug) { failures++; console.log(`FAIL identity:${slug}: sidecar declares slug ${JSON.stringify(sidecar.slug)}`) }
 }
 
 // extractor parity: sidecar tokens vs the narration extractor's token stream
@@ -224,18 +232,21 @@ paras = [p for s in secs for p in s]
 print(json.dumps({"tokens": " ".join(paras).split(), "sha": hashlib.sha256("\\n\\n".join(paras).encode()).hexdigest()}))
 `
   let out
-  try { out = JSON.parse(execFileSync('python3', ['-c', py], { encoding: 'utf8', env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' } })) } catch (e) { console.log(`SKIP parity:${slug}: ${String(e.message).split('\n')[0]}`); continue }
+  try { out = JSON.parse(execFileSync('python3', ['-c', py], { encoding: 'utf8', env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' } })) } catch (e) { failures++; console.log(`FAIL parity:${slug}: extractor did not run: ${String(e.message).split('\n')[0]}`); continue }
   const got = sidecar.words.map((w) => w.w)
   const exp = out.tokens
   let i = 0
   while (i < got.length && i < exp.length && got[i] === exp[i]) i++
   const equal = i === got.length && i === exp.length
-  const hashNote = sidecar.source_sha256 ? (sidecar.source_sha256 === out.sha ? 'hash=match' : 'hash=MISMATCH') : 'hash=absent(pre-2026-09-06 sidecar)'
-  console.log(`${equal ? 'OK  ' : 'DIFF'} parity:${slug}: sidecar ${got.length} tokens vs extractor ${exp.length}; ${hashNote}${equal ? '' : `; first divergence at ${i}: sidecar ${JSON.stringify(got.slice(i, i + 3))} extractor ${JSON.stringify(exp.slice(i, i + 3))}`}`)
-  // Parity is a hard contract only for sidecars that declare their source
-  // (generated after 2026-09-06). Older sidecars report DIFF as information:
-  // their pipeline predates the extractor (e.g. 1002's figure captions).
-  if (!equal && sidecar.source_sha256) failures++
+  const hashOk = sidecar.source_sha256 ? sidecar.source_sha256 === out.sha : null
+  const hashNote = hashOk === null ? 'hash=absent(pre-2026-09-06 sidecar)' : (hashOk ? 'hash=match' : 'hash=MISMATCH')
+  // A declared source hash is a contract: a mismatch fails, whatever the tokens say.
+  // Token parity is a hard contract for sidecars that declare their source;
+  // older sidecars report DIFF as information (their pipeline predates the
+  // extractor, e.g. 1002's figure captions).
+  const bad = hashOk === false || (!equal && sidecar.source_sha256)
+  console.log(`${bad ? 'FAIL' : (equal ? 'OK  ' : 'DIFF')} parity:${slug}: sidecar ${got.length} tokens vs extractor ${exp.length}; ${hashNote}${equal ? '' : `; first divergence at ${i}: sidecar ${JSON.stringify(got.slice(i, i + 3))} extractor ${JSON.stringify(exp.slice(i, i + 3))}`}`)
+  if (bad) failures++
 }
 
 console.log(failures ? `\n${failures} failure(s)` : '\nall read-along checks passed')

@@ -44,6 +44,7 @@ OUTPUT_FORMAT = "mp3_44100_128"
 CHUNK_CHAR_LIMIT = 3800             # size-based fallback chunking limit
 MIN_CHUNK_CHARS = 250               # v3: prompts under ~250 chars go inconsistent
 SEAM_GAP_S = 2.1                    # silence between body chunks (section seam; 0.35 too abrupt, 1.2/1.6 still tight; Boss-set 2026-07-21)
+EXTRACTOR_VERSION = 2               # 2 = blockquote markers + inline backticks stripped (2026-09-06); 1 = neither
 STITCH_CTX_CHARS = 1000             # previous_text/next_text context cap
 INTRO_GAP_S = 2.0                   # per the audio config: 2s intro/body + body/outro
 ENV_LOCAL = Path("/Users/travisbonnet/code/CODE/.env.local")
@@ -81,7 +82,8 @@ def extract_paragraphs(md_path: Path) -> list[str]:
     # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
     # break (matching the <blockquote><p>..</p><p>..</p></blockquote> the site
     # renders). Left in, they reached the sidecar as ">" tokens (072, 2026-09-06).
-    text = re.sub(r"^>[ \t]?", "", text, flags=re.M)
+    # Nested ("> > x", ">> x") and up-to-3-space-indented markers count too.
+    text = re.sub(r"^[ \t]{0,3}(?:>[ \t]?)+", "", text, flags=re.M)
     paras = []
     for block in re.split(r"\n\s*\n", text):
         block = block.strip()
@@ -90,6 +92,8 @@ def extract_paragraphs(md_path: Path) -> list[str]:
         # markdown links [text](url) -> text ; emphasis markers dropped
         block = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", block)
         block = re.sub(r"([*_]{1,2})(\S(?:.*?\S)?)\1", r"\2", block)
+        # inline code `x` renders as x: the backticks are markup, not prose
+        block = re.sub(r"`([^`]*)`", r"\1", block)
         # collapse internal newlines/whitespace the way HTML rendering does
         block = re.sub(r"\s+", " ", block)
         paras.append(block)
@@ -128,7 +132,8 @@ def extract_sections(md_path: Path, stop_at_sources: bool) -> list[list[str]]:
     # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
     # break (matching the <blockquote><p>..</p><p>..</p></blockquote> the site
     # renders). Left in, they reached the sidecar as ">" tokens (072, 2026-09-06).
-    text = re.sub(r"^>[ \t]?", "", text, flags=re.M)
+    # Nested ("> > x", ">> x") and up-to-3-space-indented markers count too.
+    text = re.sub(r"^[ \t]{0,3}(?:>[ \t]?)+", "", text, flags=re.M)
     sections, cur = [], []
     stopped = False
     for block in re.split(r"\n\s*\n", text):
@@ -145,6 +150,8 @@ def extract_sections(md_path: Path, stop_at_sources: bool) -> list[list[str]]:
             break
         block = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"\1", block)
         block = re.sub(r"([*_]{1,2})(\S(?:.*?\S)?)\1", r"\2", block)
+        # inline code `x` renders as x: the backticks are markup, not prose
+        block = re.sub(r"`([^`]*)`", r"\1", block)
         block = re.sub(r"\s+", " ", block)
         cur.append(block)
     if cur and not stopped:
@@ -347,10 +354,16 @@ def main():
     # Identity: the sidecar names its slug and the sha256 of the exact prose it
     # was generated from, so a sidecar can be matched to (or rejected against)
     # the accepted text instead of being assumed current.
+    # "extractor" is the extraction-rules version (bump when extract_* changes
+    # what text a given markdown yields); "audio_sha256" binds the sidecar to
+    # the exact mp3 it was timed against.
     source_sha256 = hashlib.sha256("\n\n".join(paras).encode("utf-8")).hexdigest()
+    audio_sha256 = hashlib.sha256(final_mp3.read_bytes()).hexdigest()
     sidecar = out_dir / f"{args.slug}.timing.json"
     sidecar.write_text(json.dumps({"version": 1, "voice": "george", "slug": args.slug,
-                                   "source_sha256": source_sha256, "words": words}))
+                                   "extractor": EXTRACTOR_VERSION,
+                                   "source_sha256": source_sha256,
+                                   "audio_sha256": audio_sha256, "words": words}))
 
     total = duration(final_mp3)
     print(f"done: {final_mp3} ({total/60:.1f} min), {sidecar} ({len(words)} words)")
