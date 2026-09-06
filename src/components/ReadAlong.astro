@@ -64,25 +64,34 @@
       var groups = ntarget.map(function () { return []; });
       var wi = 0, consumed = 0, ok = true, done = false;
 
+      // Two phases. Phase 1 builds every replacement fragment DETACHED and
+      // validates the whole mapping; phase 2 commits them only if the map is
+      // complete. On any rejection the page text is left exactly as rendered
+      // (a partial commit used to drop the rest of a text node: the first
+      // paragraph of 072's quoted verdict vanished on the live page, 2026-09-06).
+      var pending = [];
       var ps = content.querySelectorAll('p');
-      ps.forEach(function (p) {
-        if (!ok || p.closest('.listen-player')) return;
+      for (var pi = 0; pi < ps.length && ok; pi++) {
+        var p = ps[pi];
+        if (p.closest('.listen-player')) continue;
         var walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
         var nodes = [], n;
         while ((n = walker.nextNode())) nodes.push(n);
-        nodes.forEach(function (node) {
-          if (!ok || !node.textContent) return;
+        for (var ni = 0; ni < nodes.length && ok; ni++) {
+          var node = nodes[ni];
+          if (!node.textContent) continue;
           var parts = node.textContent.split(/(\s+)/);
           var frag = document.createDocumentFragment();
-          parts.forEach(function (part) {
-            if (!ok || !part) return;
-            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          for (var k = 0; k < parts.length && ok; k++) {
+            var part = parts[k];
+            if (!part) continue;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); continue; }
             // Sidecar exhausted mid-page (narration stops before e.g. a Sources
             // block): leave the remaining text unwrapped and keep the sync that
             // is already mapped, instead of failing the whole feature.
-            if (done || wi >= ntarget.length) { done = true; frag.appendChild(document.createTextNode(part)); return; }
+            if (done || wi >= ntarget.length) { done = true; frag.appendChild(document.createTextNode(part)); continue; }
             var np = norm(part);
-            if (np !== ntarget[wi].substr(consumed, np.length)) { ok = false; return; }
+            if (np !== ntarget[wi].substr(consumed, np.length)) { ok = false; break; }
             var s = document.createElement('span');
             s.className = 'ra-w';
             s.textContent = part;
@@ -90,15 +99,18 @@
             groups[wi].push(s);
             consumed += np.length;
             if (consumed >= ntarget[wi].length) { wi++; consumed = 0; }
-          });
-          node.parentNode.replaceChild(frag, node);
-        });
-      });
+          }
+          if (ok) pending.push({ node: node, frag: frag });
+        }
+      }
 
       if (!ok || wi !== ntarget.length || consumed !== 0) {
         console.warn('read-along: token map desync (wi=' + wi + '/' + ntarget.length +
-          ' consumed=' + consumed + ' ok=' + ok + '), sync disabled');
+          ' consumed=' + consumed + ' ok=' + ok + '), sync disabled; page text untouched');
         return;
+      }
+      for (var ci = 0; ci < pending.length; ci++) {
+        pending[ci].node.parentNode.replaceChild(pending[ci].frag, pending[ci].node);
       }
       spans = groups;
 

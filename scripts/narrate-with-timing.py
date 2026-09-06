@@ -77,6 +77,11 @@ def extract_paragraphs(md_path: Path) -> list[str]:
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
     # any remaining html tags render as inline/invisible; strip tags, keep inner text
     text = re.sub(r"<[^>\n]+>", "", text)
+    # Blockquote markers are markdown syntax, not prose: strip them per line so
+    # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
+    # break (matching the <blockquote><p>..</p><p>..</p></blockquote> the site
+    # renders). Left in, they reached the sidecar as ">" tokens (072, 2026-09-06).
+    text = re.sub(r"^>[ \t]?", "", text, flags=re.M)
     paras = []
     for block in re.split(r"\n\s*\n", text):
         block = block.strip()
@@ -119,6 +124,11 @@ def extract_sections(md_path: Path, stop_at_sources: bool) -> list[list[str]]:
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S | re.I)
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
     text = re.sub(r"<[^>\n]+>", "", text)
+    # Blockquote markers are markdown syntax, not prose: strip them per line so
+    # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
+    # break (matching the <blockquote><p>..</p><p>..</p></blockquote> the site
+    # renders). Left in, they reached the sidecar as ">" tokens (072, 2026-09-06).
+    text = re.sub(r"^>[ \t]?", "", text, flags=re.M)
     sections, cur = [], []
     stopped = False
     for block in re.split(r"\n\s*\n", text):
@@ -334,8 +344,13 @@ def main():
     final_mp3 = out_dir / f"{args.slug}.mp3"
     concat(seq, final_mp3)
 
+    # Identity: the sidecar names its slug and the sha256 of the exact prose it
+    # was generated from, so a sidecar can be matched to (or rejected against)
+    # the accepted text instead of being assumed current.
+    source_sha256 = hashlib.sha256("\n\n".join(paras).encode("utf-8")).hexdigest()
     sidecar = out_dir / f"{args.slug}.timing.json"
-    sidecar.write_text(json.dumps({"version": 1, "voice": "george", "words": words}))
+    sidecar.write_text(json.dumps({"version": 1, "voice": "george", "slug": args.slug,
+                                   "source_sha256": source_sha256, "words": words}))
 
     total = duration(final_mp3)
     print(f"done: {final_mp3} ({total/60:.1f} min), {sidecar} ({len(words)} words)")
