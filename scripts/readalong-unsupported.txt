@@ -3,4 +3,4 @@
 # Anything under public/ ships with a working-tree deploy, so a slug here is a
 # known-bad file that is still being served; the fix is to move it out of public/.
 # One slug per line; # starts a comment.
-049-thoughtcrimes-digital-brutalism-the-void-protocol   # 2026-06 read-along demo sidecar built from a page that still had the player text in it; never a release artifact; awaiting the Boss's OK to move out of public/
+# (049 was listed here 2026-09-06 for its demo sidecar; it was re-narrated with a real sidecar 2026-09-07 and removed.)

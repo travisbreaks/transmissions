@@ -35,11 +35,14 @@ spec.loader.exec_module(nwt)
 
 
 def silence_spans(mp3: Path, min_len: float = 1.5, noise_db: int = -70):
-    out = subprocess.run(
+    r = subprocess.run(
         ["ffmpeg", "-v", "info", "-i", str(mp3), "-af",
          f"silencedetect=noise={noise_db}dB:d={min_len}", "-f", "null", "-"],
         capture_output=True, text=True,
-    ).stderr
+    )
+    if r.returncode != 0:
+        sys.exit(f"silencedetect failed (exit {r.returncode}): {r.stderr[-400:]}")
+    out = r.stderr
     starts = [float(x) for x in re.findall(r"silence_start: ([0-9.]+)", out)]
     ends = [float(x) for x in re.findall(r"silence_end: ([0-9.]+)", out)]
     if len(starts) != len(ends):
@@ -130,25 +133,53 @@ def main():
         sys.exit(f"found {len(spans)} digital-silence spans, expected {want} (intro gap + {len(chunks)-1} seams + outro gap): {spans}")
     total = nwt.duration(mp3)
 
-    # 3. cut intro, chunks, outro (lossless) and write them under the generator's cache names
+    # 3. validate every boundary and alignment BEFORE touching the cache: the
+    #    generator reuses any mp3+alignment pair that exists, so a half-written
+    #    cache is worse than none (Riker, 2026-09-07). Gap lengths must match the
+    #    generator's assembly constants, and every chunk's words must sit inside
+    #    its cut.
     intro_text = f"Transmission. Number {a.number}. {a.title}."
     outro_text = (f"Thus concludes our transmission on {a.title}. This has been a "
                   f"narration brought to you by travisbreaks.org. Hope you have enjoyed it.")
-    cut(mp3, work / f"intro-{nwt.cache_key(intro_text)}.mp3", 0.0, spans[0][0])
-    cut(mp3, work / f"outro-{nwt.cache_key(outro_text)}.mp3", spans[-1][1], total)
-    wi = 0
+    for k, (s0, e0) in enumerate(spans):
+        expect = nwt.INTRO_GAP_S if k in (0, len(spans) - 1) else nwt.SEAM_GAP_S
+        if abs((e0 - s0) - expect) > 0.08:
+            sys.exit(f"gap {k} is {e0 - s0:.3f}s, expected {expect}s (assembly constants changed, or this is not our mp3)")
+    plan, wi = [], 0
     for i, (text, toks) in enumerate(zip(chunks, chunk_tokens)):
         start, end = spans[i][1], spans[i + 1][0]
-        h = nwt.cache_key(text)
-        cut(mp3, work / f"body{i}-{h}.mp3", start, end)
         cw = words[wi:wi + len(toks)]
         wi += len(toks)
         if cw[0]["s"] < start - 0.05 or cw[-1]["e"] > end + 0.05:
             sys.exit(f"chunk {i}: word times {cw[0]['s']}..{cw[-1]['e']} fall outside the cut {start}..{end}")
-        (work / f"body{i}-{h}.alignment.json").write_text(json.dumps(synth_alignment(text, cw, start)))
-        print(f"  [rebuilt] body{i} {len(text)} chars {len(toks)} words  {start:.3f}..{end:.3f}s -> body{i}-{h}")
-    print(f"rebuilt cache for {a.slug}: intro + {len(chunks)} chunks + outro in {work}")
-    print("next: run narrate-with-timing.py with the same --work-dir; unchanged sections print [cache]")
+        plan.append((i, text, toks, start, end, synth_alignment(text, cw, start)))
+
+    # 4. build into a FRESH temporary cache, then promote it whole
+    import hashlib, shutil, tempfile, time
+    tmp = Path(tempfile.mkdtemp(prefix="rebuild-", dir=str(work.parent)))
+    try:
+        cut(mp3, tmp / f"intro-{nwt.cache_key(intro_text)}.mp3", 0.0, spans[0][0])
+        cut(mp3, tmp / f"outro-{nwt.cache_key(outro_text)}.mp3", spans[-1][1], total)
+        for i, text, toks, start, end, align in plan:
+            h = nwt.cache_key(text)
+            cut(mp3, tmp / f"body{i}-{h}.mp3", start, end)
+            (tmp / f"body{i}-{h}.alignment.json").write_text(json.dumps(align))
+            print(f"  [rebuilt] body{i} {len(text)} chars {len(toks)} words  {start:.3f}..{end:.3f}s -> body{i}-{h}")
+        # provenance: what this cache was reconstructed from, and what is assumed
+        (tmp / "REBUILT.json").write_text(json.dumps({
+            "rebuilt_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+            "slug": a.slug,
+            "source_mp3": str(mp3), "source_mp3_sha256": hashlib.sha256(mp3.read_bytes()).hexdigest(),
+            "source_sidecar": a.sidecar, "as_narrated_md": a.md,
+            "assumed": "voice/model/settings are today's generator constants (cache_key); the original run's are not recorded in the sidecar",
+            "note": "chunk audio is a -c copy cut at mp3 frame boundaries; alignments are synthesised from word times",
+        }, indent=1))
+        for f in tmp.iterdir():
+            shutil.move(str(f), str(work / f.name))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    print(f"rebuilt cache for {a.slug}: intro + {len(chunks)} chunks + outro in {work} (REBUILT.json records provenance)")
+    print("next: narrate-with-timing.py --cache-only ... to prove zero-spend, then the real run")
 
 
 if __name__ == "__main__":

@@ -13,6 +13,10 @@ const transmissions = defineCollection({
     source_id: z.string().optional(),
     id: z.number(),
     draft: z.boolean().default(false),
+    // Dated correction notice for substantive post-publication edits. Rendered by
+    // the page template OUTSIDE the narrated body, so it never desyncs a timing
+    // sidecar and is never read aloud. Format: "Correction, <Month D, YYYY>: ...".
+    corrected: z.string().optional(),
   }),
 })
 

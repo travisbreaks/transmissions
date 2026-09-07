@@ -105,6 +105,12 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
       <Content />
     </div>
 
+    {entry.data.corrected && (
+      <aside class="correction font-body">
+        <p>{entry.data.corrected}</p>
+      </aside>
+    )}
+
     <ReadAlong />
     <FloatingPlayer />
 
@@ -147,6 +153,18 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
   .transmission-header {
     margin-bottom: 2.5rem;
   }
+
+  /* dated correction notice (frontmatter `corrected`): outside .content so the
+     read-along never maps it and narration never reads it */
+  .correction {
+    margin: 2.5rem 0 0;
+    padding: 0.9rem 1.1rem;
+    border-left: 2px solid rgba(120, 220, 255, 0.35);
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-style: italic;
+  }
+  .correction p { margin: 0; }
 
   .meta-line {
     font-size: 0.65rem;

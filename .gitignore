@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Narration audio lives on R2, never in git (timing sidecars DO commit)
 public/*.mp3
+
+# workshop safety snapshots (never deploy, never commit)
+workshop-snapshots/

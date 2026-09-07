@@ -44,7 +44,7 @@ OUTPUT_FORMAT = "mp3_44100_128"
 CHUNK_CHAR_LIMIT = 3800             # size-based fallback chunking limit
 MIN_CHUNK_CHARS = 250               # v3: prompts under ~250 chars go inconsistent
 SEAM_GAP_S = 2.1                    # silence between body chunks (section seam; 0.35 too abrupt, 1.2/1.6 still tight; Boss-set 2026-07-21)
-EXTRACTOR_VERSION = 2               # 2 = blockquote markers + inline backticks stripped (2026-09-06); 1 = neither
+EXTRACTOR_VERSION = 3               # 3 = column-0 HTML blocks (div/figure/aside) dropped whole (2026-09-07); 2 = blockquote markers + inline backticks stripped (2026-09-06); 1 = neither
 STITCH_CTX_CHARS = 1000             # previous_text/next_text context cap
 INTRO_GAP_S = 2.0                   # per the audio config: 2s intro/body + body/outro
 ENV_LOCAL = Path("/Users/travisbonnet/code/CODE/.env.local")
@@ -93,6 +93,11 @@ def extract_paragraphs(md_path: Path) -> list[str]:
     text = re.sub(r"<style.*?</style>", "", text, flags=re.S | re.I)
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S | re.I)
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
+    # Any other HTML block (a line starting with <div ...> through the next
+    # column-0 </div>) is site furniture, not prose: the EP card in 049, the
+    # image figures, the terminal overlays. Left in, their link text was
+    # narrated ("THOUGHTCRIMES EP, 6 tracks, Listen on SoundCloud", 2026-09-07).
+    text = re.sub(r"(?ms)^<(div|figure|aside|blockquote class)[^\n]*\n.*?^</(div|figure|aside|blockquote)>[ \t]*$\n?", "", text)
     # any remaining html tags render as inline/invisible; strip tags, keep inner text
     text = re.sub(r"<[^>\n]+>", "", text)
     # Blockquote markers are markdown syntax, not prose: strip them per line so
@@ -144,6 +149,11 @@ def extract_sections(md_path: Path, stop_at_sources: bool) -> list[list[str]]:
     text = re.sub(r"<style.*?</style>", "", text, flags=re.S | re.I)
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S | re.I)
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
+    # Any other HTML block (a line starting with <div ...> through the next
+    # column-0 </div>) is site furniture, not prose: the EP card in 049, the
+    # image figures, the terminal overlays. Left in, their link text was
+    # narrated ("THOUGHTCRIMES EP, 6 tracks, Listen on SoundCloud", 2026-09-07).
+    text = re.sub(r"(?ms)^<(div|figure|aside|blockquote class)[^\n]*\n.*?^</(div|figure|aside|blockquote)>[ \t]*$\n?", "", text)
     text = re.sub(r"<[^>\n]+>", "", text)
     # Blockquote markers are markdown syntax, not prose: strip them per line so
     # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
@@ -325,9 +335,11 @@ def main():
                     help="exclude the **Sources** block (and beyond) from narration")
     ap.add_argument("--section-chunks", action="store_true",
                     help="one chunk per --- section (prosody seams at section breaks)")
+    ap.add_argument("--cache-only", action="store_true",
+                    help="preflight: fail before any credential lookup or network call if any chunk is "
+                         "not already cached; otherwise assemble from cache at zero spend")
     args = ap.parse_args()
 
-    key = api_key()
     work = Path(args.work_dir); work.mkdir(parents=True, exist_ok=True)
     out_dir = Path(args.out_dir); out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -345,6 +357,17 @@ def main():
     intro_text = f"Transmission. Number {args.number}. {args.title}."
     outro_text = (f"Thus concludes our transmission on {args.title}. This has been a "
                   f"narration brought to you by travisbreaks.org. Hope you have enjoyed it.")
+
+    # what this run would bill, computed before any key or network access
+    missing = [("intro", intro_text)] if not (work / f"intro-{cache_key(intro_text)}.mp3").exists() else []
+    missing += [(f"body{i}", c) for i, c in enumerate(chunks)
+                if not ((work / f"body{i}-{cache_key(c)}.mp3").exists() and (work / f"body{i}-{cache_key(c)}.alignment.json").exists())]
+    missing += [("outro", outro_text)] if not (work / f"outro-{cache_key(outro_text)}.mp3").exists() else []
+    print(f"to bill: {len(missing)} chunk(s), {sum(len(t) for _, t in missing)} chars"
+          + (": " + ", ".join(tag for tag, _ in missing) if missing else " (all cached)"))
+    if args.cache_only and missing:
+        sys.exit("--cache-only: cache is incomplete; refusing to call TTS")
+    key = "cache-only" if args.cache_only else api_key()
 
     intro_mp3, _ = tts(intro_text, key, work, "intro", want_alignment=False)
     chunk_files, chunk_aligns = [], []

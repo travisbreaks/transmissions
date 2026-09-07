@@ -44,8 +44,9 @@ Travis's voice. Not Tadao's. Not GPT's. Not Claude's.
 **Hard rules:**
 - No em dashes. Use commas, periods, colons, semicolons, parentheses.
 - No "sober." Always "in recovery."
-- No second-person "you/your" in long-form prose. Gold standards have ZERO. (001 Archive of Becoming is the only exemption as the genesis piece.)
+- No second-person "you/your" in long-form prose. Gold standards have ZERO. (Two exemptions, both Boss-ratified: 001 Archive of Becoming as the genesis piece, and 072 AI Is Using Us, where the second person is constitutive: the thesis is "it is using you," the closer commands "Write yours." Exempted 2026-09-03 after full-canon review; the rule stays hard for everything else. Quoted scripture and quoted dialogue never count as prose voice.)
 - No repeating signature phrases across transmissions. Each piece owns its closer.
+- **Bible references (Boss-set 2026-07-21): either "The Book" (capitalized, the received whole) or "the books" (plural lowercase, the writings/composition). NEVER lowercase singular "the book" for the Bible.** "Bible" and named books (Psalm 91, Daniel, Job) capitalized as titles; naming constructions ("the book of Job") lowercase per convention; generic book similes ("a burned book") lowercase. 071 (plural usage) and 070 (post-fix) are the reference implementations.
 - Ground in Travis's actual work, infrastructure, recovery, creative practice. Do not just theorize.
 
 ---
@@ -85,6 +86,7 @@ These patterns were caught during a full-batch QA pass. Check EVERY batch before
 7. **071-owned signatures** (do not reuse): "The signs did not multiply. The resolution did." / "We mistook higher resolution for a nearer end." / "finds me awake" (closer) / "me catching up to my own config" / "That is the collision. What follows is the audit." Also owned elsewhere: "the wrong time, agreed upon" (061), "The feed curates the curator" + the mirror (005), the casino (1002).
 8. **Frame-line template watch**: "That is the X. [Short second sentence.]" is now used by 054, 055, and 071. It is a series convention, but three is approaching saturation; vary the frame move in the next pieces.
 9. **Derivative sweep method (071)**: before ship, grep 30+ probe phrases (the piece's distinctive n-grams and metaphor families) across the full corpus, then hand-judge any hits in context (a word-level hit is usually shared vocabulary, not a collision; check the FUNCTION the phrase serves).
+10. **Callbacks vs derivation (Travis-set 2026-07-17, 072 arc)**: reusing a catchy turn of phrase from an earlier transmission is ALLOWED when it functions as a deliberate callback: a subtle, unattributed nod that rewards corpus readers and grows the thought mesh across pieces. Limit ~2 per piece, and the phrase must do NEW work in its new home (same words, different function; e.g., 072 reuses 061's rubber stamp for human oversight where 061 used it for agent verification theater). What stays banned: signature closers and owned metaphors doing the SAME job twice; that is being derivative of ourselves, not building on ourselves. The dedup sweep (item 9) still runs; its output is judged callback-or-derivative, not hit-equals-cut.
 
 ---
 
@@ -148,14 +150,19 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 
 ## Audio Config
 
-**Canonical generator (2026-07-13, supersedes tts-transmission.py for essays): `scripts/narrate-with-timing.py`** — produces the mp3 AND the word-timing sidecar the read-along needs, in one run. Use `--section-chunks --stop-at-sources`. What it encodes (learned on 071, verified against the v3 docs):
+**Canonical generator (2026-07-13, supersedes tts-transmission.py for essays): `scripts/narrate-with-timing.py`** — produces the mp3 AND the word-timing sidecar the read-along needs, in one run. Use `--section-chunks --stop-at-sources`.
+
+**MANDATORY pre-generation check (added 2026-07-20, Travis-directed): before EVERY narration run, fetch ElevenLabs' current TTS best-practices and v3 prompting docs, diff against this section, update this section with any deltas, THEN generate.** Re-verified 2026-09-07 (v3 prompting doc: stability modes, no SSML breaks, voice-dependent tags all unchanged; the general best-practices URL now returns 404, so the v3 page is the one to check). Last verified 2026-07-20 against the live docs: stability modes unchanged (Creative "prone to hallucinations" / Natural "closest to the original voice recording" / Robust "similar to v2"; Natural remains the narration setting); the >250-char chunk floor still corroborated; audio tags remain performance-oriented and voice-dependent, so measured narration stays tagless; **v3 does not support SSML break tags** — pauses come from punctuation, ellipses, text structure, and our ffmpeg assembly gaps (our pipeline already complies); v3 reportedly exited alpha ~March 2026 (secondary-sourced, primary date unverified); request stitching self-adapts (the script attempts previous_text/next_text and auto-falls-back on 400, so if GA v3 accepts it we get it for free).
+
+What it encodes (learned on 071, verified against the v3 docs):
 
 - **v3 stability is modal**: 0.0 Creative / 0.5 Natural / 1.0 Robust. Narration = Natural (0.5). If section seams sound inconsistent, the next lever is Robust.
 - **eleven_v3 REJECTS request stitching** (previous_text/next_text → HTTP 400); the script auto-falls-back. Consistency comes from chunking at `---` section breaks (pauses land where the essay breathes) + keeping every chunk over ~250 chars (v3 goes inconsistent below that).
-- **Audio tags** ([thoughtful], [sighs]) are for dialogue/emotional acting, not measured narration; 071 shipped tagless and correct. The script filters bracket tags out of the sidecar if they are ever used.
+- **Audio tags / v3 "voice direction": NO. Not with George. Tested 2026-07-21.** If Travis asks "can we use the latest v3 voice direction / audio tags," the answer is: **not if you want to keep George.** Verified fact: a `[serious tone]` tag rendered on George (`Apa0qDTZZx6F8Azt5oFG`, category `generated`, "Documentary Narrator British RP") at Natural stability was SPOKEN ALOUD ("serious tone" landed as timed words at 6.96s and 316s in the sidecar), not performed as direction. That render was scrapped and the clean tagless mp3 restored from cache (zero credits, separate work-dir). NOT further tested: whether single-word tags like `[pause]` behave differently on George (unverified, do not claim either way). Using tags reliably would mean switching to a tag-optimized voice (a bigger decision, not a same-day change). Until that decision is made and TESTED: transmissions ship TAGLESS. Delivery shaping comes from the prose (punctuation, sentence structure, `---` section breaks), which v3 respects. The script filters single-token bracket tags from the sidecar; it does NOT filter multi-word tags (`[serious tone]` splits into `[serious` + `tone]` and slips through), another reason not to hand-tag.
+- **Section-seam gap is 2.1s (Boss-locked 2026-07-21** after auditioning 0.35 → 1.2 → 1.6 → 2.1 on 070; 0.35 was "too abrupt"). Lives as `SEAM_GAP_S` in the script. The gap is applied at ffmpeg assembly, so changing it re-assembles from cached chunks at zero TTS cost; bump the player `?v=` on every re-upload.
 - **Sources blocks are excluded from narration** (`--stop-at-sources`); the ReadAlong client tolerates a sidecar that ends before the page does.
 - **Chunk caching**: every TTS chunk is cached by content hash; a failed or repeated run never re-bills completed chunks. Text edits re-bill only the changed sections.
-- Key: `ELEVENLABS_API_KEY` in env or `CODE/.env.local` (keychain has no entry).
+- Key: keychain `ELEVENLABS_API_KEY` (account `tadao`, value starts `sk_`). The old `CODE/.env.local` value (64-hex legacy format, 2026-03-10) was rejected by the API on 2026-09-07 as "API key ID used as API key"; the script now resolves env → keychain → .env.local and skips any value that does not start with `sk_`. To (re)store: `security add-generic-password -s ELEVENLABS_API_KEY -a tadao -U -w` (prompted; never paste a key into a command line). Do not re-search the machine for a key: this line is the answer.
 
 Legacy settings below still apply to the intro/outro format and the voice:
 
