@@ -10,7 +10,7 @@ id: 73
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/073-absolutely-no-ai.mp3?v=3" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/073-absolutely-no-ai.mp3?v=4" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
@@ -295,9 +295,9 @@ The case is Bartz v. Anthropic, and it did not end the way the panic wanted it t
 
 In September 2025, Anthropic settled the authors' class action for one and a half billion dollars. Roughly three thousand a book, across nearly half a million titles. The headline wrote itself: they stole the books, they paid for it, move on.
 
-The ruling underneath the settlement is the part nobody quotes. On June 23, 2025, before the money, the judge split the question in two. Training a model on books the company had lawfully acquired was ruled transformative. Fair use. Legal. The pirated library was the other half: Anthropic had also downloaded copies it never paid for and kept them, and the judge sent that piece to trial rather than blessing it. The settlement resolved it before a jury ever did, so there is no final verdict on the piracy, only a very expensive decision not to find out. But the shape of the ruling is clear enough: in that courtroom, the training was not the sin. The stealing to obtain the training material was.
+The ruling underneath the settlement is the part nobody quotes. On June 23, 2025, before the money, the judge split the question in two. Training the model on the books was ruled transformative. Fair use. Legal. The pirated library was the other half: Anthropic had also downloaded copies it never paid for and kept them as a library, and the judge refused to call that fair use. He called it theft, and reserved those copies and the damages for trial. The settlement avoided the scheduled trial. But the shape of the ruling is clear enough: in that courtroom, the training was not the sin. The stealing to obtain the training material was.
 
-One district court, one medium: books, not music. The labels argue the reasoning may not transfer, because a music model's outputs compete with the recordings it trained on in a way a chatbot's do not. Maybe so. The distinction still stands, and the blanket rule cannot hold it. "They stole the books" is not what the court found. The court found that how the material was obtained is one legal question and what the model does with it is a separate one. A single bit cannot carry a two-part holding.
+One district court, one medium: books, not music. The labels argue the reasoning may not transfer, because a music model's outputs compete with the recordings it trained on in a way a chatbot's do not. Maybe so. The distinction still stands, and the blanket rule cannot hold it. "They stole the books" is half of what the court found. The other half is that how the material was obtained is one legal question and what the model does with it is a separate one. A single bit cannot carry a two-part holding.
 
 ---
 
@@ -342,3 +342,5 @@ The machine did not take the work. A rule that could not read did.
 [What authors need to know about the Anthropic settlement](https://authorsguild.org/advocacy/artificial-intelligence/what-authors-need-to-know-about-the-anthropic-settlement/) (Authors Guild)
 
 [Bartz v. Anthropic: first court decision on the fair use defense in LLM training](https://www.wiggin.com/publication/bartz-v-anthropic-first-court-decision-on-fair-use-defense-in-llm-training/) (Wiggin and Dana)
+
+*Correction, September 7, 2026: an earlier version of this piece said the court had left the piracy question unanswered and that "they stole the books" was not what it found. The June 23, 2025 order denied fair use for the pirated library, called it theft, and reserved those copies and the damages for trial; the training holding was not limited to lawfully acquired books. The two paragraphs on the ruling were rewritten and re-narrated the same day.*
