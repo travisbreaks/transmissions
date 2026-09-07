@@ -165,14 +165,15 @@ const overflowCount = tags.length - 3
     font-weight: 900;
     line-height: 1;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.06);
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.18);
     pointer-events: none;
     user-select: none;
     letter-spacing: 0.05em;
-    transition: -webkit-text-stroke 0.3s ease;
+    transition: -webkit-text-stroke 0.3s ease, color 0.3s ease;
   }
 
   .card:hover .card-number {
-    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.12);
+    -webkit-text-stroke: 1px rgba(204, 164, 59, 0.6);
+    color: rgba(204, 164, 59, 0.12);
   }
 </style>
