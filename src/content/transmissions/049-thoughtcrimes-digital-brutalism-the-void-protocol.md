@@ -6,10 +6,11 @@ tags: ["protocol", "void"]
 key_quote: "The interface is not a window. It's a scar."
 source_platform: "chatgpt"
 id: 49
+corrected: "Correction, September 7, 2026: the somatic-layer section described a gold-slash fade of 0.94 per frame as the rate adrenaline clears the bloodstream and said the decay curves were in the codebase. The number entered the archive from a design prototype's demonstration copy, and no such implementation has been recovered. The section now describes the spec and marks the adrenaline comparison as an image. The narration was regenerated the same day."
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/049-thoughtcrimes-digital-brutalism-the-void-protocol.mp3?v=4" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/049-thoughtcrimes-digital-brutalism-the-void-protocol.mp3?v=6" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
@@ -396,9 +397,9 @@ Prefer legibility over persuasion. The interface communicates, it does not sell.
 
 The somatic layer is where this gets concrete.
 
-On the THOUGHTCRIMES visual system, interaction leaves physical traces. Gold slashes appear on aggressive mouse movement and fade at a rate that approximates adrenaline clearance from the bloodstream: opacity multiplied by 0.94 per frame. Click events leave impact marks that persist and decay. Scroll velocity warps the viewport. The interface does not absorb input and return output cleanly. It shows the evidence of contact.
+The THOUGHTCRIMES spec calls for interaction to leave physical traces. Gold slashes on aggressive mouse movement that fade; the image I wrote them against was adrenaline leaving the bloodstream. Impact marks on every click, persisting and decaying. Scroll velocity warping the viewport. The interface is not to absorb input and return output cleanly. It is to show the evidence of contact.
 
-This is not metaphor. It is implementation. The decay curves are in the codebase. The shader handles the rendering. The system reacts like a body because it was built to react like a body: contact produces visible response, and the response fades at biological speed rather than at whatever duration a designer thought would feel "snappy."
+This is not metaphor. It is a spec, written to be built: contact produces visible response, and the response fades on a curve that reads as biological rather than at whatever duration a designer thought would feel "snappy."
 
 The same principle runs through the infrastructure I build. Sentinel does not hide the machine. It reports the machine. Egger does not smooth its outputs into palatability. It logs what it finds, including the parts that are uncomfortable. The monitoring dashboards do not optimize for calm. They optimize for accuracy, which sometimes means a screen full of red.
 
