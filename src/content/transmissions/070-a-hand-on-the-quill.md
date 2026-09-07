@@ -7,10 +7,11 @@ tags: ["worlds", "systems", "self"]
 key_quote: "Revelation that passes through fearful, status-seeking primates arrives partly revelation and partly autobiography."
 source_platform: "chatgpt"
 id: 70
+corrected: "Correction, September 7, 2026: the opening line called the pinnacle temptation the devil's first recorded argument in the New Testament. In Matthew 4 the first temptation is stones to bread; the Psalm 91 quotation is the second. The line now says it is the first time the devil quotes scripture. The narration was updated the same day."
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/070-a-hand-on-the-quill.mp3?v=6" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/070-a-hand-on-the-quill.mp3?v=7" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
@@ -257,7 +258,7 @@ id: 70
 })();
 </script>
 
-The devil's first recorded argument in the New Testament is a Bible study.
+The first time the devil quotes scripture in the New Testament, it is a Bible study.
 
 Matthew writes it plainly. The tempter takes the Messiah to the pinnacle of the temple and quotes Psalm 91 at him, accurately: he will command his angels concerning you. No forged verse. No invented scripture. Real text, cited cleanly, aimed at the wrong end. Whatever else the story teaches, it establishes the adversary's method in his opening scene. He does not need to write The Book. He needs to hold it while it is being read.
 
