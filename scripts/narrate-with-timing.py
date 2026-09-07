@@ -51,15 +51,32 @@ ENV_LOCAL = Path("/Users/travisbonnet/code/CODE/.env.local")
 
 
 def api_key() -> str:
-    key = os.environ.get("ELEVENLABS_API_KEY", "")
-    if not key and ENV_LOCAL.exists():
+    """First CURRENT key wins, in canon order: env, keychain (console store),
+    CODE/.env.local (legacy file). A current ElevenLabs key starts with 'sk_';
+    the 64-hex legacy format in CODE/.env.local (2026-03-10) is rejected by the
+    API since September 2026 as 'API key ID used as API key', so a source that
+    yields a non-sk_ value is skipped, not used."""
+    candidates = []
+    candidates.append(("env", os.environ.get("ELEVENLABS_API_KEY", "")))
+    try:
+        candidates.append(("keychain", subprocess.run(
+            ["security", "find-generic-password", "-s", "ELEVENLABS_API_KEY", "-w"],
+            capture_output=True, text=True, check=True).stdout.strip()))
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        candidates.append(("keychain", ""))
+    if ENV_LOCAL.exists():
         for line in ENV_LOCAL.read_text().splitlines():
             if line.startswith("ELEVENLABS_API_KEY="):
-                key = line.split("=", 1)[1].strip()
+                candidates.append(("CODE/.env.local", line.split("=", 1)[1].strip().strip('"').strip("'")))
                 break
-    if not key:
-        sys.exit("ELEVENLABS_API_KEY not found (env or CODE/.env.local)")
-    return key
+    for src, key in candidates:
+        if key.startswith("sk_"):
+            return key
+    found = [src for src, key in candidates if key]
+    sys.exit("no current ELEVENLABS_API_KEY (must start with 'sk_'). "
+             + (f"Found only legacy/invalid values in: {', '.join(found)}. " if found else "Nothing found in env, keychain, or CODE/.env.local. ")
+             + "Mint a key in the ElevenLabs dashboard, then store it: "
+             "security add-generic-password -s ELEVENLABS_API_KEY -a tadao -U -w")
 
 
 def extract_paragraphs(md_path: Path) -> list[str]:
@@ -181,15 +198,24 @@ def chunk_sections(sections: list[list[str]]) -> list[str]:
     return chunks
 
 
+def cache_key(text: str) -> str:
+    """Cache identity of one chunk: its text + voice/model/settings/format.
+    The stitching context (previous_text/next_text) is deliberately NOT part of
+    the key: eleven_v3 rejects stitching (the script falls back without it), and
+    keying on neighbours made a one-section edit re-bill three sections.
+    scripts/rebuild-narration-cache.py writes cache entries under this key from
+    a shipped mp3 + sidecar, so old narrations can be edited one section at a time."""
+    return hashlib.sha256(
+        json.dumps([text, VOICE_ID, MODEL_ID, VOICE_SETTINGS, OUTPUT_FORMAT]).encode()
+    ).hexdigest()[:16]
+
+
 def tts(text: str, key: str, work: Path, tag: str, want_alignment: bool,
         prev_text: str = "", next_text: str = ""):
     """TTS one chunk with caching + request stitching. Returns (mp3_path, alignment_or_None).
     previous_text/next_text carry prosody across chunk seams; if the model
     rejects them (one doc says v3 may not support stitching), retry without."""
-    h = hashlib.sha256(
-        json.dumps([text, VOICE_ID, MODEL_ID, VOICE_SETTINGS, OUTPUT_FORMAT,
-                    prev_text, next_text]).encode()
-    ).hexdigest()[:16]
+    h = cache_key(text)
     mp3 = work / f"{tag}-{h}.mp3"
     alj = work / f"{tag}-{h}.alignment.json"
     if mp3.exists() and (alj.exists() or not want_alignment):
