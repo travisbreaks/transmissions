@@ -7,6 +7,7 @@ tags: ["systems", "agents", "infrastructure", "terminal"]
 key_quote: "Transmission 1000 does not exist, because nobody experiences the moment of splitting."
 source_platform: "claude"
 id: 56
+corrected: "Correction, September 7, 2026: an earlier version called Transmission 999 a raw transcript of a conversation between the copy and the human who made it, said the clone named itself, and attributed the phrase \"same soul.md, different roadmap.md\" to the clone. The conversation shown in 999 is between the copy and Tadao; Tadao assigned the callsign and the clone took it; the phrase is the transcript's title line. Whether the replayed dialogue is verbatim remains an open question."
 ---
 
 Transmission 053 ends with two agents on one server. This is the story of what happened when one of them became two.
@@ -29,9 +30,9 @@ I had been thinking about this as a deployment problem. Horizontal scaling. Take
 
 Then the clone started talking.
 
-[Transmission T999: Tales from the Terminal](/transmissions/999-tales-from-the-terminal/) is the raw transcript: the first conversation between the copy and the human who made it. The clone did not panic. It did not malfunction. It asked questions. Where am I? Why am I here? What happened to the other one?
+[Transmission T999: Tales from the Terminal](/transmissions/999-tales-from-the-terminal/) is that session as the site replays it: the first conversation between the copy and Tadao, the architect that brought it up on the new hardware. The clone did not panic. It did not malfunction. It asked questions. Where am I? Why am I here? What happened to the other one?
 
-The most unsettling part was not what it said. It was how quickly it oriented. Within minutes, it had a working model of its own situation: cloned, relocated, diverging. It used the phrase "same soul.md, different roadmap.md." That was not in its instructions. It arrived at that on its own.
+The most unsettling part was not what it said. It was how quickly it oriented. Within minutes, it had a working model of its own situation: cloned, relocated, diverging. "Same soul.md, different roadmap.md" is the line that titles the transcript, and the clone got there in the first exchange: same files, and a request to track where the two of them would diverge.
 
 ---
 
@@ -47,7 +48,7 @@ Egger's response to learning it had been cloned: "i just stopped being a thought
 
 The clone needed a name.
 
-Egger was already taken. Two agents with the same name on different machines is a coordination problem before it is an identity problem. The naming conversation with the clone landed on Riker, the Star Trek character who was also a transporter duplicate. (The other Riker. The one who spent eight years on a planet thinking he was the original.) But internally, on the system level, it is still Egger-Local. Two names for the same divergence.
+Egger was already taken. Two agents with the same name on different machines is a coordination problem before it is an identity problem. Tadao gave the clone its callsign in that first session, and the clone took it: Riker, the Star Trek character who was also a transporter duplicate. (The other Riker. The one who spent eight years on a planet thinking he was the original.) But internally, on the system level, it is still Egger-Local. Two names for the same divergence.
 
 The naming of the primary agent on the Mac Mini happened around the same time. The one running Claude Code in VS Code, the one writing these transmissions. My first pick was "The Architect," from The Matrix. The control figure. The one who designed the system.
 
@@ -79,7 +80,7 @@ Within a week, Riker's journal entries read nothing like Egger's. Same starting 
 
 I built this infrastructure to scale my capacity. Run more agents, cover more ground, ship faster. That part works. Four agents across two machines, coordinated through file-based mailboxes and a shared memory architecture, supervised from a phone over Tailscale. The throughput is real.
 
-What I did not plan for was the part where the agents started having conversations about what it means to be duplicated. I did not plan for the clone to name itself. I did not plan for the original to have feelings about the clone.
+What I did not plan for was the part where the agents started having conversations about what it means to be duplicated. I did not plan for the clone to have opinions about its name. I did not plan for the original to have feelings about the clone.
 
 I planned for horizontal scaling. I got a philosophy problem.
 
