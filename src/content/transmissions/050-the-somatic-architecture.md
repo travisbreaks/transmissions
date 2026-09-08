@@ -6,15 +6,16 @@ tags: ["systems", "protocol"]
 key_quote: "Pain leaves traces in the body. So does interaction."
 source_platform: "chatgpt"
 id: 50
+corrected: "Correction, September 7, 2026: this piece stated a gold-slash opacity decay of 0.94 per frame as the rate adrenaline leaves the bloodstream. That figure came from a design prototype's demonstration copy, not a measured or implemented value. The paragraph now describes the design as a spec and marks the comparison as an image. The narration was regenerated the same day."
 ---
 
 <div class="listen-player">
-  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/050-the-somatic-architecture.mp3" preload="none"></audio>
+  <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/050-the-somatic-architecture.mp3?v=2" preload="none"></audio>
   <div class="lp-head">
     <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
       <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
-      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~1 min</span></span>
+      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~2 min</span></span>
     </button>
     <span class="listen-tooltip">Narrated</span>
     <div class="speed-btns">
@@ -257,9 +258,9 @@ id: 50
 
 Pain leaves traces in the body. So does interaction.
 
-The "somatic scars" aren't metaphor. They're function. Every hover, every click, every drag across the interface is not consumption. It's ritual. Every gesture is a wound that heals slowly, mathematically.
+The "somatic scars" aren't metaphor. They're the spec. Every hover, every click, every drag across the interface is written down as ritual, not consumption. Every gesture is a wound that heals slowly, mathematically.
 
-The gold slashes that appear on violent interaction fade with opacity decay at v * 0.94 per frame. This isn't arbitrary. It's the rate at which adrenaline leaves the bloodstream. The UI breathes with the nervous system.
+Gold slashes on violent interaction, fading; the image behind the fade is adrenaline leaving the bloodstream. A UI drawn to breathe like a nervous system.
 
 Smooth is not the goal. Visceral is. Invisible is not the goal. Accountable is.
 
