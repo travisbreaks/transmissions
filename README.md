@@ -8,7 +8,7 @@ A curated archive of philosophical essays on AI interaction, consciousness, grie
 [![Astro](https://img.shields.io/badge/Astro-5-ff5d01)](https://astro.build)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://typescriptlang.org)
 
-![transmissions](https://assets.travisbreaks.com/github/travisbreaks-blog.png)
+![transmissions](https://assets.travisbreaks.com/github/transmissions-og.png)
 
 ## Tech Stack
 
@@ -16,7 +16,7 @@ Astro 5 SSG, TypeScript, Markdown content collections
 
 ## Features
 
-- **51 curated transmissions** organized by thematic channels (grief, void, signal, protocol, sonic, self, systems, process, worlds)
+- **Curated transmissions** organized by thematic channels (grief, void, signal, protocol, sonic, self, systems, process, worlds)
 - **Confidence scoring**: each entry carries a 0-100 epistemic confidence metric, displayed prominently
 - **Client-side search and filtering**: real-time multi-tag filtering (AND logic), title/summary search, and sort by date or confidence
 - **Glass-morphism design system**: frosted panels, grain overlay, scanline animation, and a three-font typographic hierarchy (Unbounded, JetBrains Mono, EB Garamond)
