@@ -17,6 +17,8 @@ const transmissions = defineCollection({
     // the page template OUTSIDE the narrated body, so it never desyncs a timing
     // sidecar and is never read aloud. Format: "Correction, <Month D, YYYY>: ...".
     corrected: z.string().optional(),
+    // editorial frame shown BEFORE the essay, outside the narrated body (e.g. "An account of the first night, September 6, 2026.")
+    note: z.string().optional(),
   }),
 })
 

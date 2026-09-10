@@ -249,5 +249,11 @@ print(json.dumps({"tokens": " ".join(paras).split(), "sha": hashlib.sha256("\\n\
   if (bad) failures++
 }
 
+// extractor fixtures: the HTML furniture-removal regression cases (Riker, 2026-09-08)
+try {
+  const fx = execFileSync('python3', [path.join(ROOT, 'scripts/test-narration-extract.py')], { encoding: 'utf8', env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' } })
+  process.stdout.write(fx)
+} catch (e) { failures++; process.stdout.write(e.stdout || ''); console.log(`FAIL extractor fixtures: ${String(e.message).split('\n')[0]}`) }
+
 console.log(failures ? `\n${failures} failure(s)` : '\nall read-along checks passed')
 process.exit(failures ? 1 : 0)

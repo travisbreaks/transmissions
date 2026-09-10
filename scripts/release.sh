@@ -20,7 +20,8 @@ stage=$(mktemp -d /tmp/transmissions-deploy.XXXXXX)
 echo "release: commit $commit"
 echo "worktree: $wt"
 git -C "$repo" worktree add --detach "$wt" "$commit" >/dev/null
-trap 'git -C "$repo" worktree remove --force "$wt" >/dev/null 2>&1 || true' EXIT
+# cleanup of the script's OWN temp worktree and staging dir (both mktemp'd above)
+trap 'git -C "$repo" worktree remove --force "$wt" >/dev/null 2>&1 || true; rm -rf "$stage"' EXIT
 
 cd "$wt"
 [ "$(git status --short | wc -l | tr -d ' ')" = "0" ] || { echo "worktree is not clean"; exit 1; }

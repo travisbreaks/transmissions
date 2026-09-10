@@ -44,7 +44,7 @@ OUTPUT_FORMAT = "mp3_44100_128"
 CHUNK_CHAR_LIMIT = 3800             # size-based fallback chunking limit
 MIN_CHUNK_CHARS = 250               # v3: prompts under ~250 chars go inconsistent
 SEAM_GAP_S = 2.1                    # silence between body chunks (section seam; 0.35 too abrupt, 1.2/1.6 still tight; Boss-set 2026-07-21)
-EXTRACTOR_VERSION = 3               # 3 = column-0 HTML blocks (div/figure/aside) dropped whole (2026-09-07); 2 = blockquote markers + inline backticks stripped (2026-09-06); 1 = neither
+EXTRACTOR_VERSION = 4               # 4 = furniture blocks removed by a nesting-aware scanner, indented closes tolerated (2026-09-10); 3 = column-0 HTML blocks (div/figure/aside) dropped whole (2026-09-07); 2 = blockquote markers + inline backticks stripped (2026-09-06); 1 = neither
 STITCH_CTX_CHARS = 1000             # previous_text/next_text context cap
 INTRO_GAP_S = 2.0                   # per the audio config: 2s intro/body + body/outro
 ENV_LOCAL = Path("/Users/travisbonnet/code/CODE/.env.local")
@@ -79,6 +79,50 @@ def api_key() -> str:
              "security add-generic-password -s ELEVENLABS_API_KEY -a tadao -U -w")
 
 
+FURNITURE_OPEN = re.compile(r"^<(div|figure|aside)\b|^<(blockquote) class\b", re.I)
+
+
+def strip_furniture_blocks(text: str) -> str:
+    """Remove HTML furniture blocks from the markdown: a block starts at a
+    column-0 <div ...>, <figure ...>, <aside ...> or <blockquote class=...> line
+    (the EP card in 049, the image figures, the terminal overlays) and ends at
+    the close tag that balances it. Left in, their link text was narrated
+    ("THOUGHTCRIMES EP, 6 tracks, Listen on SoundCloud", 2026-09-07).
+
+    Nesting is tracked per tag name and the close may be indented, which the
+    earlier column-0 regex got wrong (Riker, 2026-09-08: an indented </div>
+    leaked promo text, or consumed essay prose up to the next column-0 close).
+    A block that never balances is left in place with a warning rather than
+    consumed to end of file. A bare <blockquote> (no class) is prose, not
+    furniture, and is not touched here. Fixtures: scripts/test-narration-extract.py."""
+    lines = text.split("\n")
+    out, i = [], 0
+    while i < len(lines):
+        m = FURNITURE_OPEN.match(lines[i])
+        if not m:
+            out.append(lines[i]); i += 1
+            continue
+        tag = (m.group(1) or m.group(2)).lower()
+        tag_re = re.compile(rf"<(/?){tag}\b[^>]*?(/?)>", re.I)
+        depth, j, balanced = 0, i, False
+        while j < len(lines):
+            for t in tag_re.finditer(lines[j]):
+                if t.group(1):
+                    depth -= 1
+                elif not t.group(2):
+                    depth += 1
+            j += 1
+            if depth <= 0:
+                balanced = True
+                break
+        if balanced:
+            i = j  # drop lines i..j-1 (the block and its balancing close)
+        else:
+            print(f"warning: unbalanced <{tag}> block at line {i + 1} left in the narration text", file=sys.stderr)
+            out.append(lines[i]); i += 1
+    return "\n".join(out)
+
+
 def extract_paragraphs(md_path: Path) -> list[str]:
     """Frontmatter, HTML comments, HTML blocks, and hr lines out; paragraphs in
     document order, with markdown link/emphasis syntax reduced to rendered text."""
@@ -93,11 +137,7 @@ def extract_paragraphs(md_path: Path) -> list[str]:
     text = re.sub(r"<style.*?</style>", "", text, flags=re.S | re.I)
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S | re.I)
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
-    # Any other HTML block (a line starting with <div ...> through the next
-    # column-0 </div>) is site furniture, not prose: the EP card in 049, the
-    # image figures, the terminal overlays. Left in, their link text was
-    # narrated ("THOUGHTCRIMES EP, 6 tracks, Listen on SoundCloud", 2026-09-07).
-    text = re.sub(r"(?ms)^<(div|figure|aside|blockquote class)[^\n]*\n.*?^</(div|figure|aside|blockquote)>[ \t]*$\n?", "", text)
+    text = strip_furniture_blocks(text)
     # any remaining html tags render as inline/invisible; strip tags, keep inner text
     text = re.sub(r"<[^>\n]+>", "", text)
     # Blockquote markers are markdown syntax, not prose: strip them per line so
@@ -149,11 +189,7 @@ def extract_sections(md_path: Path, stop_at_sources: bool) -> list[list[str]]:
     text = re.sub(r"<style.*?</style>", "", text, flags=re.S | re.I)
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S | re.I)
     text = re.sub(r"<div class=\"listen-player\".*?</div>\s*</div>\s*</div>", "", text, flags=re.S)
-    # Any other HTML block (a line starting with <div ...> through the next
-    # column-0 </div>) is site furniture, not prose: the EP card in 049, the
-    # image figures, the terminal overlays. Left in, their link text was
-    # narrated ("THOUGHTCRIMES EP, 6 tracks, Listen on SoundCloud", 2026-09-07).
-    text = re.sub(r"(?ms)^<(div|figure|aside|blockquote class)[^\n]*\n.*?^</(div|figure|aside|blockquote)>[ \t]*$\n?", "", text)
+    text = strip_furniture_blocks(text)
     text = re.sub(r"<[^>\n]+>", "", text)
     # Blockquote markers are markdown syntax, not prose: strip them per line so
     # "> quoted" narrates as "quoted", and a lone ">" line becomes a paragraph
@@ -206,6 +242,29 @@ def chunk_sections(sections: list[list[str]]) -> list[str]:
         chunks[1] = chunks[0] + "\n\n" + chunks[1]
         chunks.pop(0)
     return chunks
+
+
+def quota(key: str, label: str) -> dict | None:
+    """Print the account's character quota (tier, used/limit, remaining, reset
+    date). Called before a run (so the bill is judged against what is left) and
+    after it (so the observed account usage change is on the record).
+    Boss-mandated 2026-09-07."""
+    if key == "cache-only":
+        return None
+    try:
+        import datetime
+        r = requests.get("https://api.elevenlabs.io/v1/user/subscription",
+                         headers={"xi-api-key": key}, timeout=30)
+        d = r.json()
+        used, limit = d.get("character_count", 0), d.get("character_limit", 0)
+        reset = d.get("next_character_count_reset_unix")
+        reset_s = datetime.datetime.fromtimestamp(reset).strftime("%Y-%m-%d %H:%M") if reset else "unknown"
+        print(f"quota {label}: {d.get('tier')} tier, {used:,} of {limit:,} chars used, "
+              f"{limit - used:,} remaining, resets {reset_s}")
+        return d
+    except Exception as e:  # quota is informational; never block a run on it
+        print(f"quota {label}: unavailable ({e})")
+        return None
 
 
 def cache_key(text: str) -> str:
@@ -368,16 +427,46 @@ def main():
     if args.cache_only and missing:
         sys.exit("--cache-only: cache is incomplete; refusing to call TTS")
     key = "cache-only" if args.cache_only else api_key()
+    q0 = quota(key, "before")
+    if q0 and missing:
+        need = sum(len(t) for _, t in missing)
+        left = q0.get("character_limit", 0) - q0.get("character_count", 0)
+        if need > left:
+            sys.exit(f"this run needs about {need:,} chars but only {left:,} remain this period; refusing")
 
-    intro_mp3, _ = tts(intro_text, key, work, "intro", want_alignment=False)
-    chunk_files, chunk_aligns = [], []
-    for i, ch in enumerate(chunks):
-        prev_ctx = chunks[i - 1] if i > 0 else intro_text
-        next_ctx = chunks[i + 1] if i < len(chunks) - 1 else outro_text
-        f, al = tts(ch, key, work, f"body{i}", want_alignment=True,
-                    prev_text=prev_ctx, next_text=next_ctx)
-        chunk_files.append(f); chunk_aligns.append(al)
-    outro_mp3, _ = tts(outro_text, key, work, "outro", want_alignment=False)
+    ledger = Path(__file__).resolve().parent.parent / "narration-ledger.jsonl"
+
+    def ledger_append(entry: dict) -> None:
+        import time
+        entry = {"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "slug": args.slug, **entry}
+        with ledger.open("a") as f:
+            f.write(json.dumps(entry) + "\n")
+
+    def usage_change(q_after) -> int | None:
+        return (q_after.get("character_count", 0) - q0.get("character_count", 0)) if (q0 and q_after) else None
+
+    try:
+        intro_mp3, _ = tts(intro_text, key, work, "intro", want_alignment=False)
+        chunk_files, chunk_aligns = [], []
+        for i, ch in enumerate(chunks):
+            prev_ctx = chunks[i - 1] if i > 0 else intro_text
+            next_ctx = chunks[i + 1] if i < len(chunks) - 1 else outro_text
+            f, al = tts(ch, key, work, f"body{i}", want_alignment=True,
+                        prev_text=prev_ctx, next_text=next_ctx)
+            chunk_files.append(f); chunk_aligns.append(al)
+        outro_mp3, _ = tts(outro_text, key, work, "outro", want_alignment=False)
+    except (Exception, KeyboardInterrupt) as e:
+        # A run that spent on TTS and then failed must still reach the ledger
+        # (Riker, 2026-09-08): record what was requested and what the account
+        # shows, then re-raise. Completed chunks stay cached for the retry.
+        if missing:
+            qf = quota(key, "after (failed run)")
+            ledger_append({"kind": "failed-run", "error": repr(e)[:200],
+                           "chunks_requested": len(missing), "chars_requested": sum(len(t) for _, t in missing),
+                           "account_usage_change": usage_change(qf),
+                           "quota_after": None if not qf else {"used": qf.get("character_count"), "limit": qf.get("character_limit"),
+                                                               "resets_unix": qf.get("next_character_count_reset_unix")}})
+        raise
 
     # absolute word times: intro + 2s, then each chunk offset by prior durations + seams
     words, offset = [], duration(intro_mp3) + INTRO_GAP_S
@@ -416,7 +505,35 @@ def main():
 
     total = duration(final_mp3)
     print(f"done: {final_mp3} ({total/60:.1f} min), {sidecar} ({len(words)} words)")
-    print(f"chars billed (approx): {body_chars + len(intro_text) + len(outro_text)}")
+    q1 = quota(key, "after")
+    delta = usage_change(q1)
+    if missing and delta == 0:
+        # the subscription counter can lag the TTS calls by seconds (2026-09-10:
+        # a 620-char run read +0 immediately and +620 a minute later)
+        import time as _t
+        _t.sleep(8)
+        q1 = quota(key, "after (re-read)")
+        delta = usage_change(q1)
+    if delta is not None:
+        # An interval measurement of the account, not necessarily this run's
+        # charge: anything else using the key in the window lands in it too.
+        print(f"observed account usage change over this run: {delta:,} chars "
+              f"(requested {sum(len(t) for _, t in missing):,})")
+    # Per-transmission usage ledger (Boss-mandated 2026-09-07): one JSON line per
+    # run, so spend per piece is on the record and future runs can be predicted.
+    # "chars_requested" is this run's ask; "chars_billed_account_delta" is the
+    # observed account usage change over the run (kept separate on purpose).
+    # A --cache-only replay touches no account and is not a run: no ledger line.
+    if args.cache_only:
+        print("ledger: not appended (--cache-only replay, nothing requested from the account)")
+        return
+    ledger_append({"kind": "run",
+                   "chunks_billed": len(missing), "chars_requested": sum(len(t) for _, t in missing),
+                   "chars_billed_account_delta": delta, "body_chars": body_chars, "words": len(words),
+                   "minutes": round(total / 60, 1),
+                   "quota_after": None if not q1 else {"used": q1.get("character_count"), "limit": q1.get("character_limit"),
+                                                       "resets_unix": q1.get("next_character_count_reset_unix")}})
+    print(f"ledger: appended to {ledger.name}")
 
 
 if __name__ == "__main__":

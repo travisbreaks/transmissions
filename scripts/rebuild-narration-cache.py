@@ -56,10 +56,12 @@ def cut(src: Path, dst: Path, start: float, end: float):
                     "-i", str(src), "-c", "copy", str(dst)], check=True)
 
 
-def synth_alignment(text: str, words: list[dict], t0: float) -> dict:
+def synth_alignment(text: str, words: list[dict], t0: float, t1: float | None = None) -> dict:
     """Per-character times (relative to the chunk file start) from word times.
     words_from_alignment() re-tokenises on whitespace, so any char timing that
-    keeps word boundaries intact round-trips to exactly these words."""
+    keeps word boundaries intact round-trips to exactly these words.
+    t1: the cut's end; a word END past it (the provider's alignment can trail a
+    few tens of ms into the chunk's own sub-threshold tail) is clamped to it."""
     chars, s, e = [], [], []
     i = 0            # index into words
     pos = 0
@@ -80,7 +82,7 @@ def synth_alignment(text: str, words: list[dict], t0: float) -> dict:
         if i >= len(words) or words[i]["w"] != w:
             got = words[i]["w"] if i < len(words) else None
             sys.exit(f"token mismatch at word {i}: text {w!r} vs sidecar {got!r}")
-        ws, we = words[i]["s"] - t0, words[i]["e"] - t0
+        ws, we = words[i]["s"] - t0, (min(words[i]["e"], t1) if t1 is not None else words[i]["e"]) - t0
         L = len(w)
         for k, ch in enumerate(w):
             chars.append(ch)
@@ -106,7 +108,7 @@ def main():
     ap.add_argument("--stop-at-sources", action="store_true")
     a = ap.parse_args()
 
-    work = Path(a.work_dir); work.mkdir(parents=True, exist_ok=True)
+    work = Path(a.work_dir); work.parent.mkdir(parents=True, exist_ok=True)
     mp3 = Path(a.mp3)
     words = json.loads(Path(a.sidecar).read_text())["words"]
 
@@ -150,13 +152,26 @@ def main():
         start, end = spans[i][1], spans[i + 1][0]
         cw = words[wi:wi + len(toks)]
         wi += len(toks)
-        if cw[0]["s"] < start - 0.05 or cw[-1]["e"] > end + 0.05:
+        # Starts are strict: a word starting before the cut, or in the silence
+        # after it, means the boundary is wrong. A word END may trail into the
+        # detected silence by a small margin (the provider's alignment ran past
+        # the -70 dB point on 070's last word by 85 ms, 2026-09-10) and is
+        # clamped to the cut; more than that is a real boundary error.
+        END_TRAIL_S = 0.25
+        if cw[0]["s"] < start - 0.05 or cw[-1]["s"] >= end or cw[-1]["e"] > end + END_TRAIL_S:
             sys.exit(f"chunk {i}: word times {cw[0]['s']}..{cw[-1]['e']} fall outside the cut {start}..{end}")
-        plan.append((i, text, toks, start, end, synth_alignment(text, cw, start)))
+        if cw[-1]["e"] > end:
+            print(f"  [note] chunk {i}: last word {cw[-1]['w']!r} ends {cw[-1]['e'] - end:.3f}s into the silence; clamped to the cut end")
+        plan.append((i, text, toks, start, end, synth_alignment(text, cw, start, end)))
 
-    # 4. build into a FRESH temporary cache, then promote it whole
+    # 4. build into a FRESH temporary cache next to the target, then promote it
+    # with ONE directory rename (same filesystem, so atomic). Any existing cache
+    # at the target is renamed aside first and kept, never deleted: an
+    # interrupted promotion leaves either the old cache or the new one, never a
+    # mix (Riker, 2026-09-08: per-file moves left the target half-updated).
     import hashlib, shutil, tempfile, time
     tmp = Path(tempfile.mkdtemp(prefix="rebuild-", dir=str(work.parent)))
+    kept_aside = None
     try:
         cut(mp3, tmp / f"intro-{nwt.cache_key(intro_text)}.mp3", 0.0, spans[0][0])
         cut(mp3, tmp / f"outro-{nwt.cache_key(outro_text)}.mp3", spans[-1][1], total)
@@ -174,11 +189,26 @@ def main():
             "assumed": "voice/model/settings are today's generator constants (cache_key); the original run's are not recorded in the sidecar",
             "note": "chunk audio is a -c copy cut at mp3 frame boundaries; alignments are synthesised from word times",
         }, indent=1))
-        for f in tmp.iterdir():
-            shutil.move(str(f), str(work / f.name))
+        if work.exists():
+            kept_aside = work.with_name(f"{work.name}.prev-{time.strftime('%Y%m%d-%H%M%S')}")
+            work.rename(kept_aside)
+            print(f"  [aside] previous cache moved to {kept_aside}")
+        try:
+            tmp.rename(work)
+        except BaseException:
+            # two renames, not one: if the second fails, put the old cache back
+            # so the expected path is never left empty (Riker, 2026-09-10 14:44)
+            if kept_aside and not work.exists():
+                kept_aside.rename(work)
+                print(f"  [restored] promotion failed; previous cache restored to {work}")
+                kept_aside = None
+            raise
     finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+        if tmp.exists():  # only on failure before promotion: the partial build
+            shutil.rmtree(tmp, ignore_errors=True)
     print(f"rebuilt cache for {a.slug}: intro + {len(chunks)} chunks + outro in {work} (REBUILT.json records provenance)")
+    if kept_aside:
+        print(f"previous cache kept at {kept_aside} (not deleted; remove it yourself when the new one is proven)")
     print("next: narrate-with-timing.py --cache-only ... to prove zero-spend, then the real run")
 
 

@@ -100,6 +100,12 @@ const readTime = Math.max(1, Math.ceil(wordCount / 200))
       <p class="font-body">&ldquo;{entry.data.key_quote}&rdquo;</p>
     </blockquote>
 
+    {entry.data.note && (
+      <aside class="correction font-body">
+        <p>{entry.data.note}</p>
+      </aside>
+    )}
+
     <!-- Content -->
     <div class="content font-body">
       <Content />
