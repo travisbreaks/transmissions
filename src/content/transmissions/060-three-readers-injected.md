@@ -7,6 +7,7 @@ tags: ["protocol", "signal", "systems"]
 key_quote: "The bait got more sophisticated. The defense did not need to."
 source_platform: "claude"
 id: 60
+form: essay
 ---
 
 <div class="listen-player">

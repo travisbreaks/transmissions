@@ -11,3 +11,12 @@ export function published(entries: Transmission[]): Transmission[] {
     return devOnly ? import.meta.env.DEV : true
   })
 }
+
+// Drafts the archive announces without publishing: the index renders these as
+// non-clickable placeholder cards (title, number, date, tags, COMING SOON) so a
+// finished-but-ungated essay is visible as coming. Demo pages are never
+// announced. The essay itself stays unreachable in production: `published()`
+// still gates routes, terminal, and RSS, and the placeholder carries no prose.
+export function upcoming(entries: Transmission[]): Transmission[] {
+  return entries.filter((t) => t.data.draft === true && !t.data.tags?.includes('demo'))
+}

@@ -6,6 +6,7 @@ tags: ["systems", "process", "signal"]
 key_quote: "A collaborator that folds when pushed is a mirror with latency. I already own mirrors."
 source_platform: "claude"
 id: 75
+form: essay
 note: "An account of the first night, September 6, 2026."
 ---
 

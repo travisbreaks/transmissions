@@ -7,6 +7,7 @@ tags: ["process", "systems", "signal"]
 key_quote: "A signal that nobody receives is just noise with good intentions."
 source_platform: "claude"
 id: 52
+form: essay
 ---
 
 <div class="listen-player">

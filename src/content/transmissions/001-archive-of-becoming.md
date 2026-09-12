@@ -6,6 +6,7 @@ tags: ["process", "protocol", "self", "signal", "sonic"]
 key_quote: "This is transmission 001 because it is the foundation, not because it was written first."
 source_platform: "chatgpt"
 id: 1
+form: essay
 ---
 
 <div class="listen-player">

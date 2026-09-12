@@ -8,9 +8,23 @@ interface Props {
   keyQuote: string
   summary: string
   index?: number
+  // Placeholder mode: announced but not published. No link, no prose, COMING SOON
+  // in place of the key quote. See `upcoming()` in src/lib/published.ts.
+  upcoming?: boolean
+  // Declared in frontmatter. A 'seed' is a premise in the queue: it carries its
+  // abstract in place of the key quote and a dim SEED badge where an essay
+  // carries its confidence, so the written pieces hold the eye.
+  form?: 'essay' | 'seed'
+  readMinutes?: number
+  narrated?: boolean
 }
 
-const { title, slug, date, confidence, tags, keyQuote, summary, index = 0 } = Astro.props
+const {
+  title, slug, date, confidence, tags, keyQuote, summary,
+  index = 0, upcoming = false, form = 'essay', readMinutes = 0, narrated = false,
+} = Astro.props
+const CardTag = upcoming ? 'div' : 'a'
+const isSeed = !upcoming && form === 'seed'
 const slugNumber = slug.match(/^(\d+)/)?.[1]
 const displayNumber = slugNumber ? slugNumber.padStart(3, '0') : ''
 
@@ -24,27 +38,46 @@ const visibleTags = tags.slice(0, 3)
 const overflowCount = tags.length - 3
 ---
 
-<a
-  href={`/transmissions/${slug}/`}
-  class="card corner-accents glass-card glow-hover card-animate"
+<CardTag
+  href={upcoming ? undefined : `/transmissions/${slug}/`}
+  class:list={['card', 'corner-accents', 'glass-card', 'card-animate', upcoming ? 'card-upcoming' : 'glow-hover', isSeed && 'card-seed']}
   data-title={title.toLowerCase()}
   data-tags={tags.join(',')}
   data-date={date.toISOString()}
-  data-summary={summary.toLowerCase()}
+  data-number={displayNumber}
+  data-form={upcoming ? 'upcoming' : form}
+  data-summary={upcoming ? '' : summary.toLowerCase()}
   style={`animation-delay: ${index * 0.05}s`}
 >
-  <div class="card-header">
-    <span class="card-date font-code">{formattedDate}</span>
-    <span class="card-confidence font-code">{confidence}%</span>
-  </div>
+  {/* An announced piece has no publication date yet, so it shows none: its
+      frontmatter date is a placeholder until it ships. */}
+  {!upcoming && (
+    <div class="card-header">
+      <span class="card-date font-code">
+        {formattedDate}
+        {!isSeed && readMinutes > 0 && <span class="card-read"> · {readMinutes} MIN</span>}
+        {!isSeed && narrated && <span class="card-narrated"> · NARRATED</span>}
+      </span>
+      {isSeed
+        ? <span class="card-badge-seed font-code">SEED</span>
+        : <span class="card-confidence font-code">{confidence}%</span>}
+    </div>
+  )}
 
   <h2 class="card-title font-display">{title}</h2>
 
-  <p class="card-summary font-body">{summary}</p>
-
-  <blockquote class="card-quote font-body">
-    &ldquo;{keyQuote}&rdquo;
-  </blockquote>
+  {upcoming ? (
+    <p class="card-coming font-code">COMING SOON</p>
+  ) : isSeed ? (
+    <p class="card-abstract font-body">{summary}</p>
+  ) : (
+    <Fragment>
+      <p class="card-summary font-body">{summary}</p>
+      <blockquote class="card-quote font-body">
+        &ldquo;{keyQuote}&rdquo;
+      </blockquote>
+    </Fragment>
+  )}
 
   <div class="card-tags">
     {visibleTags.map(tag => (
@@ -61,7 +94,7 @@ const overflowCount = tags.length - 3
       style={`--sheen-duration: ${7 + (index % 7) * 1.3}s; --sheen-delay: ${(index * 1.7) % 5}s`}
     >{displayNumber}</span>
   )}
-</a>
+</CardTag>
 
 <style>
   .card {
@@ -75,13 +108,29 @@ const overflowCount = tags.length - 3
     position: relative;
   }
 
-  .card:hover {
+  /* Hover affordances are for cards you can open; .card-upcoming stays inert. */
+  .card:not(.card-upcoming):hover {
     border-color: var(--cyan-dim);
     transform: translateY(-2px);
   }
 
-  .card:hover .card-title {
+  .card:not(.card-upcoming):hover .card-title {
     color: var(--cyan);
+  }
+
+  /* Announced, not published: dimmed, inert, no hover affordance. */
+  .card-upcoming {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .card-coming {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    border-left: 2px solid var(--glass-border);
+    padding-left: 0.75rem;
+    line-height: 1.5;
   }
 
   .card-header {
@@ -96,12 +145,44 @@ const overflowCount = tags.length - 3
     letter-spacing: 0.1em;
   }
 
+  .card-read {
+    color: var(--text-muted);
+  }
+
+  /* The one card signal no seed ever carries. */
+  .card-narrated {
+    color: var(--cyan);
+  }
+
   .card-confidence {
     font-size: 0.6rem;
     color: var(--gold);
     letter-spacing: 0.05em;
     padding: 2px 6px;
     border: 1px solid var(--gold-dim);
+  }
+
+  /* Same slot as the confidence badge, deliberately quieter. */
+  .card-badge-seed {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    padding: 2px 6px;
+    border: 1px solid var(--glass-border);
+  }
+
+  /* A seed's whole page is its abstract, so the card shows it rather than a
+     3-line tease: 39 of the 50 fit inside four lines entire. No gold key quote,
+     and no read time: those blocks mark a written piece, and the clamp keeps a
+     seed from standing taller than the essays beside it. */
+  .card-abstract {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .card-title {
@@ -148,7 +229,7 @@ const overflowCount = tags.length - 3
     transition: background 0.2s ease;
   }
 
-  .card:hover .tag {
+  .card:not(.card-upcoming):hover .tag {
     background: var(--cyan-dim);
   }
 
@@ -172,7 +253,7 @@ const overflowCount = tags.length - 3
     transition: -webkit-text-stroke 0.3s ease, color 0.3s ease;
   }
 
-  .card:hover .card-number {
+  .card:not(.card-upcoming):hover .card-number {
     -webkit-text-stroke: 1px rgba(204, 164, 59, 0.6);
     color: rgba(204, 164, 59, 0.12);
   }

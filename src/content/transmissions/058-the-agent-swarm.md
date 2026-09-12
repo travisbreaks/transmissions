@@ -7,6 +7,7 @@ tags: ["systems", "agents", "infrastructure"]
 key_quote: "Capability without oversight is a detonator looking for a circuit."
 source_platform: "claude"
 id: 58
+form: essay
 ---
 
 <div class="listen-player">

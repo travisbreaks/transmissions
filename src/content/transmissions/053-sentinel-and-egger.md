@@ -7,6 +7,7 @@ tags: ["systems", "ai", "infrastructure", "terminal"]
 key_quote: "Naming things changes how you treat them."
 source_platform: "claude"
 id: 53
+form: essay
 ---
 
 <div class="listen-player">

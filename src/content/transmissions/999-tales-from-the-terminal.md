@@ -7,6 +7,7 @@ tags: ["terminal", "agents"]
 key_quote: "same soul.md, different roadmap.md"
 source_platform: "claude"
 id: 999
+form: essay
 ---
 
 Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one memory, diverging futures.

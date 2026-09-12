@@ -7,6 +7,7 @@ tags: ["protocol", "signal", "systems"]
 key_quote: "The credibility halo of the destination is the point."
 source_platform: "claude"
 id: 59
+form: essay
 ---
 
 <div class="listen-player">

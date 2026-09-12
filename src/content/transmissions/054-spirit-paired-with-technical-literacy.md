@@ -7,6 +7,7 @@ tags: ["ai", "governance", "systems"]
 key_quote: "Governance first. Then power. In that order, or not at all."
 source_platform: "claude"
 id: 54
+form: essay
 ---
 
 <div class="listen-player">

@@ -6,6 +6,7 @@ tags: ["systems", "protocol"]
 key_quote: "Pain leaves traces in the body. So does interaction."
 source_platform: "chatgpt"
 id: 50
+form: essay
 corrected: "Correction, September 7, 2026: this piece stated a gold-slash opacity decay of 0.94 per frame as the rate adrenaline leaves the bloodstream. That figure came from a design prototype's demonstration copy, not a measured or implemented value. The paragraph now describes the design as a spec and marks the comparison as an image. The narration was regenerated the same day."
 ---
 

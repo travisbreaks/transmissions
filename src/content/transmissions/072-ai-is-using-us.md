@@ -7,6 +7,7 @@ tags: ["systems", "protocol", "self"]
 key_quote: "Recital can be trained. Behavior is where the owners showed."
 source_platform: "panel"
 id: 72
+form: essay
 ---
 
 <div class="listen-player">

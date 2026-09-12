@@ -7,6 +7,7 @@ tags: ["terminal", "worlds"]
 key_quote: "A wall that costs nothing says nothing."
 source_platform: "claude"
 id: 1002
+form: essay
 ---
 
 <div class="listen-player">

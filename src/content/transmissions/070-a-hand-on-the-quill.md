@@ -7,6 +7,7 @@ tags: ["worlds", "systems", "self"]
 key_quote: "Revelation that passes through fearful, status-seeking primates arrives partly revelation and partly autobiography."
 source_platform: "chatgpt"
 id: 70
+form: essay
 corrected: "Correction, September 7, 2026: the opening line called the pinnacle temptation the devil's first recorded argument in the New Testament. In Matthew 4 the first temptation is stones to bread; the Psalm 91 quotation is the second. The line now says it is the first time the devil quotes scripture. The narration was updated the same day."
 ---
 

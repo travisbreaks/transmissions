@@ -7,6 +7,7 @@ tags: ["systems", "agents", "ai"]
 key_quote: "The clock of agents, in the present paradigm, is an instrument for laundering hallucination into consensus."
 source_platform: "claude"
 id: 61
+form: essay
 ---
 
 <div class="listen-player">

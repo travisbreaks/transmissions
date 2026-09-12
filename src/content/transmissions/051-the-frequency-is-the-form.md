@@ -6,6 +6,7 @@ tags: ["sonic", "process", "systems"]
 key_quote: "The creature is not animated. It is listening."
 source_platform: "chatgpt"
 id: 51
+form: essay
 ---
 
 <div class="listen-player">

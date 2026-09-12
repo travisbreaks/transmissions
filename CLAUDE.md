@@ -118,7 +118,7 @@ The `key_quote` is NOT the first sentence pulled up. It is a standalone teaser t
 1. Read the stub (frontmatter + summary)
 2. Read original ChatGPT source if available (source_platform field)
 3. Draft full essay in Travis's voice (~1500-2500 words)
-4. Replace stub body (keep frontmatter unchanged)
+4. Replace stub body (frontmatter otherwise unchanged, but set `form: essay`: a drafted piece still marked `seed` ships as a placeholder card)
 5. Self-review: em dashes, you/your, absolutes, voice consistency, grounding
 
 ### Phase 2: Editorial Review (Travis + GPT)
@@ -212,9 +212,12 @@ key_quote: "The thesis line."
 source_platform: "chatgpt" | "claude" | omitted
 source_id: "uuid" (optional, for ChatGPT source conversations)
 id: N
+form: essay | seed   # optional, defaults to seed
 ```
 
 **Tag taxonomy (9 categories):** process, protocol, self, signal, sonic, systems, void, grief, worlds
+
+**`form` (added 2026-09-12):** declares whether an entry is a written transmission (`essay`) or a premise in the queue (`seed`: a title, a key quote, an abstract). The archive marks the two differently (an essay card carries read time, a NARRATED marker, its confidence, and the gold key quote; a seed card carries a dim SEED badge and its abstract) and counts them separately in the header ("24 WRITTEN // 50 IN THE QUEUE"). **It is declared, never inferred:** word count lies, since 050 (119 words) and 054 (473) are finished, narrated pieces that any threshold would file with the stubs. The default is `seed`, so **drafting a stub into an essay means adding `form: essay` at the same time** or it ships still marked as a premise. Phase 1 of the pipeline owns that line.
 
 ---
 
@@ -238,5 +241,5 @@ Before marking any transmission as ready for TTS:
 - [ ] At least one section grounded in Travis's actual work/infrastructure/recovery
 - [ ] Closing signature is unique (not used in any other transmission)
 - [ ] Key quote still fits the expanded essay
-- [ ] Frontmatter unchanged from stub (except adding source_id if discovered)
+- [ ] Frontmatter unchanged from stub (except `form: essay`, and source_id if discovered)
 - [ ] No AI fingerprint density: negation-correction and "That is" openers varied

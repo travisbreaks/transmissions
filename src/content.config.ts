@@ -12,6 +12,12 @@ const transmissions = defineCollection({
     source_platform: z.string().default('chatgpt'),
     source_id: z.string().optional(),
     id: z.number(),
+    // Declared, never inferred. 'essay' is a written transmission; 'seed' is a
+    // premise in the queue (a title, a key quote, an abstract). The archive
+    // marks and counts the two separately. Declared because word count lies:
+    // 050 (119 words) and 054 (473) are finished, narrated pieces, and any
+    // threshold would file them with the stubs.
+    form: z.enum(['essay', 'seed']).default('seed'),
     draft: z.boolean().default(false),
     // Dated correction notice for substantive post-publication edits. Rendered by
     // the page template OUTSIDE the narrated body, so it never desyncs a timing

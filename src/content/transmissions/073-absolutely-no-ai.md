@@ -7,6 +7,7 @@ tags: ["systems", "sonic", "process"]
 key_quote: "A rule that cannot tell an instrument from a forgery will ban the instrument every time, and keep the forger who lied on the intake form."
 source_platform: "chatgpt"
 id: 73
+form: essay
 ---
 
 <div class="listen-player">

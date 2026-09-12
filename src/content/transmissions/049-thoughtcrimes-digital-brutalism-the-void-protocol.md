@@ -6,6 +6,7 @@ tags: ["protocol", "void"]
 key_quote: "The interface is not a window. It's a scar."
 source_platform: "chatgpt"
 id: 49
+form: essay
 corrected: "Correction, September 7, 2026: the somatic-layer section described a gold-slash fade of 0.94 per frame as the rate adrenaline clears the bloodstream and said the decay curves were in the codebase. The number entered the archive from a design prototype's demonstration copy, and no such implementation has been recovered. The section now describes the spec and marks the adrenaline comparison as an image. The narration was regenerated the same day."
 ---
 

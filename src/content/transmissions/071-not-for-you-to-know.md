@@ -7,6 +7,7 @@ tags: ["protocol", "systems", "void"]
 key_quote: "We mistook higher resolution for a nearer end."
 source_platform: "claude"
 id: 71
+form: essay
 ---
 
 <div class="listen-player">

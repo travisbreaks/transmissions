@@ -7,6 +7,7 @@ key_quote: "Mercy is the refusal to abandon the difficult."
 source_platform: "chatgpt"
 source_id: "34ca22ce-165a-46f5-b14a-2c2c64564d23"
 id: 8
+form: essay
 ---
 
 Mercy is the refusal to abandon the difficult.

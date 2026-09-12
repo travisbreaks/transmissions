@@ -7,6 +7,7 @@ tags: ["systems", "agents", "infrastructure"]
 key_quote: "The agent did not fail because it was stupid. It failed because it was confident. Those are different problems."
 source_platform: "claude"
 id: 57
+form: essay
 ---
 
 <div class="listen-player">

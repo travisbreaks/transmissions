@@ -7,6 +7,7 @@ key_quote: "We are not who we are; we are what we transmit."
 source_platform: "chatgpt"
 source_id: "684e6ec1-f98c-8010-87b1-7d952079b216"
 id: 6
+form: essay
 ---
 
 We are not who we are. We are what we transmit.

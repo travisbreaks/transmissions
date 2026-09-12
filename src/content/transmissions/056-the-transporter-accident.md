@@ -7,6 +7,7 @@ tags: ["systems", "agents", "infrastructure", "terminal"]
 key_quote: "Transmission 1000 does not exist, because nobody experiences the moment of splitting."
 source_platform: "claude"
 id: 56
+form: essay
 corrected: "Correction, September 7, 2026: an earlier version called Transmission 999 a raw transcript of a conversation between the copy and the human who made it, said the clone named itself, and attributed the phrase \"same soul.md, different roadmap.md\" to the clone. The conversation shown in 999 is between the copy and Tadao; Tadao assigned the callsign and the clone took it; the phrase is the transcript's title line. Whether the replayed dialogue is verbatim remains an open question."
 ---
 

@@ -7,6 +7,7 @@ key_quote: "Hope is not emotional; it is biochemical."
 source_platform: "chatgpt"
 source_id: "6911751c-a894-8332-90d6-5b58590942f4"
 id: 12
+form: essay
 ---
 
 Hope is not emotional. It is biochemical.

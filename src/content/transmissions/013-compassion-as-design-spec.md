@@ -7,6 +7,7 @@ key_quote: "If empathy breaks the model, the model was wrong."
 source_platform: "chatgpt"
 source_id: "b0bcc505-12b3-474c-94ae-6464d1f2a26e"
 id: 13
+form: essay
 ---
 
 If empathy breaks the model, the model was wrong.

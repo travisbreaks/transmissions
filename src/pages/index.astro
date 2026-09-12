@@ -1,19 +1,42 @@
 ---
 import { getCollection } from 'astro:content'
-import { published } from '../lib/published'
+import { published, upcoming } from '../lib/published'
+import { cleanProse, readMinutes, summarize } from '../lib/prose'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import SEOHead from '../components/SEOHead.astro'
 import TransmissionCard from '../components/TransmissionCard.astro'
 import EmailCapture from '../components/EmailCapture.astro'
 
-const transmissions = published(await getCollection('transmissions'))
-  .filter(t => t.data.id < 999 || !t.data.tags.includes('terminal'))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+const entries = await getCollection('transmissions')
+const notTerminal = (t: (typeof entries)[number]) => t.data.id < 999 || !t.data.tags.includes('terminal')
 
-// Collect all unique tags across entries
+// Drafts render as placeholder cards, so they are excluded here even in dev
+// (where `published()` keeps them) to avoid the same essay appearing twice.
+const transmissions = published(entries)
+  .filter(t => t.data.draft !== true)
+  .filter(notTerminal)
+
+// The number is the spine of the archive: it is stamped on every card, and it
+// is the only key that orders the whole corpus the way it reads. Sorting by
+// date put 061 (published 2026-07-04) above the 069-064 seeds (dated to the
+// events they describe) and left the 27 shared dates to break on filename, so
+// every duplicate pair rendered low-number-first. Date sort is still offered.
+const announced = upcoming(entries).filter(notTerminal)
+const cards = [
+  ...transmissions.map(t => ({ entry: t, announced: false })),
+  ...announced.map(t => ({ entry: t, announced: true })),
+].sort((a, b) => b.entry.data.id - a.entry.data.id)
+
+// Written essays and premises in the queue are counted separately: 74 in one
+// number reads as 74 essays. The announced card counts as neither until it ships.
+const writtenCount = transmissions.filter(t => t.data.form === 'essay').length
+const queueCount = transmissions.length - writtenCount
+
+// Collect all unique tags across entries. Placeholder cards are excluded: they
+// hide under any active filter, so a tag only they carry would filter to nothing.
 const allTags = [...new Set(transmissions.flatMap(t => t.data.tags))].sort()
 
-const description = `${transmissions.length} philosophical transmissions on AI interaction, consciousness, grief, and creative process. By Travis Bonnet.`
+const description = `${writtenCount} philosophical transmissions on AI interaction, consciousness, grief, and creative process, plus ${queueCount} premises in the queue. By Travis Bonnet.`
 ---
 
 <BaseLayout>
@@ -33,8 +56,10 @@ const description = `${transmissions.length} philosophical transmissions on AI i
         <span class="title-prefix">03 //</span> TRANSMISSIONS
       </h1>
       <p class="archive-count font-code">
-        <span class="count-number" id="count-display" data-target={transmissions.length}>0</span>
-        <span id="visible-count" style="display:none">{transmissions.length}</span> TRANSMISSIONS IN ARCHIVE
+        <span class="count-number" id="count-display" data-target={writtenCount}>0</span>
+        <span id="visible-count" style="display:none">{writtenCount}</span> WRITTEN
+        <span class="count-sep">//</span>
+        <span class="count-queue" id="queue-display">{queueCount}</span> IN THE QUEUE
       </p>
     </header>
 
@@ -51,6 +76,13 @@ const description = `${transmissions.length} philosophical transmissions on AI i
       </div>
 
       <div class="filter-controls">
+        <!-- Default view is the written essays. The queue is one click away, not
+             gone: a seed is announced, not hidden. -->
+        <div class="view-toggle" role="group" aria-label="Which transmissions to show">
+          <button class="view-btn font-code active" data-view="written" aria-pressed="true">WRITTEN</button>
+          <button class="view-btn font-code" data-view="all" aria-pressed="false">ALL</button>
+        </div>
+
         <div class="filter-dropdowns">
           <div class="tag-dropdown" id="tag-dropdown">
             <button class="filter-select font-code" id="tag-toggle">
@@ -66,6 +98,7 @@ const description = `${transmissions.length} philosophical transmissions on AI i
           </div>
 
           <select id="sort-select" class="filter-select font-code">
+            <option value="number-desc">NUMBER</option>
             <option value="date-desc">NEWEST</option>
             <option value="date-asc">OLDEST</option>
             <option value="title-asc">TITLE A-Z</option>
@@ -83,8 +116,8 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     />
 
     <!-- Grid -->
-    <div class="grid" id="transmission-grid">
-      {transmissions.map((t, i) => (
+    <div class="grid" id="transmission-grid" data-view="written">
+      {cards.map(({ entry: t, announced: isAnnounced }, i) => (
         <TransmissionCard
           title={t.data.title}
           slug={t.slug}
@@ -92,8 +125,17 @@ const description = `${transmissions.length} philosophical transmissions on AI i
           confidence={t.data.confidence}
           tags={t.data.tags}
           keyQuote={t.data.key_quote}
-          summary={t.body?.replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<[^>]*>/g, '').replace(/^---[\s\S]*?---/, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200) ?? ''}
+          form={t.data.form}
+          readMinutes={readMinutes(t.body ?? '')}
+          narrated={(t.body ?? '').includes('class="listen-player"')}
+          summary={isAnnounced
+            ? ''
+            : t.data.form === 'seed'
+              /* A seed's abstract IS its page for 39 of the 50: show it whole. */
+              ? cleanProse(t.body ?? '')
+              : summarize(t.body ?? '', 200)}
           index={i}
+          upcoming={isAnnounced}
         />
       ))}
     </div>
@@ -146,17 +188,28 @@ const description = `${transmissions.length} philosophical transmissions on AI i
   // Client-side search, filter, and sort (vanilla JS — progressive enhancement)
   const searchInput = document.getElementById('search-input') as HTMLInputElement
   const grid = document.getElementById('transmission-grid')!
-  const cards = Array.from(grid.querySelectorAll('.card')) as HTMLElement[]
+  // Placeholder cards (announced, unpublished) sit in number order but stay
+  // outside search, sort, and both counts. They hide while a filter is active so
+  // a narrowed view never shows an unrelated coming-soon card.
+  const cards = Array.from(grid.querySelectorAll('.card:not(.card-upcoming)')) as HTMLElement[]
+  const upcomingCards = Array.from(grid.querySelectorAll('.card-upcoming')) as HTMLElement[]
   const tagBtns = document.querySelectorAll('[data-filter-tag]')
   const sortSelect = document.getElementById('sort-select') as HTMLSelectElement
   const visibleCount = document.getElementById('visible-count')!
+  const queueDisplay = document.getElementById('queue-display')!
   const emptyState = document.getElementById('empty-state')!
+
+  const cardNumber = (el: HTMLElement) => parseInt(el.dataset.number || '0', 10)
 
   let activeTags = new Set<string>()
 
   function filterAndSort() {
     const query = searchInput.value.toLowerCase().trim()
-    let visible = 0
+    let visibleWritten = 0
+    let visibleQueue = 0
+
+    const narrowed = query !== '' || activeTags.size > 0
+    for (const card of upcomingCards) card.style.display = narrowed ? 'none' : ''
 
     for (const card of cards) {
       const title = card.dataset.title || ''
@@ -175,25 +228,42 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 
       if (matchesSearch && matchesTags) {
         card.style.display = ''
-        visible++
+        if (card.dataset.form === 'seed') visibleQueue++
+        else visibleWritten++
       } else {
         card.style.display = 'none'
       }
     }
 
-    visibleCount.textContent = String(visible)
-    emptyState.style.display = visible === 0 ? '' : 'none'
+    visibleCount.textContent = String(visibleWritten)
+    queueDisplay.textContent = String(visibleQueue)
 
-    // Sort visible cards
+    // In the written view the queue is hidden by stylesheet, so matches there do
+    // not fill the grid: say so instead of showing an empty page.
+    const shown = grid.dataset.view === 'written' ? visibleWritten : visibleWritten + visibleQueue
+    emptyState.textContent = shown === 0 && visibleQueue > 0
+      ? `NOTHING WRITTEN YET. ${visibleQueue} IN THE QUEUE MATCH.`
+      : 'NO TRANSMISSIONS FOUND'
+    emptyState.style.display = shown === 0 ? '' : 'none'
+
+    // Sort visible cards. Placeholder cards join the sort while they are shown,
+    // so clearing a search returns them to their number position instead of
+    // leaving them stranded ahead of the re-appended grid.
     const sortVal = sortSelect.value
-    const sorted = cards
+    const sorted = [...cards, ...(narrowed ? [] : upcomingCards)]
       .filter(c => c.style.display !== 'none')
       .sort((a, b) => {
         switch (sortVal) {
+          case 'number-desc':
+            return cardNumber(b) - cardNumber(a)
+          // 27 dates in the corpus are shared by two transmissions, so date
+          // sorts break ties on the number instead of on filename order.
           case 'date-desc':
             return (b.dataset.date || '').localeCompare(a.dataset.date || '')
+              || cardNumber(b) - cardNumber(a)
           case 'date-asc':
             return (a.dataset.date || '').localeCompare(b.dataset.date || '')
+              || cardNumber(a) - cardNumber(b)
           case 'title-asc':
             return (a.dataset.title || '').localeCompare(b.dataset.title || '')
           case 'confidence-desc': {
@@ -212,6 +282,18 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 
   searchInput.addEventListener('input', filterAndSort)
   sortSelect.addEventListener('change', filterAndSort)
+
+  document.querySelectorAll<HTMLButtonElement>('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      grid.dataset.view = btn.dataset.view!
+      document.querySelectorAll<HTMLButtonElement>('.view-btn').forEach(b => {
+        const on = b === btn
+        b.classList.toggle('active', on)
+        b.setAttribute('aria-pressed', String(on))
+      })
+      filterAndSort()
+    })
+  })
 
   tagBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -292,6 +374,18 @@ const description = `${transmissions.length} philosophical transmissions on AI i
     text-align: center;
   }
 
+  .count-queue {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-family: var(--font-code);
+    letter-spacing: 0.05em;
+  }
+
+  .count-sep {
+    color: var(--glass-border);
+  }
+
   .filter-bar {
     padding: 1.25rem;
     margin-bottom: 2rem;
@@ -326,7 +420,46 @@ const description = `${transmissions.length} philosophical transmissions on AI i
 
   .filter-controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Seeds are hidden by stylesheet rather than inline style so the default view
+     holds with JavaScript disabled, and so the search code (which only ever
+     clears the inline display) cannot reveal them. */
+  .grid[data-view='written'] :global(.card-seed) {
+    display: none;
+  }
+
+  .view-toggle {
+    display: flex;
+  }
+
+  .view-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    padding: 5px 12px;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+
+  .view-btn + .view-btn {
+    border-left: none;
+  }
+
+  .view-btn:hover {
+    color: var(--cyan);
+  }
+
+  .view-btn.active {
+    color: var(--cyan);
+    border-color: var(--cyan-dim);
+    background: var(--cyan-dim);
   }
 
   .filter-dropdowns {

@@ -7,6 +7,7 @@ tags: ["systems", "grief", "process"]
 key_quote: "The question was never how to silence the signal. It was always how to read it without flinching."
 source_platform: "claude"
 id: 55
+form: essay
 ---
 
 <div class="listen-player">

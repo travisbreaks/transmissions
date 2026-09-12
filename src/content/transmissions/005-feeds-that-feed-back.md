@@ -7,6 +7,7 @@ key_quote: "Nobody just curates the feed. The feed curates the curator."
 source_platform: "chatgpt"
 source_id: "e88cd218-82b4-44be-b732-f1b34e8cd460"
 id: 5
+form: essay
 ---
 
 Nobody just curates the feed. The feed curates the curator.
