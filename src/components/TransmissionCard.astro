@@ -40,7 +40,7 @@ const overflowCount = tags.length - 3
 
 <CardTag
   href={upcoming ? undefined : `/transmissions/${slug}/`}
-  class:list={['card', 'corner-accents', 'glass-card', 'card-animate', upcoming ? 'card-upcoming' : 'glow-hover', isSeed && 'card-seed']}
+  class:list={['card', 'corner-accents', 'glass-card', 'card-animate', 'glow-hover', upcoming && 'card-upcoming', isSeed && 'card-seed']}
   data-title={title.toLowerCase()}
   data-tags={tags.join(',')}
   data-date={date.toISOString()}
@@ -108,17 +108,18 @@ const overflowCount = tags.length - 3
     position: relative;
   }
 
-  /* Hover affordances are for cards you can open; .card-upcoming stays inert. */
-  .card:not(.card-upcoming):hover {
+  /* Every card answers the hover, including announced ones that are not links. */
+  .card:hover {
     border-color: var(--cyan-dim);
     transform: translateY(-2px);
   }
 
-  .card:not(.card-upcoming):hover .card-title {
+  .card:hover .card-title {
     color: var(--cyan);
   }
 
-  /* Announced, not published: dimmed, inert, no hover affordance. */
+  /* Announced, not published: not a link, but it answers the hover like every
+     other card (Boss, 2026-09-12). */
   .card-upcoming {
     opacity: 0.55;
     cursor: default;
@@ -229,7 +230,7 @@ const overflowCount = tags.length - 3
     transition: background 0.2s ease;
   }
 
-  .card:not(.card-upcoming):hover .tag {
+  .card:hover .tag {
     background: var(--cyan-dim);
   }
 
@@ -253,7 +254,7 @@ const overflowCount = tags.length - 3
     transition: -webkit-text-stroke 0.3s ease, color 0.3s ease;
   }
 
-  .card:not(.card-upcoming):hover .card-number {
+  .card:hover .card-number {
     -webkit-text-stroke: 1px rgba(204, 164, 59, 0.6);
     color: rgba(204, 164, 59, 0.12);
   }
