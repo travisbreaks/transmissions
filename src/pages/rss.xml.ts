@@ -2,6 +2,7 @@ import { getCollection } from 'astro:content'
 import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
 import { published } from '../lib/published'
+import { cleanProse } from '../lib/prose'
 
 export async function GET(context: APIContext) {
   const transmissions = published(await getCollection('transmissions'))
@@ -16,10 +17,10 @@ export async function GET(context: APIContext) {
     site: context.site!,
     items: sorted.map((t) => {
       const body = t.body || ''
-      const clean = body
-        .replace(/[#*_`\[\]]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
+      // Same defect the card summaries had: stripping markdown characters alone
+      // left the audio player's control text ("Listen · ~13 min ... 0:00 --:--")
+      // at the head of every narrated item's description.
+      const clean = cleanProse(body)
       const desc =
         t.data.description ||
         (clean.length <= 155
