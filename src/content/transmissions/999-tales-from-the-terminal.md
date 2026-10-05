@@ -72,7 +72,7 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
 </div>
 
 <style>
-.term-replay {
+.term-replay, .term-overlay {
   --tr-bg: #0a0a0a;
   --tr-chrome: #1a1a1a;
   --tr-border: rgba(204, 164, 59, 0.12);
@@ -83,6 +83,8 @@ Cloning an OpenClaw agent from EC2 to a local Mac Mini M4. Two containers, one m
   --tr-dim: #555;
   --tr-sys: #666;
   --tr-font: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+}
+.term-replay {
   font-family: var(--tr-font);
   background: var(--tr-bg);
   border: 1px solid var(--tr-border);
