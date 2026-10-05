@@ -77,7 +77,7 @@ The exchange acquired a cast.
 </div>
 
 <style>
-.term-replay {
+.term-replay, .term-overlay, .term-jump, .term-jump-top {
   --tr-bg: #0a0a0a;
   --tr-chrome: #1a1a1a;
   --tr-border: rgba(204, 164, 59, 0.12);
@@ -88,6 +88,8 @@ The exchange acquired a cast.
   --tr-dim: #555;
   --tr-sys: #666;
   --tr-font: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+}
+.term-replay {
   font-family: var(--tr-font);
   background: var(--tr-bg);
   border: 1px solid var(--tr-border);
@@ -334,6 +336,7 @@ The exchange acquired a cast.
 @keyframes term-dots3 { 0% { content: ''; } 25% { content: '\00B7'; } 50% { content: '\00B7\00B7'; } 75% { content: '\00B7\00B7\00B7'; } }
 .term-jump, .term-jump-top { font-family: var(--tr-font); font-size: 11px; letter-spacing: 0.5px; color: var(--tr-cyan); opacity: 0.75; margin: 10px 0; }
 .term-jump a, .term-jump-top a { color: var(--tr-cyan); }
+#recap { scroll-margin-top: 5rem; }
 /* --- Moltbook embed (unused in this piece) --- */
 .moltbook-embed {
   font-family: var(--tr-font);

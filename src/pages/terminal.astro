@@ -39,7 +39,7 @@ const transmissions = published(await getCollection('transmissions'))
         const slugNum = t.slug.match(/^(\d+)/)?.[1] ?? ''
         const num = parseInt(slugNum, 10)
         const displayNum = num >= 999 ? 'T' + slugNum : slugNum.padStart(3, '0')
-        const fmtDate = t.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        const fmtDate = t.data.date.toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' })
         return (
           <a href={`/transmissions/${t.slug}/`} class="hub-entry glass-card corner-accents" style={`animation-delay: ${i * 0.12}s`}>
             <div class="entry-header">

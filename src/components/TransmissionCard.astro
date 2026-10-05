@@ -29,6 +29,7 @@ const slugNumber = slug.match(/^(\d+)/)?.[1]
 const displayNumber = slugNumber ? slugNumber.padStart(3, '0') : ''
 
 const formattedDate = date.toLocaleDateString('en-US', {
+  timeZone: 'UTC',
   year: 'numeric',
   month: 'short',
 })
