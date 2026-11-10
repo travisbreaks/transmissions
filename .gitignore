@@ -28,3 +28,8 @@ public/*.mp3
 
 # workshop safety snapshots (never deploy, never commit)
 workshop-snapshots/
+
+# Internal agent working files stay local; this repository is public.
+.claude/memory/
+.claude/agents/
+.tadao/
