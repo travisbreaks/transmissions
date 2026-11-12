@@ -2,9 +2,11 @@ name: Notify CODE to redeploy travisbreaks.org
 
 # travisbreaks.org/transmissions/ is NOT served from this repo. The CODE monorepo
 # (github.com/travisbreaks/CODE) owns the apex deploy: its
-# .github/workflows/deploy-netlify.yml checks this repo out, runs
-# `npm ci && npm run build`, and copies dist/ over travisbreaks-site/transmissions/
-# on every run, then ships travisbreaks-site to Netlify and Cloudflare Workers.
+# .github/workflows/deploy-netlify.yml (name kept from before C5) checks this repo
+# out at main, runs `npm ci && npm run build`, gates on complete output, copies
+# dist/ over travisbreaks-site/transmissions/ on every run, then ships
+# travisbreaks-site to Cloudflare Workers only (the Netlify upload was removed in
+# C5, CODE #424, 2026-11-09).
 #
 # Before this workflow existed, that refresh was opportunistic: it only ran when
 # something else pushed to CODE's main, or when a human clicked workflow_dispatch
@@ -101,11 +103,12 @@ jobs:
             '{event_type: "transmissions-published", client_payload: {sha: $sha, ref: $ref}}')
 
           # The Authorization header goes through a curl config file, not a -H
-          # argument. A process's argv is readable by anything else on the runner
-          # (ps, /proc/*/cmdline); a file under RUNNER_TEMP created with umask 077
-          # is not. The heredoc is deliberately UNQUOTED so the shell expands
-          # $CODE_DISPATCH_TOKEN while writing the file, because curl performs no
-          # variable expansion when it reads a config file.
+          # argument, so the token never appears in argv (ps, /proc/*/cmdline).
+          # The file is created under RUNNER_TEMP with umask 077 (mode 0600): that
+          # keeps out other ordinary user accounts, but not processes running as
+          # the same runner account, or root. The heredoc is deliberately UNQUOTED
+          # so the shell expands $CODE_DISPATCH_TOKEN while writing the file,
+          # because curl performs no variable expansion when it reads a config file.
           CURL_CONFIG="$RUNNER_TEMP/dispatch-curl.conf"
           umask 077
           cat > "$CURL_CONFIG" <<EOF
