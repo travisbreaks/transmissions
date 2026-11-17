@@ -1,6 +1,6 @@
 ---
 title: "WHEN AGENTS FAIL"
-description: "Twelve failure modes from six months of daily AI agent use. Not theoretical risk assessments. Field notes from production, with commit hashes."
+description: "Twelve failure modes from six months of daily AI agent use. Not theoretical risk assessments. Field notes from production."
 date: 2026-03-19
 confidence: 95
 tags: ["systems", "agents", "infrastructure"]
@@ -8,17 +8,19 @@ key_quote: "The agent did not fail because it was stupid. It failed because it w
 source_platform: "claude"
 id: 57
 form: essay
+note: "The text was corrected on November 17, 2026. The narration is an earlier version and has not been updated."
+corrected: "Correction, November 17, 2026: the documented CI iteration count is eight or more, and the public contribution contains case studies of two of these failure types, not all twelve. The description no longer promises commit hashes."
 ---
 
 <div class="listen-player">
   <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/057-when-agents-fail.mp3?v=1" preload="none"></audio>
   <div class="lp-head">
-    <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
+    <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play earlier narration, before the November 17 text corrections">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
       <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
-      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~9 min</span></span>
+      <span class="listen-meta"><span>Earlier narration</span><span class="listen-sep"> · </span><span class="listen-dur">~9 min</span></span>
     </button>
-    <span class="listen-tooltip">Narrated</span>
+    <span class="listen-tooltip">Audio predates text corrections</span>
     <div class="speed-btns">
       <button class="speed-btn active" data-speed="1">1x</button>
       <button class="speed-btn" data-speed="1.25">1.25x</button>
@@ -315,7 +317,7 @@ No file locking. No cross-session awareness. No merge conflict detection. Just s
 
 ## Case 5: CI Quota Exhaustion
 
-The agent was iterating on a failing CI pipeline. Each push triggered a GitHub Actions run. The agent's strategy was: change one thing, push, wait for CI, read the error, change another thing, push again. Eighteen iterations later, the monthly Actions quota was exhausted. Every project in the monorepo lost CI for the rest of the billing cycle.
+The agent was iterating on a failing CI pipeline. Each push triggered a GitHub Actions run. The agent's strategy was: change one thing, push, wait for CI, read the error, change another thing, push again. Eight or more iterations later, the monthly Actions quota was exhausted. Every project in the monorepo lost CI for the rest of the billing cycle.
 
 The agent had no model of finite resources. It treated CI as an infinite oracle.
 
@@ -329,7 +331,7 @@ Every one of these failures shares a common structure: the agent optimized for t
 
 The failures are not random. They are architectural. The agent is a powerful local optimizer operating without global awareness. That is not a bug to fix. It is a characteristic to design around.
 
-The full set of twelve cases, with commit hashes and detailed mitigations, is documented in my contribution to [awesome-agent-failures](https://github.com/vectara/awesome-agent-failures). The cases above are the ones that cost the most to learn.
+Two of these failure types, client data deployed to a public URL and concurrent sessions overwriting each other, have public case studies in my contribution to [awesome-agent-failures](https://github.com/vectara/awesome-agent-failures). The cases above are the ones that cost the most to learn.
 
 ---
 

@@ -8,17 +8,19 @@ key_quote: "The question was never how to silence the signal. It was always how 
 source_platform: "claude"
 id: 55
 form: essay
+note: "The text was corrected on November 17, 2026. The narration is an earlier version and has not been updated."
+corrected: "Correction, November 17, 2026: the sentence stating that presence reduces pain now reads: Support can reduce it."
 ---
 
 <div class="listen-player">
   <audio id="listen-audio" src="https://assets.travisbreaks.com/transmissions/055-pain-as-signal.mp3" preload="none"></audio>
   <div class="lp-head">
-    <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play narration">
+    <button class="listen-btn" id="listen-btn" onclick="lpToggle()" aria-label="Play earlier narration, before the November 17 text correction">
       <svg class="listen-icon icon-play" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 2.5l10 5.5-10 5.5V2.5z"/></svg>
       <svg class="listen-icon icon-pause" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:none"><path d="M4 2h3v12H4V2zm5 0h3v12H9V2z"/></svg>
-      <span class="listen-meta"><span>Listen</span><span class="listen-sep"> · </span><span class="listen-dur">~9 min</span></span>
+      <span class="listen-meta"><span>Earlier narration</span><span class="listen-sep"> · </span><span class="listen-dur">~9 min</span></span>
     </button>
-    <span class="listen-tooltip">Narrated</span>
+    <span class="listen-tooltip">Audio predates text correction</span>
     <div class="speed-btns">
       <button class="speed-btn active" data-speed="1">1x</button>
       <button class="speed-btn" data-speed="1.25">1.25x</button>
@@ -275,7 +277,7 @@ The clinical term is predictive processing. The brain maintains continuous proba
 Expectation changes pain.
 Isolation amplifies it.
 Belief modulates it.
-Presence reduces it.
+Support can reduce it.
 
 None of that makes suffering less real. It makes it more architecturally complex than the old model allowed. The same signal passes through multiple layers of interpretation before it surfaces as experience. Every layer is a point of intervention. Every layer is also a point of failure.
 
