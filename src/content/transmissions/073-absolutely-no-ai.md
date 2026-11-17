@@ -8,6 +8,7 @@ key_quote: "A rule that cannot tell an instrument from a forgery will ban the in
 source_platform: "chatgpt"
 id: 73
 form: essay
+note: "This essay is dated July 20, 2026 and was corrected on September 7. A November 17 update follows the sources. The narration covers the essay, not the new update."
 ---
 
 <div class="listen-player">
@@ -345,3 +346,13 @@ The machine did not take the work. A rule that could not read did.
 [Bartz v. Anthropic: first court decision on the fair use defense in LLM training](https://www.wiggin.com/publication/bartz-v-anthropic-first-court-decision-on-fair-use-defense-in-llm-training/) (Wiggin and Dana)
 
 *Correction, September 7, 2026: an earlier version of this piece said the court had left the piracy question unanswered and that "they stole the books" was not what it found. The June 23, 2025 order denied fair use for the pirated library, called it theft, and reserved those copies and the damages for trial; the training holding was not limited to lawfully acquired books. The two paragraphs on the ruling were rewritten and re-narrated the same day.*
+
+---
+
+## Update, November 17, 2026
+
+Suno introduced v6 on September 9, developed with Warner Music Group, BMG and Believe, and said its earlier models would be retired as v6 rolled out. [Suno's announcement](https://suno.com/blog/introducing-v6)
+
+The September 8 Believe and TuneCore partnership also changes the independent-artist picture. Suno announced voluntary participation in new artist experiences for Believe and TuneCore artists, and said tracks made with its new industry-partner model would become eligible for distribution through those services. My July account of independents being outside these arrangements needs that qualification. Those announcements do not establish coverage for every artist or retroactive clearance for earlier tracks. [Partnership announcement](https://suno.com/blog/believe-partnership)
+
+The litigation continued after launch: UMG and Sony filed a second complaint on September 18, and Suno answered on October 20. That answer is a party pleading, not a court ruling on the disputed training. [Suno's answer, Document 11](https://www.musicbusinessworldwide.com/files/2026/11/Suno-answer-4-1-1.pdf)
