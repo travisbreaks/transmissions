@@ -136,6 +136,9 @@
     if (!audio || !inPage || !fp) { if (fp) fp.remove(); return; }
 
     var btn = document.getElementById('fp-btn');
+    var inPageButton = document.getElementById('listen-btn');
+    var narrationLabel = inPageButton && inPageButton.getAttribute('aria-label');
+    if (narrationLabel) { btn.setAttribute('aria-label', narrationLabel); btn.title = narrationLabel; }
     var playIco = fp.querySelector('.fp-play');
     var pauseIco = fp.querySelector('.fp-pause');
     var track = document.getElementById('fp-track');
