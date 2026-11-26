@@ -1218,34 +1218,16 @@ The exchange acquired a cast.
 <p class="term-jump"><a href="#recap">Read the written recap below</a> (available now; the scene above runs about 8 minutes).</p>
 
 <!-- Email capture: appears after terminal finishes -->
-<div class="term-email-capture" style="display:none; opacity:0">
+<div class="term-email-capture" data-source="transmissions" style="display:none; opacity:0">
   <p class="term-cap-copy">If this one landed, there are more.</p>
-  <form class="term-cap-form">
-    <input type="email" name="email" placeholder="YOUR EMAIL" required autocomplete="email" class="term-cap-input" />
-    <button type="submit" class="term-cap-btn">SUBSCRIBE</button>
+  <form class="term-cap-form" method="post" data-capture-form>
+    <input type="email" name="email" placeholder="YOUR EMAIL" required autocomplete="email" aria-label="Email address" class="term-cap-input" disabled />
+    <button type="submit" class="term-cap-btn" disabled>SUBSCRIBE</button>
   </form>
-  <p class="term-cap-success" style="display:none">Signal received.</p>
+  <p class="term-cap-status" role="status" data-capture-status></p>
+  <noscript><p class="term-cap-status">This form needs JavaScript.</p></noscript>
   <a href="https://travisfixes.com/privacy/" target="_blank" rel="noopener" class="term-cap-privacy">Privacy policy</a>
 </div>
-
-<script>
-document.querySelector('.term-cap-form')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.querySelector('input[name="email"]').value.trim();
-  try {
-    const res = await fetch('https://email-capture.travisbreaks.workers.dev', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, source: 'transmissions' }),
-    });
-    if (res.ok) {
-      form.style.display = 'none';
-      form.closest('.term-email-capture').querySelector('.term-cap-success').style.display = 'block';
-    }
-  } catch {}
-});
-</script>
 
 <style>
 .term-email-capture {
@@ -1294,12 +1276,13 @@ document.querySelector('.term-cap-form')?.addEventListener('submit', async (e) =
   white-space: nowrap;
 }
 .term-cap-btn:hover { background: rgba(5, 217, 232, 0.18); }
-.term-cap-success {
+.term-cap-status {
   font-size: 0.65rem;
   letter-spacing: 0.1em;
   color: #05d9e8;
   margin: 0.5rem 0 0;
 }
+.term-cap-status:empty { margin: 0; }
 .term-cap-privacy {
   display: inline-block;
   margin-top: 0.4rem;
