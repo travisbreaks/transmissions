@@ -15,73 +15,104 @@ const {
 {variant === 'modal' ? (
   <div class="capture-overlay" id="capture-overlay" data-source={source}>
     <div class="capture-modal glass-card corner-accents">
-      <button class="capture-close font-code" data-capture-close>&times;</button>
+      <button type="button" class="capture-close font-code" aria-label="Close subscription form" data-capture-close>&times;</button>
       <p class="capture-copy font-code">{copy}</p>
-      <form class="capture-form" data-capture-form>
+      <form class="capture-form" method="post" data-capture-form>
         <input
           type="email"
           name="email"
           placeholder="YOUR EMAIL"
           required
           autocomplete="email"
+          aria-label="Email address"
+          disabled
           class="capture-input font-code"
         />
-        <button type="submit" class="capture-btn font-code">SUBSCRIBE</button>
+        <button type="submit" class="capture-btn font-code" disabled>SUBSCRIBE</button>
       </form>
-      <p class="capture-success font-code" data-capture-success>Signal received.</p>
+      <p class="capture-status font-code" role="status" data-capture-status></p>
+      <noscript><p class="capture-status font-code">This form needs JavaScript.</p></noscript>
       <p class="capture-dismiss font-code" data-capture-close>No thanks</p>
     </div>
   </div>
 ) : (
   <div class={`email-capture ${variant}`} data-source={source}>
     <p class="capture-copy font-code">{copy}</p>
-    <form class="capture-form" data-capture-form>
+    <form class="capture-form" method="post" data-capture-form>
       <input
         type="email"
         name="email"
         placeholder="YOUR EMAIL"
         required
         autocomplete="email"
+        aria-label="Email address"
+        disabled
         class="capture-input font-code"
       />
-      <button type="submit" class="capture-btn font-code">SUBSCRIBE</button>
+      <button type="submit" class="capture-btn font-code" disabled>SUBSCRIBE</button>
     </form>
-    <p class="capture-success font-code" data-capture-success>Signal received.</p>
+    <p class="capture-status font-code" role="status" data-capture-status></p>
+    <noscript><p class="capture-status font-code">This form needs JavaScript.</p></noscript>
     <a href="https://travisfixes.com/privacy/" target="_blank" rel="noopener" class="capture-privacy font-code">Privacy policy</a>
   </div>
 )}
 
 <script>
-  // Form submission
-  document.querySelectorAll('[data-capture-form]').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const el = e.target as HTMLFormElement;
-      const wrapper = el.closest('.email-capture, .capture-modal') as HTMLElement;
-      const overlay = el.closest('.capture-overlay') as HTMLElement;
-      const email = (el.querySelector('input[name="email"]') as HTMLInputElement).value.trim();
-      const source = (wrapper?.dataset.source || overlay?.dataset.source || 'transmissions');
+  const requestTimeout = 10_000;
+  const unconfirmedMessage = "No confirmation came back. Try again in a minute.";
+
+  document.querySelectorAll<HTMLFormElement>('[data-capture-form]').forEach(form => {
+    const input = form.querySelector<HTMLInputElement>('input[name="email"]');
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const status = form.parentElement?.querySelector<HTMLElement>('[data-capture-status]');
+    if (!input || !button || !status) return;
+
+    const source = form.closest<HTMLElement>('[data-source]')?.dataset.source || 'transmissions';
+    const modal = form.closest<HTMLElement>('.capture-overlay');
+    let pending = false;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (pending) return;
+
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), requestTimeout);
+      pending = true;
+      input.readOnly = true;
+      button.disabled = true;
+      status.textContent = 'Sending…';
 
       try {
-        const res = await fetch('https://email-capture.travisbreaks.workers.dev', {
+        const response = await fetch('https://email-capture.travisbreaks.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, source }),
+          body: JSON.stringify({ email: input.value.trim(), source }),
+          signal: controller.signal,
         });
+        if (!response.ok) throw new Error('Request failed');
 
-        if (res.ok) {
-          el.style.display = 'none';
-          const success = wrapper.querySelector('[data-capture-success]') as HTMLElement;
-          if (success) success.style.display = 'block';
-          if (overlay) {
-            setTimeout(() => { overlay.classList.remove('visible'); }, 1500);
+        const result = await response.json();
+        if (result?.ok === true) {
+          status.textContent = 'Signal sent.';
+          if (modal) {
+            window.setTimeout(() => { modal.classList.remove('visible'); }, 1500);
             sessionStorage.setItem('capture-dismissed', '1');
           }
+        } else {
+          status.textContent = unconfirmedMessage;
         }
       } catch {
-        // Fail silently
+        status.textContent = unconfirmedMessage;
+      } finally {
+        window.clearTimeout(timeout);
+        pending = false;
+        input.readOnly = false;
+        button.disabled = false;
       }
     });
+
+    input.disabled = false;
+    button.disabled = false;
   });
 
   // Modal: show after scrolling 40% of page, once per session
@@ -264,8 +295,7 @@ const {
     background: rgba(5, 217, 232, 0.2);
   }
 
-  .capture-success {
-    display: none;
+  .capture-status {
     font-size: 0.7rem;
     letter-spacing: 0.1em;
     color: var(--cyan);
